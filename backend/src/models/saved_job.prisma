@@ -1,0 +1,13 @@
+model SavedJob { 
+  candidateId String   @map("candidate_id") @db.Uuid
+  jobPostId   String   @map("job_post_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobPost   JobPost   @relation(fields: [jobPostId], references: [id], onDelete: Cascade)
+
+  @@id([candidateId, jobPostId])
+  @@index([jobPostId])
+  @@map("saved_job")
+}
+//xóa cứng

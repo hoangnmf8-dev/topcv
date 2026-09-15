@@ -1,0 +1,14 @@
+model Province {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code     String @unique @db.VarChar(20)
+  name     String @db.VarChar(150)
+  fullName String @map("full_name") @db.VarChar(200)
+
+  wards              Ward[]
+  candidates         Candidate[] @relation("CandidateLocation")
+  companies          Company[]   @relation("CompanyLocation")
+  jobPosts           JobPost[]
+
+  @@index([name])
+  @@map("province")
+}

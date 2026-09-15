@@ -1,0 +1,29 @@
+enum PlanAudience {
+  candidate
+  company
+
+  @@map("plan_audience")
+}
+
+model ServicePlan {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code         String    @unique @db.VarChar(80)
+  name         String    @db.VarChar(150)
+  audience     PlanAudience
+  description  String?   @db.Text
+  price        Decimal   @db.Decimal(15, 2)
+  currency     String    @default("VND") @db.VarChar(10)
+  durationDays Int?      @map("duration_days")
+  metadata     Json      @default("{}") @db.JsonB
+  isFree       Boolean   @default(false) @map("is_free")
+  isActive     Boolean   @default(true) @map("is_active")
+  displayOrder Int       @default(0) @map("display_order")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz
+
+  orders Order[]
+
+  @@index([audience, isActive, displayOrder])
+  @@map("service_plans")
+}

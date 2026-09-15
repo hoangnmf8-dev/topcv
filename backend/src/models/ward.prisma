@@ -1,0 +1,12 @@
+model Ward {
+  id         String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  provinceId String @map("province_id") @db.Uuid
+  code       String @unique @db.VarChar(20)
+  fullName   String @map("full_name") @db.VarChar(200)
+
+  province Province @relation(fields: [provinceId], references: [id], onDelete: Restrict)
+
+  @@index([provinceId])
+  @@index([fullName])
+  @@map("ward")
+}

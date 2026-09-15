@@ -1,0 +1,36 @@
+enum OrderStatus {
+  pending
+  processing
+  paid
+  failed
+  cancelled
+  refunded
+  expired
+
+  @@map("order_status")
+}
+
+model Order {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code           String      @unique @db.VarChar(50)
+  purchasedByAccountId String      @map("purchased_by_account_id") @db.Uuid
+  planId                String      @map("plan_id") @db.Uuid
+  totalAmount    Decimal     @map("total_amount") @db.Decimal(15, 2)
+  currency       String      @default("VND") @db.VarChar(10)
+  status         OrderStatus @default(pending)
+  startedAt      DateTime?   @map("started_at") @db.Timestamptz
+  expiresAt      DateTime?   @map("expires_at") @db.Timestamptz
+  metadata       Json        @default("{}") @db.JsonB
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime?   @map("deleted_at") @db.Timestamptz
+
+  purchaser Account     @relation("OrderPurchaser", fields: [purchasedByAccountId], references: [id], onDelete: Restrict)
+  plan      ServicePlan @relation(fields: [planId], references: [id], onDelete: Restrict)
+  payments  Payment[]
+
+  @@index([purchasedByAccountId, status, expiresAt])
+  @@index([status, createdAt])
+  @@index([planId])
+  @@map("orders")
+}

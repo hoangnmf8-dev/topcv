@@ -1,0 +1,14 @@
+model JobTitle {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobCategoryId String    @map("job_category_id") @db.Uuid
+  code          String?   @unique @db.VarChar(30)
+  name          String    @db.VarChar(150)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz
+
+  jobPost       JobPost[]
+  category      JobCategory @relation(fields: [jobCategoryId], references: [id], onDelete: Cascade)
+
+  @@map("job_title")
+}

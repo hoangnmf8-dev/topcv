@@ -1,0 +1,29 @@
+enum AuditActorType {
+  ACCOUNT
+  SYSTEM
+  WEBHOOK
+  CRON
+}
+
+model AuditLog {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorType      AuditActorType @map("actor_type")
+  actorAccountId String?        @map("actor_account_id") @db.Uuid
+  action         String         @db.VarChar(50)
+  entityType     String         @map("entity_type") @db.VarChar(100) //bảng nào chịu tác động
+  entityId       String?        @map("entity_id") @db.Uuid //id của bảng chịu tác động
+  beforeData     Json?          @map("before_data") @db.JsonB //dữ liệu trước, tóm gọn dữ liệu bị thay đổi
+  afterData      Json?          @map("after_data") @db.JsonB
+  ipAddress      String?        @map("ip_address") @db.VarChar(64)
+  userAgent      String?        @map("user_agent") @db.VarChar(500) //thông tin trình duyệt/ứng dụng gửi req req.get("user-agent");
+  requestId      String?        @map("request_id") @db.VarChar(100) //id của http request
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  actor Account? @relation("AuditActor", fields: [actorAccountId], references: [id], onDelete: SetNull)
+
+  @@index([actorAccountId, createdAt])
+  @@index([entityType, entityId, createdAt])
+  @@index([action, createdAt])
+  @@index([requestId])
+  @@map("audit_logs")
+}

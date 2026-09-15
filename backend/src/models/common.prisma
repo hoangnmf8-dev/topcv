@@ -1,0 +1,13 @@
+enum AccountStatus {
+  active
+  blocked
+
+  @@map("account_status")
+}
+
+enum UserRole {
+  candidate
+  company
+  admin
+  @@map("role")
+}

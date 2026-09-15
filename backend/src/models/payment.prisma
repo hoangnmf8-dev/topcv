@@ -1,0 +1,32 @@
+enum PaymentStatus {
+  pending
+  processing
+  succeeded
+  failed
+  cancelled
+  expired
+  refunded
+
+  @@map("payment_status")
+}
+
+model Payment {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId         String        @map("order_id") @db.Uuid
+  provider        String        @db.VarChar(50)
+  transactionCode String?       @map("transaction_code") @db.VarChar(150)
+  amount          Decimal       @db.Decimal(15, 2)
+  currency        String        @default("VND") @db.VarChar(10)
+  status          PaymentStatus @default(pending)
+  failureReason   String?       @map("failure_reason") @db.Text
+  paidAt          DateTime?     @map("paid_at") @db.Timestamptz
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  @@unique([provider, transactionCode])
+  @@index([orderId, createdAt])
+  @@index([status, createdAt])
+  @@map("payments")
+}

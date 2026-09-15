@@ -1,0 +1,35 @@
+enum VerificationStatus {
+  pending
+  verified
+  rejected
+}
+
+model Company {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId          String             @unique @map("account_id") @db.Uuid
+  phone              String?            @db.VarChar(30)
+  name               String             @db.VarChar(255)
+  code               String             @unique @db.VarChar(255)
+  logoKey           String?            @map("logo_url") @db.VarChar(500)
+  bannerKey          String?            @map("banner_url") @db.VarChar(500)
+  description        String?            @db.Text
+  website            String?            @db.VarChar(255)
+  taxCode            String?            @unique @map("tax_code") @db.VarChar(50)
+  sizeRange          String?            @map("size_range") @db.VarChar(50)
+  locationId         String?            @map("location_id") @db.Uuid
+  address            String?            @db.Text
+  verificationStatus VerificationStatus @default(pending) @map("verification_status")
+  verifiedAt         DateTime?          @map("verified_at") @db.Timestamptz
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime?          @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt          DateTime?          @map("deleted_at") @db.Timestamptz
+
+  account       Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  location      Province?      @relation("CompanyLocation", fields: [locationId], references: [id], onDelete: SetNull)
+  jobPosts      JobPost[]
+  conversations Conversation[]
+
+  @@index([locationId])
+  @@index([verificationStatus, createdAt])
+  @@map("company")
+}

@@ -1,0 +1,22 @@
+model Account {
+  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String        @unique @db.VarChar(255)
+  passwordHash String        @map("password_hash") @db.VarChar(255)
+  role         UserRole
+  status       AccountStatus @default(active)
+  lastLoginAt  DateTime?     @map("last_login_at") @db.Timestamptz
+  verifyEmail  Boolean       @map("verify_email") @default(false)
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime?     @map("deleted_at") @db.Timestamptz
+
+  candidate Candidate?
+  company   Company?
+  purchasedOrders Order[]        @relation("OrderPurchaser")
+  sentMessages    Message[]      @relation("MessageSender")
+  notifications   Notification[] @relation("NotificationRecipient")
+  auditLogs       AuditLog[]     @relation("AuditActor")
+
+  @@index([email, status])
+  @@map("accounts")
+}

@@ -1,0 +1,49 @@
+enum JobStatus {
+  DRAFT     @map("draft")
+  PENDING   @map("pending")
+  PUBLISHED @map("published")
+  PAUSED    @map("paused")
+  REJECTED  @map("rejected")
+  CLOSED    @map("closed")
+  EXPIRED   @map("expired")
+
+  @@map("job_status")
+}
+
+model JobPost {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId          String    @map("company_id") @db.Uuid
+  jobTitleId         String?   @map("job_title_id") @db.Uuid
+  jobCategoryId      String    @map("job_category_id") @db.Uuid
+  locationId         String    @map("location_id") @db.Uuid
+  title              String    @db.VarChar(255)
+  description        String?   @db.Text
+  requirements       String?   @db.Text
+  benefits           String?   @db.Text
+  salaryMin          Decimal?  @map("salary_min") @db.Decimal(15, 2)
+  salaryMax          Decimal?  @map("salary_max") @db.Decimal(15, 2)
+  currency           String?   @default("VND") @db.VarChar(10)
+  employmentType     String?   @default("full_time") @map("employment_type") @db.VarChar(30)
+  experienceYearsMin Decimal?  @map("experience_years_min") @db.Decimal(4, 1)
+  deadlineAt         DateTime? @map("deadline_at") @db.Timestamptz
+  status             JobStatus @default(DRAFT)
+  publishedAt        DateTime? @map("published_at") @db.Timestamptz
+  isBoosted          Boolean   @map("is_boosted") @default(false) @db.Boolean
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime? @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz
+
+  company  Company     @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  jobTitle JobTitle?   @relation(fields: [jobTitleId], references: [id], onDelete: SetNull)
+  category JobCategory @relation(fields: [jobCategoryId], references: [id], onDelete: Restrict)
+  location Province    @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  applications Application[]
+  savedJobs    SavedJob[]
+
+  @@index([companyId, status, createdAt])
+  @@index([jobCategoryId, jobTitleId])
+  @@index([locationId, status])
+  @@index([status, deadlineAt])
+
+  @@map("job_post")
+}

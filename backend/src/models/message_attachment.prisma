@@ -1,0 +1,15 @@
+model MessageAttachment {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  messageId String    @map("message_id") @db.Uuid
+  fileName  String    @map("file_name") @db.VarChar(255)
+  fileUrl   String    @map("file_url") @db.VarChar(500)
+  mimeType  String?   @map("mime_type") @db.VarChar(100)
+  fileSize  BigInt?   @map("file_size")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz
+
+  message Message @relation(fields: [messageId],references: [id],onDelete: Cascade)
+
+  @@index([messageId, deletedAt])
+  @@map("message_attachments")
+}

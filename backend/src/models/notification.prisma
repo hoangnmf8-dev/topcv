@@ -1,0 +1,29 @@
+enum NotificationType {
+  system
+  application
+  interview
+  message
+  job
+  payment
+  service_plan
+
+  @@map("notification_type")
+}
+
+model Notification {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  recipientAccountId String           @map("recipient_account_id") @db.Uuid
+  type               NotificationType @default(system)
+  title              String           @db.VarChar(150)
+  description        String           @db.VarChar(255)
+  link               String?          @db.VarChar(500)
+  readAt             DateTime?        @map("read_at") @db.Timestamptz
+  metadata           Json?            @db.JsonB
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  deletedAt          DateTime?        @map("deleted_at") @db.Timestamptz
+
+  recipient Account @relation("NotificationRecipient", fields: [recipientAccountId], references: [id], onDelete: Cascade)
+
+  @@index([recipientAccountId, readAt, createdAt])
+  @@map("notifications")
+}

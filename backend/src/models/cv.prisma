@@ -1,0 +1,19 @@
+model Cv {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  candidateId String    @map("candidate_id") @db.Uuid
+  title       String    @db.VarChar(255)
+  templateCode String?  @map("template_code") @db.VarChar(100)
+  contentJson Json?     @map("content_json") @db.JsonB
+  fileKey     String?   @map("file_url") @db.VarChar(500)
+  isDefault   Boolean   @default(false) @map("is_default") //cv mặc định khi ứng tuyển nhanh hoặc hiển thị khi ntd xem cv
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+
+  candidate Candidate @relation(fields: [candidateId],references: [id],onDelete: Cascade)
+  applications Application[]
+
+  @@index([candidateId])
+  @@index([candidateId, deletedAt])
+  @@map("cvs")
+}

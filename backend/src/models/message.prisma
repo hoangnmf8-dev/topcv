@@ -1,0 +1,35 @@
+enum MessageType {
+  text
+  image
+  file
+
+  @@map("message_type")
+}
+
+model Message {
+  id               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  conversationId   String      @map("conversation_id") @db.Uuid
+  senderAccountId  String      @map("sender_account_id") @db.Uuid
+  replyToMessageId String?     @map("reply_to_message_id") @db.Uuid
+  type             MessageType @default(text)
+  content          String?     @db.Text
+  isPinned         Boolean     @default(false) @map("is_pinned")
+  isLiked          Boolean     @default(false) @map("is_liked")
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz
+
+  conversation Conversation @relation(fields: [conversationId],references: [id],onDelete: Cascade)
+
+  sender Account @relation("MessageSender", fields: [senderAccountId], references: [id], onDelete: Restrict)
+
+  replyTo Message? @relation("MessageReplies",fields: [replyToMessageId],references: [id],onDelete: SetNull)
+
+  replies Message[] @relation("MessageReplies")
+  attachments MessageAttachment[]
+
+  @@index([conversationId, createdAt])
+  @@index([senderAccountId])
+  @@index([replyToMessageId])
+  @@map("messages")
+}

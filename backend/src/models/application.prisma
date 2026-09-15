@@ -1,0 +1,32 @@
+enum ApplicationStatus {
+  submitted
+  reviewing
+  interview
+  hired
+  rejected
+
+  @@map("application_status")
+}
+
+model Application {
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jobPostId    String            @map("job_post_id") @db.Uuid
+  candidateId  String            @map("candidate_id") @db.Uuid
+  cvId         String?           @map("cv_id") @db.Uuid
+  coverLetter  String?           @map("cover_letter") @db.Text
+  status       ApplicationStatus @default(submitted)
+  fitScore     Decimal?          @map("fit_score") @db.Decimal(5, 2)
+  internalNote String?           @map("internal_note") @db.Text
+  appliedAt    DateTime          @default(now()) @map("applied_at") @db.Timestamptz
+  updatedAt    DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt    DateTime?         @map("deleted_at") @db.Timestamptz
+
+  jobPost   JobPost   @relation(fields: [jobPostId], references: [id], onDelete: Restrict)
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Restrict)
+  cv        Cv?       @relation(fields: [cvId], references: [id], onDelete: SetNull)
+
+  @@unique([jobPostId, candidateId])
+  @@index([candidateId, status])
+  @@index([jobPostId, status])
+  @@map("applications")
+}
