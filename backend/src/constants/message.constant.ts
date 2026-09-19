@@ -7,7 +7,8 @@ export const ERROR_MESSAGE = {
     ACCOUNT_NOT_FOUND: "Không tìm thấy tài khoản",
     INVALID_TOKEN: "Token không hợp lệ",
     OTP_INVALID: "Mã otp không hợp lệ"
-  }
+  },
+  ACCOUNT_NOT_FOUND: "Không tìm thấy tài khoản",
 };
 export const SUCCESS_MESSAGE = {
   AUTH_CONTROLER: {
@@ -21,5 +22,6 @@ export const SUCCESS_MESSAGE = {
     RESEND_OTP: "Tạo mã otp mới thành công",
     CREATE_OTP: "Tạo mã otp thành công",
     RESET_PASSWORD: "Thay đổi mật khẩu thành công",
-  }
+  },
+  ACCOUNT_NOT_FOUND: "Không tìm thấy tài khoản",
 }

@@ -1,15 +1,20 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import axios from "axios";
-import { getAccesToken, makeRefreshToken } from '@/actions/auth.action';
-import { Unauthorized } from '@/exceptions';
+import { getAccesToken, makeRefreshToken } from "@/actions/auth.action";
+import { Unauthorized } from "@/exceptions";
+import type { SyntheticEvent } from "react";
+import uploadService from "@/services/upload.service";
+import { useCompanyStore } from "@/stores/company.store";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-};
+  return twMerge(clsx(inputs));
+}
 let refreshPromise: null | Promise<boolean> = null;
 const getNewToken = async () => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/auth/refresh-token`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_API}/auth/refresh-token`,
+  );
   const data = await response.json();
   return response;
 };
@@ -22,22 +27,44 @@ export const httpRequest = axios.create({
 });
 httpRequest.interceptors.request.use(async (config) => {
   const accessToken = await getAccesToken();
-  if(accessToken) {
+  if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
-  };
+  }
   return config;
 });
-httpRequest.interceptors.response.use((response) => response, async (error) => {
-  if(+error.status === 401) {
-    if(!refreshPromise) {
-      refreshPromise = makeRefreshToken();
+httpRequest.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (+error.status === 401) {
+      if (!refreshPromise) {
+        refreshPromise = makeRefreshToken();
+      }
+      const newToken = await refreshPromise;
+      if (newToken) {
+        refreshPromise = null;
+        return httpRequest(error.config);
+      }
+      throw new Unauthorized("Không có quyền truy cập", "UNAUTHORIZED");
+    }
+    return Promise.reject(error);
+  },
+);
+export const refreshImage = (objectKey?: string | null) =>
+  async (event: SyntheticEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+    if (!objectKey) {
+      image.src = "";
+      return;
     };
-    const newToken = await refreshPromise;
-    if(newToken) {
-      refreshPromise = null;
-      return httpRequest(error.config);
+    if(objectKey === image.dataset.objectKey) {
+      image.src = "";
+      return;
     };
-    throw new Unauthorized("Không có quyền truy cập", "UNAUTHORIZED");
+    image.dataset.objectKey = objectKey;
+    const result = await uploadService.getUrlFile(objectKey);
+    if (result.success) {
+      useCompanyStore.getState().updateCompany(result.data.url);
+    } else {
+      image.src = "";
+    }
   };
-  return Promise.reject(error);
-});

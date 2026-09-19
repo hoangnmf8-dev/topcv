@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ArrowRight, BriefcaseBusiness, Layers3, MapPin, Search, ShieldCheck, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { JOB_CATEGORIES, JOB_CATEGORY_BY_CODE } from "@/lib/job-categories"
 import {
   Select,
   SelectContent,
@@ -15,14 +16,7 @@ import {
 
 const QUICK_TAGS = ["ReactJS", "Marketing", "Tester", "Java", "Kế toán", "Designer"]
 
-const CATEGORY_LABELS: Record<string, string> = {
-  all: "Tất cả danh mục nghề",
-  it: "Công nghệ thông tin",
-  sales: "Kinh doanh / Bán hàng",
-  marketing: "Marketing / Truyền thông",
-  accounting: "Kế toán / Kiểm toán",
-  design: "Thiết kế / Sáng tạo",
-}
+const CATEGORY_LABELS: Record<string, string> = { all: "Tất cả danh mục nghề", ...JOB_CATEGORY_BY_CODE }
 
 const LOCATION_LABELS: Record<string, string> = {
   all: "Tất cả địa điểm",
@@ -76,7 +70,7 @@ export function HeroSearch() {
         </div>
 
         <form onSubmit={submit} className="mx-auto mt-8 max-w-6xl rounded-2xl border border-white/25 bg-white p-2.5 shadow-2xl shadow-emerald-950/25 md:rounded-3xl md:p-3">
-          <div className="grid gap-2 md:grid-cols-[minmax(260px,1fr)_220px_210px_auto] md:items-center">
+          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_260px_220px_auto] md:items-center">
             <label className="flex h-13 items-center gap-3 rounded-xl border border-transparent bg-slate-50 px-4 transition focus-within:border-emerald-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-50">
               <Search className="size-5 shrink-0 text-emerald-600" />
               <input
@@ -87,29 +81,25 @@ export function HeroSearch() {
                 className="h-full w-full bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
               />
             </label>
-            <div className="flex h-13 items-center gap-2 rounded-xl bg-slate-50 px-2">
+            <div className="flex h-13 min-w-0 items-center gap-2 rounded-xl bg-slate-50 px-2">
               <Layers3 className="ml-2 size-5 shrink-0 text-emerald-600" />
-              <Select value={category} onValueChange={(value) => value && setCategory(value)}>
-                <SelectTrigger className="h-11 w-full border-0 bg-transparent shadow-none focus-visible:ring-0">
+              <Select modal={false} value={category} onValueChange={(value) => value && setCategory(value)}>
+                <SelectTrigger aria-label="Danh mục nghề" className="h-11 min-w-0 flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:block [&_[data-slot=select-value]]:truncate">
                   <SelectValue>{CATEGORY_LABELS[category]}</SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false} align="start" className="min-w-64 max-w-[calc(100vw-2rem)] p-1">
                   <SelectItem value="all">Tất cả danh mục nghề</SelectItem>
-                  <SelectItem value="it">Công nghệ thông tin</SelectItem>
-                  <SelectItem value="sales">Kinh doanh / Bán hàng</SelectItem>
-                  <SelectItem value="marketing">Marketing / Truyền thông</SelectItem>
-                  <SelectItem value="accounting">Kế toán / Kiểm toán</SelectItem>
-                  <SelectItem value="design">Thiết kế / Sáng tạo</SelectItem>
+                  {JOB_CATEGORIES.map((item) => <SelectItem key={item.code} value={item.code}>{item.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex h-13 items-center gap-2 rounded-xl bg-slate-50 px-2">
+            <div className="flex h-13 min-w-0 items-center gap-2 rounded-xl bg-slate-50 px-2">
               <MapPin className="ml-2 size-5 shrink-0 text-emerald-600" />
-              <Select value={location} onValueChange={(value) => value && setLocation(value)}>
-                <SelectTrigger className="h-11 w-full border-0 bg-transparent shadow-none focus-visible:ring-0">
+              <Select modal={false} value={location} onValueChange={(value) => value && setLocation(value)}>
+                <SelectTrigger aria-label={undefined} className="h-11 min-w-0 flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 [&_[data-slot=select-value]]:min-w-0 [&_[data-slot=select-value]]:block [&_[data-slot=select-value]]:truncate">
                   <SelectValue>{LOCATION_LABELS[location]}</SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false} align="start" className="min-w-64 max-w-[calc(100vw-2rem)] p-1">
                   <SelectItem value="all">Tất cả địa điểm</SelectItem>
                   <SelectItem value="hanoi">Hà Nội</SelectItem>
                   <SelectItem value="hcm">Hồ Chí Minh</SelectItem>

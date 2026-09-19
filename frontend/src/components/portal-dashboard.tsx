@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAccountStore } from "@/stores/auth.store";
+import { CandidateSavedJobs } from "@/components/candidate-saved-jobs";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import uploadService from "@/services/upload.service";
+import { UPLOAD } from "@/constants/upload.constant";
 import {
   BarChart3,
   BriefcaseBusiness,
@@ -118,7 +123,7 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
           {tab === "overview" && <Overview candidate={candidate} />}{" "}
           {tab === "profile" && <Profile />}{" "}
           {tab === "applications" && <List title="Việc đã ứng tuyển" />}{" "}
-          {tab === "saved" && <List title="Việc làm đã lưu" />}{" "}
+          {tab === "saved" && <CandidateSavedJobs />}{" "}
           {tab === "jobs" && <List title="Tin tuyển dụng của bạn" />}{" "}
           {tab === "candidates" && <MiniAts />}{" "}
           {tab === "analytics" && <Analytics />}{" "}
@@ -238,6 +243,41 @@ function Overview({ candidate }: { candidate: boolean }) {
   );
 }
 function Profile() {
+  const profile = useAccountStore(state => state.account?.candidate);
+  const updateCandidate = useAccountStore(state => state.updateCandidate);
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+  const fullName = profile?.fullName || "Nguyễn Văn A";
+  const initials = fullName.trim().split(/\s+/).filter(Boolean).slice(-2).map(word => word[0]).join("").toUpperCase() || "UV";
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  useEffect(() => {
+    if (!avatarFile) { setAvatarUrl(""); return; }
+    const url = URL.createObjectURL(avatarFile);
+    setAvatarUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [avatarFile]);
+  async function saveAvatar() {
+    if (!avatarFile || !profile || isSavingAvatar) return;
+    setIsSavingAvatar(true);
+    try {
+      const presigned = await uploadService.getPresignedUrl(avatarFile, "avatar");
+      if (!presigned.success) throw new Error(presigned.message || "Không thể tải ảnh.");
+      await uploadService.uploadFile(presigned.data.uploadUrl, avatarFile);
+      const result = await uploadService.completeUploadFile("avatar", presigned.data.objectKey);
+      if (!result.success) throw new Error(result.message || "Không thể lưu ảnh đại diện.");
+      if (!result.data?.imageUrl || !result.data?.objectKey) {
+        throw new Error("Máy chủ chưa xác nhận ảnh đã lưu. Vui lòng thử lại.");
+      }
+      updateCandidate({ avatarKey: result.data.objectKey, avatarUrl: result.data.imageUrl });
+      setAvatarFile(null);
+      setAvatarUrl("");
+      toast.success(result.message || "Lưu ảnh đại diện thành công");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Không thể lưu ảnh đại diện.");
+    } finally {
+      setIsSavingAvatar(false);
+    }
+  }
   const cvs = [
     {
       id: "frontend",
@@ -266,36 +306,30 @@ function Profile() {
   ];
   return (
     <div className="space-y-6">
-      <section className="overflow-hidden rounded-2xl bg-white shadow-sm">
-        <div className="h-36 bg-[linear-gradient(110deg,#064e2d,#00b14f,#48d597)]">
-          <button
-            onClick={() => toast.success("Đã cập nhật ảnh bìa.")}
-            className="float-right m-4 rounded-lg bg-white/90 px-3 py-2 text-xs font-bold text-slate-700"
-          >
-            Thay ảnh bìa
-          </button>
-        </div>
-        <div className="relative px-6 pb-6">
-          <div className="absolute -top-12 grid size-24 place-items-center rounded-full border-4 border-white bg-[#e7f9ef] text-3xl font-bold text-[#008f40]">
-            NA
-          </div>
-          <button
-            onClick={() => toast.success("Đã cập nhật ảnh đại diện.")}
-            className="absolute left-[96px] top-1 rounded-full bg-white px-2 py-1 text-xs font-bold shadow"
-          >
-            Đổi ảnh
-          </button>
-          <div className="pt-14">
-            <h2 className="text-xl font-bold">Nguyễn Văn A</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              Front-end Developer · Hà Nội · Đã xác thực
-            </p>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
-              Tôi tập trung xây dựng trải nghiệm web hiệu quả, dễ dùng và có khả
-              năng mở rộng.
-            </p>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+          <label className="relative block size-24 shrink-0 cursor-pointer rounded-full transition hover:opacity-80 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2" title="Đổi ảnh đại diện">
+            <Avatar className="size-24 border-4 border-emerald-50">
+              <AvatarImage src={avatarUrl || profile?.avatarUrl || undefined} alt={"Ảnh đại diện " + fullName} />
+              <AvatarFallback className="bg-emerald-50 text-3xl font-bold text-emerald-700">{initials}</AvatarFallback>
+            </Avatar>
+            <input disabled={isSavingAvatar || !profile} type="file" aria-label="Đổi ảnh đại diện" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={event => {
+              const file = event.target.files?.[0]; event.target.value = "";
+              if (!file) return;
+              if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > UPLOAD.IMAGE_SIZE) { toast.error("Chọn ảnh JPG, PNG hoặc WebP tối đa 5 MB."); return; }
+              setAvatarFile(file);
+            }}/>
+          </label>
+          <div><h2 className="text-xl font-bold">{fullName}</h2><p className="mt-1 text-sm text-slate-500">{profile?.headline || "Front-end Developer"}</p>
+            {avatarFile && <div className="mt-3 flex items-center gap-3">
+              <button type="button" disabled={isSavingAvatar} onClick={saveAvatar} className="rounded-xl bg-[#00b14f] px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
+                {isSavingAvatar ? "Đang lưu..." : "Lưu ảnh đại diện"}
+              </button>
+              <button type="button" disabled={isSavingAvatar} onClick={() => { setAvatarFile(null); setAvatarUrl(""); }} className="text-sm text-slate-500 disabled:opacity-50">Hủy</button>
+            </div>}
           </div>
         </div>
+        <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">Tôi tập trung xây dựng trải nghiệm web hiệu quả, dễ dùng và có khả năng mở rộng.</p>
       </section>
       <Panel title="Hồ sơ & CV">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">

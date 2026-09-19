@@ -27,14 +27,7 @@ export type Job = {
   }
 }
 
-export const CATEGORIES = [
-  "Công nghệ thông tin",
-  "Marketing",
-  "Kinh doanh / Bán hàng",
-  "Kiểm thử / QA",
-  "Thiết kế",
-  "Tài chính / Ngân hàng",
-]
+export { JOB_CATEGORY_NAMES as CATEGORIES } from "@/lib/job-categories"
 
 export const jobs: Job[] = [
   {

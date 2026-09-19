@@ -1,12 +1,10 @@
 import { CompanyInfoRegister } from "../types/auth.type";
+import { CompanyDataUpdate } from "../types/company.type";
 import createCode from "../utils/code";
 import { hashString } from "../utils/hashing";
 import { prisma } from "../utils/prisma";
 
 class CompanyService {
-  constructor() {
-
-  };
   async createCompany(companyInfo: CompanyInfoRegister) {
     const {fullName: name, email, phone, password, confirmPassword, role} = companyInfo;
     return await prisma.$transaction(async (tx) => {
@@ -27,6 +25,18 @@ class CompanyService {
       });
       return newCompanyAccount;
     })
+  };
+  async updateCompany(id: string, data: CompanyDataUpdate) {
+    return await prisma.company.update({
+      where: {
+        id
+      }, 
+      data: {
+        ...data
+      }
+    }
+    )
+    
   };
 };
 const companyService = new CompanyService();

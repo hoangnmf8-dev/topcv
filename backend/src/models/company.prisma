@@ -10,8 +10,8 @@ model Company {
   phone              String?            @db.VarChar(30)
   name               String             @db.VarChar(255)
   code               String             @unique @db.VarChar(255)
-  logoKey           String?            @map("logo_url") @db.VarChar(500)
-  bannerKey          String?            @map("banner_url") @db.VarChar(500)
+  logoKey           String?            @map("logo_key") @db.VarChar(500)
+  bannerKey          String?            @map("banner_key") @db.VarChar(500)
   description        String?            @db.Text
   website            String?            @db.VarChar(255)
   taxCode            String?            @unique @map("tax_code") @db.VarChar(50)

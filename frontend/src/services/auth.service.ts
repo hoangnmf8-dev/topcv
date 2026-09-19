@@ -2,10 +2,13 @@ import { httpRequest } from "@/lib/utils";
 
 class AuthServie {
   async getProfile() {
-    const response = await httpRequest.get("/auth/profile");
-    return response;
+    try {
+      const response = await httpRequest.get("/auth/profile");
+      return response.data;
+    } catch(error) {
+      
+    }
   }
-
   async refreshToken(refreshToken: string) {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_API}/auth/refresh-token`,

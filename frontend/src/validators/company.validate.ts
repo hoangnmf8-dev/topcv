@@ -1,22 +1,10 @@
+import { UPLOAD } from "@/constants/upload.constant";
 import * as z from "zod";
-export const COMPANY_SIZE_OPTIONS = [
-  { value: "UNDER_10", label: "Dưới 10 nhân sự" },
-  { value: "FROM_10_TO_99", label: "10 – 99 nhân sự" },
-  { value: "FROM_100_TO_499", label: "100 – 499 nhân sự" },
-  { value: "FROM_500_TO_999", label: "500 – 999 nhân sự" },
-  { value: "FROM_1000", label: "Từ 1.000 nhân sự" },
-] as const;
-export const CITY_OPTIONS = [
-  "Hà Nội",
-  "Hồ Chí Minh",
-  "Đà Nẵng",
-  "Hải Phòng",
-] as const;
-const imageSchema = (maxMB: number) =>
+const imageSchema = (maxMB: number, type: "logo" | "banner") =>
   z
     .custom<File>(
       (value) => typeof File !== "undefined" && value instanceof File,
-      { message: "Vui lòng chọn file ảnh" },
+      { message: `Vui lòng chọn file ảnh cho ${type}` },
     )
     .refine(
       (file) => ["image/jpeg", "image/png", "image/webp"].includes(file.type),
@@ -25,6 +13,15 @@ const imageSchema = (maxMB: number) =>
     .refine((file) => file.size <= maxMB, {
       message: `Ảnh không được vượt quá ${maxMB} MB`,
     });
+
+const optionalImageSchema = (maxBytes: number, type: "logo" | "banner") =>
+  z.preprocess((value) => {
+    if (value == null) return undefined;
+    if (typeof FileList !== "undefined" && value instanceof FileList) {
+      return value.item(0) ?? undefined;
+    } 
+    return value;
+  }, imageSchema(maxBytes, type).optional());
 export const companyProfileSchema = z.object({
   name: z
     .string()
@@ -39,7 +36,7 @@ export const companyProfileSchema = z.object({
       if (!value) return true;
       const normalized = value.replace(/[\s().-]/g, "");
       return /^\+?[0-9]{9,15}$/.test(normalized);
-    }),
+    }, "Không đúng định dạng"),
   website: z
     .string()
     .trim()
@@ -57,28 +54,22 @@ export const companyProfileSchema = z.object({
       { message: "Website phải có dạng https://example.com" },
     )
     .optional(),
-  tax: z
+  taxCode: z
     .string()
     .trim()
     .min(1, "Không được để trống")
     .max(20, "Tối đa 20 kí tự"),
-  size: z
-    .enum([
-      "UNDER_10",
-      "FROM_10_TO_99",
-      "FROM_100_TO_499",
-      "FROM_500_TO_999",
-      "FROM_1000",
-    ])
-    .or(z.literal(""))
-    .optional(),
+  sizeRange: z.string().optional(),
   address: z.string().trim().max(300, "Địa chỉ tối đa 300 ký tự"),
   description: z
     .string()
     .trim()
     .max(2000, "Giới thiệu doanh nghiệp tối đa 2.000 ký tự")
     .optional(),
-  logo: imageSchema(5).optional(),
-  banner: imageSchema(5).optional(),
+  logo: optionalImageSchema(UPLOAD.IMAGE_SIZE, "logo"),
+  banner: optionalImageSchema(UPLOAD.IMAGE_SIZE, "banner"),
+  logoUrl: z.string().optional(),
+  bannerUrl: z.string().optional(),
 });
 export type CompanyProfile = z.infer<typeof companyProfileSchema>;
+export type CompanyProfileInput = z.input<typeof companyProfileSchema>;

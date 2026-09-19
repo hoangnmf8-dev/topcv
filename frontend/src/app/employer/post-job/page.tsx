@@ -1,34 +1,522 @@
-"use client"
-import {useState} from "react"
-import {useRouter} from "next/navigation"
-import {toast} from "sonner"
-import {MapPin,CalendarDays,UsersRound,Sparkles,ArrowLeft,X} from "lucide-react"
-import {EmployerHeader} from "@/components/employer-header"
-import {RoleFooter} from "@/components/role-footer"
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import {
+  MapPin,
+  CalendarDays,
+  UsersRound,
+  Sparkles,
+  ArrowLeft,
+  X,
+} from "lucide-react";
+import { EmployerHeader } from "@/components/employer-header";
+import { RoleFooter } from "@/components/role-footer";
+import { JOB_CATEGORY_NAMES } from "@/lib/job-categories";
 
-const initial={title:"Chuyên viên Quan hệ Khách hàng Doanh nghiệp",category:"Kinh doanh / Bán hàng",location:"Hải Phòng",salaryMin:"13",salaryMax:"30",currency:"triệu VNĐ/tháng",negotiable:false,experience:"1 năm",overviewRequirements:"Cao đẳng trở lên",deadline:"31/08/2026",description:"Bạn sẽ trực tiếp quản lý quan hệ khách hàng, phát triển cơ hội kinh doanh và tư vấn giải pháp phù hợp cho doanh nghiệp.\n\n- Quản lý và chăm sóc khách hàng doanh nghiệp hiện tại.\n- Tìm kiếm, tiếp thị và phát triển khách hàng doanh nghiệp mới.\n- Tư vấn giải pháp phù hợp với nhu cầu của khách hàng SME.",requirements:"Ứng viên phù hợp cần đáp ứng các tiêu chí sau:\n\n- Tốt nghiệp đại học khối Kinh tế, Tài chính hoặc Ngân hàng.\n- Có từ 01 năm kinh nghiệm trong lĩnh vực tài chính hoặc khách hàng doanh nghiệp.",benefits:"Gia nhập Onenet, bạn sẽ nhận được các quyền lợi:\n\n- Lương tháng 13 và thưởng theo kết quả.\n- Bảo hiểm toàn diện và khám sức khỏe định kỳ.\n- Đào tạo chuyên sâu và team building hằng năm.",skills:"Giao tiếp, Chăm sóc khách hàng, Bán hàng"}
-type Data=typeof initial
-const money=(d:Data)=>d.negotiable?"Thỏa thuận":`${d.salaryMin} - ${d.salaryMax} ${d.currency}`
+const initial = {
+  title: "Chuyên viên Quan hệ Khách hàng Doanh nghiệp",
+  category: "Kinh doanh / Bán hàng",
+  location: "Hải Phòng",
+  salaryMin: "13",
+  salaryMax: "30",
+  currency: "triệu VNĐ/tháng",
+  negotiable: false,
+  experience: "1 năm",
+  overviewRequirements: "Cao đẳng trở lên",
+  deadline: "31/08/2026",
+  description:
+    "Bạn sẽ trực tiếp quản lý quan hệ khách hàng, phát triển cơ hội kinh doanh và tư vấn giải pháp phù hợp cho doanh nghiệp.\n\n- Quản lý và chăm sóc khách hàng doanh nghiệp hiện tại.\n- Tìm kiếm, tiếp thị và phát triển khách hàng doanh nghiệp mới.\n- Tư vấn giải pháp phù hợp với nhu cầu của khách hàng SME.",
+  requirements:
+    "Ứng viên phù hợp cần đáp ứng các tiêu chí sau:\n\n- Tốt nghiệp đại học khối Kinh tế, Tài chính hoặc Ngân hàng.\n- Có từ 01 năm kinh nghiệm trong lĩnh vực tài chính hoặc khách hàng doanh nghiệp.",
+  benefits:
+    "Gia nhập Onenet, bạn sẽ nhận được các quyền lợi:\n\n- Lương tháng 13 và thưởng theo kết quả.\n- Bảo hiểm toàn diện và khám sức khỏe định kỳ.\n- Đào tạo chuyên sâu và team building hằng năm.",
+  skills: "Giao tiếp, Chăm sóc khách hàng, Bán hàng",
+};
+type Data = typeof initial;
+const money = (d: Data) =>
+  d.negotiable ? "Thỏa thuận" : `${d.salaryMin} - ${d.salaryMax} ${d.currency}`;
 
-export default function Page(){
- const router=useRouter()
- const [step,setStep]=useState(0),[data,setData]=useState<Data>(initial)
- const [previewOpen,setPreviewOpen]=useState(false)
- const set=<K extends keyof Data>(k:K,v:Data[K])=>setData(x=>({...x,[k]:v}))
- const invalid=!data.negotiable&&Number(data.salaryMin)>Number(data.salaryMax)
- const publish=()=>{toast.success("Tạo tin tuyển dụng thành công",{description:"Tin đã được chuyển vào danh sách quản lý tuyển dụng."});router.push("/employer?tab=jobs")}
- const labels=["Thông tin cơ bản","Mô tả & yêu cầu","Quyền lợi & xem trước"]
- return <main className="route-employer-post-job min-h-screen bg-[#f4f6f8]"><EmployerHeader/><div className="mx-auto w-full max-w-[1280px] px-4 py-5 sm:px-6 sm:py-8"><div className="mb-5 grid grid-cols-3 gap-1 rounded-2xl bg-white p-1.5 shadow-sm sm:mb-6 sm:gap-2 sm:p-2">{labels.map((x,i)=><button key={x} onClick={()=>setStep(i)} className={`min-w-0 rounded-xl px-2 py-3 text-xs font-bold transition sm:p-3 sm:text-sm ${step===i?"bg-emerald-50 text-[#008f40]":"text-slate-400 hover:bg-slate-50"}`}><span className="sm:hidden">Bước {i+1}</span><span className="hidden sm:inline">{i+1}. {x}</span></button>)}</div><div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px]"><section className="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-7"><h1 className="text-xl font-bold text-slate-900 sm:text-2xl">{labels[step]}</h1>
- {step===0&&<div className="mt-6 grid gap-5"><Field label="Tiêu đề tin tuyển dụng" value={data.title} change={v=>set("title",v)}/><div className="grid gap-5 sm:grid-cols-2"><Field label="Ngành nghề" value={data.category} change={v=>set("category",v)}/><Field label="Địa điểm làm việc" value={data.location} change={v=>set("location",v)}/><Field label="Lương tối thiểu" value={data.salaryMin} type="number" disabled={data.negotiable} change={v=>set("salaryMin",v)}/><Field label="Lương tối đa" value={data.salaryMax} type="number" disabled={data.negotiable} change={v=>set("salaryMax",v)}/><label className="font-bold">Đơn vị<select value={data.currency} onChange={e=>set("currency",e.target.value)} className="mt-2 w-full rounded-xl border bg-white p-3 font-normal"><option>triệu VNĐ/tháng</option><option>VNĐ/tháng</option><option>USD/tháng</option></select></label><Field label="Kinh nghiệm tối thiểu" value={data.experience} change={v=>set("experience",v)}/><Field label="Hạn nhận hồ sơ" value={data.deadline} change={v=>set("deadline",v)}/></div><label className="flex gap-2 font-semibold"><input type="checkbox" checked={data.negotiable} onChange={e=>set("negotiable",e.target.checked)}/>Mức lương thỏa thuận</label>{invalid&&<p className="text-sm text-red-600">Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu.</p>}</div>}
- {step===1&&<div className="mt-6 space-y-6"><div className="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5"><h2 className="border-l-4 border-[#00b14f] pl-3 text-lg font-bold">Tổng quan</h2><p className="mt-2 text-sm text-slate-500">Các giá trị cách nhau bằng dấu phẩy sẽ hiển thị thành từng thẻ trên tin tuyển dụng.</p><div className="mt-4 grid gap-4"><Field label="Yêu cầu tổng quan" value={data.overviewRequirements} change={v=>set("overviewRequirements",v)}/><Field label="Chuyên môn" value={data.skills} change={v=>set("skills",v)}/></div></div><ContentEditor label="Mô tả công việc" value={data.description} change={v=>set("description",v)} job={data}/><ContentEditor label="Yêu cầu ứng viên" value={data.requirements} change={v=>set("requirements",v)} job={data}/></div>}
- {step===2&&<div className="mt-6"><ContentEditor label="Quyền lợi ứng viên" value={data.benefits} change={v=>set("benefits",v)} job={data}/></div>}
- <div className="mt-8 flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-between"><button disabled={!step} onClick={()=>setStep(step-1)} className="rounded-xl border px-5 py-3 font-bold disabled:opacity-30">Quay lại</button><button disabled={invalid} onClick={()=>step===2?setPreviewOpen(true):setStep(step+1)} className="rounded-xl bg-[#00b14f] px-5 py-3 font-bold text-white disabled:opacity-30">{step===2?"Xem trước tin đăng":"Tiếp tục"}</button></div></section><Preview data={data}/></div></div>{previewOpen&&<FullPreview data={data} onClose={()=>setPreviewOpen(false)} onPublish={publish}/>}<RoleFooter variant="employer"/></main>
+export default function Page() {
+  const router = useRouter();
+  const [step, setStep] = useState(0),
+    [data, setData] = useState<Data>(initial);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const set = <K extends keyof Data>(k: K, v: Data[K]) =>
+    setData((x) => ({ ...x, [k]: v }));
+  const invalid =
+    !data.negotiable && Number(data.salaryMin) > Number(data.salaryMax);
+  const publish = () => {
+    toast.success("Tạo tin tuyển dụng thành công", {
+      description: "Tin đã được chuyển vào danh sách quản lý tuyển dụng.",
+    });
+    router.push("/employer?tab=jobs");
+  };
+  const labels = [
+    "Thông tin cơ bản",
+    "Mô tả & yêu cầu",
+    "Quyền lợi & xem trước",
+  ];
+  return (
+    <main className="route-employer-post-job min-h-screen bg-[#f4f6f8]">
+      <EmployerHeader />
+      <div className="mx-auto w-full max-w-[1280px] px-4 py-5 sm:px-6 sm:py-8">
+        <div className="mb-5 grid grid-cols-3 gap-1 rounded-2xl bg-white p-1.5 shadow-sm sm:mb-6 sm:gap-2 sm:p-2">
+          {labels.map((x, i) => (
+            <button
+              key={x}
+              onClick={() => setStep(i)}
+              className={`min-w-0 rounded-xl px-2 py-3 text-xs font-bold transition sm:p-3 sm:text-sm ${step === i ? "bg-emerald-50 text-[#008f40]" : "text-slate-400 hover:bg-slate-50"}`}
+            >
+              <span className="sm:hidden">Bước {i + 1}</span>
+              <span className="hidden sm:inline">
+                {i + 1}. {x}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px]">
+          <section className="min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-7">
+            <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
+              {labels[step]}
+            </h1>
+            {step === 0 && (
+              <div className="mt-6 grid gap-5">
+                <Field
+                  label="Tiêu đề tin tuyển dụng"
+                  value={data.title}
+                  change={(v) => set("title", v)}
+                />
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="font-bold">
+                    Ngành nghề
+                    <select
+                      value={data.category}
+                      onChange={(e) => set("category", e.target.value)}
+                      className="mt-2 w-full rounded-xl border bg-white p-3 font-normal"
+                    >
+                      {JOB_CATEGORY_NAMES.map((category) => (
+                        <option key={category}>{category}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <Field
+                    label="Địa điểm làm việc"
+                    value={data.location}
+                    change={(v) => set("location", v)}
+                  />
+                  <Field
+                    label="Lương tối thiểu"
+                    value={data.salaryMin}
+                    type="number"
+                    disabled={data.negotiable}
+                    change={(v) => set("salaryMin", v)}
+                  />
+                  <Field
+                    label="Lương tối đa"
+                    value={data.salaryMax}
+                    type="number"
+                    disabled={data.negotiable}
+                    change={(v) => set("salaryMax", v)}
+                  />
+                  <label className="font-bold">
+                    Đơn vị
+                    <select
+                      value={data.currency}
+                      onChange={(e) => set("currency", e.target.value)}
+                      className="mt-2 w-full rounded-xl border bg-white p-3 font-normal"
+                    >
+                      <option>triệu VNĐ/tháng</option>
+                      <option>VNĐ/tháng</option>
+                      <option>USD/tháng</option>
+                    </select>
+                  </label>
+                  <Field
+                    label="Kinh nghiệm tối thiểu"
+                    value={data.experience}
+                    change={(v) => set("experience", v)}
+                  />
+                  <Field
+                    label="Hạn nhận hồ sơ"
+                    value={data.deadline}
+                    change={(v) => set("deadline", v)}
+                  />
+                </div>
+                <label className="flex gap-2 font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={data.negotiable}
+                    onChange={(e) => set("negotiable", e.target.checked)}
+                  />
+                  Mức lương thỏa thuận
+                </label>
+                {invalid && (
+                  <p className="text-sm text-red-600">
+                    Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu.
+                  </p>
+                )}
+              </div>
+            )}
+            {step === 1 && (
+              <div className="mt-6 space-y-6">
+                <div className="rounded-2xl border border-emerald-100 bg-emerald-50/40 p-5">
+                  <h2 className="border-l-4 border-[#00b14f] pl-3 text-lg font-bold">
+                    Tổng quan
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-500">
+                    Các giá trị cách nhau bằng dấu phẩy sẽ hiển thị thành từng
+                    thẻ trên tin tuyển dụng.
+                  </p>
+                  <div className="mt-4 grid gap-4">
+                    <Field
+                      label="Yêu cầu tổng quan"
+                      value={data.overviewRequirements}
+                      change={(v) => set("overviewRequirements", v)}
+                    />
+                    <Field
+                      label="Chuyên môn"
+                      value={data.skills}
+                      change={(v) => set("skills", v)}
+                    />
+                  </div>
+                </div>
+                <ContentEditor
+                  label="Mô tả công việc"
+                  value={data.description}
+                  change={(v) => set("description", v)}
+                  job={data}
+                />
+                <ContentEditor
+                  label="Yêu cầu ứng viên"
+                  value={data.requirements}
+                  change={(v) => set("requirements", v)}
+                  job={data}
+                />
+              </div>
+            )}
+            {step === 2 && (
+              <div className="mt-6">
+                <ContentEditor
+                  label="Quyền lợi ứng viên"
+                  value={data.benefits}
+                  change={(v) => set("benefits", v)}
+                  job={data}
+                />
+              </div>
+            )}
+            <div className="mt-8 flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-between">
+              <button
+                disabled={!step}
+                onClick={() => setStep(step - 1)}
+                className="rounded-xl border px-5 py-3 font-bold disabled:opacity-30"
+              >
+                Quay lại
+              </button>
+              <button
+                disabled={invalid}
+                onClick={() =>
+                  step === 2 ? setPreviewOpen(true) : setStep(step + 1)
+                }
+                className="rounded-xl bg-[#00b14f] px-5 py-3 font-bold text-white disabled:opacity-30"
+              >
+                {step === 2 ? "Xem trước tin đăng" : "Tiếp tục"}
+              </button>
+            </div>
+          </section>
+          <Preview data={data} />
+        </div>
+      </div>
+      {previewOpen && (
+        <FullPreview
+          data={data}
+          onClose={() => setPreviewOpen(false)}
+          onPublish={publish}
+        />
+      )}
+      <RoleFooter variant="employer" />
+    </main>
+  );
 }
-function Field({label,value,change,type="text",disabled=false}:{label:string,value:string,change:(v:string)=>void,type?:string,disabled?:boolean}){return <label className="font-bold">{label}<input type={type} min={type==="number"?0:undefined} disabled={disabled} value={value} onChange={e=>change(e.target.value)} className="mt-2 w-full rounded-xl border p-3 font-normal disabled:bg-slate-100"/></label>}
-function ContentEditor({label,value,change,job}:{label:string,value:string,change:(v:string)=>void,job:Data}){const [prompt,setPrompt]=useState("");const generate=()=>{const head=label==="Mô tả công việc"?`Bạn sẽ đảm nhiệm vị trí ${job.title}, góp phần phát triển hoạt động ${job.category.toLowerCase()} của doanh nghiệp.`:label==="Yêu cầu ứng viên"?`Chúng tôi tìm kiếm ứng viên phù hợp với vị trí ${job.title}.`:`Các quyền lợi dành cho vị trí ${job.title}:`;const lines=label==="Mô tả công việc"?["Chủ động thực hiện các nhiệm vụ chuyên môn theo mục tiêu được giao.","Phối hợp với các bộ phận liên quan để bảo đảm tiến độ và chất lượng công việc.","Theo dõi kết quả, đề xuất giải pháp cải tiến và báo cáo định kỳ."]:label==="Yêu cầu ứng viên"?[`${job.experience} kinh nghiệm ở vị trí tương đương.`,job.overviewRequirements,"Có kỹ năng giao tiếp, phối hợp và giải quyết vấn đề tốt."]: ["Thu nhập cạnh tranh và thưởng theo hiệu quả công việc.","Được tham gia đầy đủ các chế độ bảo hiểm.","Có cơ hội đào tạo và phát triển nghề nghiệp."];change(`${head}${prompt.trim()?` ${prompt.trim()}`:""}\n\n${lines.map(x=>`- ${x}`).join("\n")}`)};return <section className="rounded-2xl border border-slate-200 p-5"><h2 className="text-lg font-bold">{label}</h2><p className="mt-1 text-sm text-slate-500">Nhập tự do. Dùng dòng trống để tách đoạn; bắt đầu dòng bằng “-” để tạo gạch đầu dòng.</p><div className="mt-4 rounded-xl bg-emerald-50 p-4"><label className="text-sm font-bold text-[#087b43]">Bạn muốn AI viết nội dung như thế nào?<textarea rows={2} value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="Ví dụ: Văn phong chuyên nghiệp, nhấn mạnh khách hàng SME và kỹ năng tư vấn..." className="mt-2 w-full rounded-xl border border-emerald-200 bg-white p-3 font-normal text-slate-700"/></label><button type="button" onClick={generate} className="mt-3 flex items-center gap-2 rounded-xl bg-[#00b14f] px-4 py-2.5 font-bold text-white"><Sparkles className="size-4"/>Tạo nội dung bằng AI</button></div><label className="mt-4 block text-sm font-bold">Nội dung hiển thị<textarea rows={10} value={value} onChange={e=>change(e.target.value)} className="mt-2 w-full rounded-xl border p-4 font-normal leading-7"/></label></section>}
-function Preview({data}:{data:Data}){return <aside className="h-fit min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-5 lg:sticky lg:top-24"><b>Xem trước tin đăng</b><div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 sm:p-5"><h2 className="break-words text-lg font-bold sm:text-xl">{data.title}</h2><p className="mt-2 text-sm text-slate-500">Công ty Onenet · Đã xác thực</p><p className="mt-4 text-lg font-extrabold text-[#00a64f] sm:text-xl">{money(data)}</p><div className="mt-4 space-y-3 border-y py-4 text-sm"><p className="flex gap-2"><MapPin className="size-5 shrink-0 text-green-500"/>{data.location}</p><p className="flex gap-2"><UsersRound className="size-5 shrink-0 text-green-500"/>{data.experience} kinh nghiệm</p><p className="flex gap-2"><CalendarDays className="size-5 shrink-0 text-green-500"/>Hạn: {data.deadline}</p></div></div></aside>}
-function FullPreview({data,onClose,onPublish}:{data:Data;onClose:()=>void;onPublish:()=>void}){return <div className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f6f8]"><header className="sticky top-0 z-10 border-b bg-white/95 shadow-sm backdrop-blur"><div className="mx-auto flex max-w-[1100px] items-center justify-between gap-3 px-4 py-3 sm:px-6"><button onClick={onClose} className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold text-slate-700"><ArrowLeft className="size-4"/>Quay lại chỉnh sửa</button><div className="hidden text-center sm:block"><b>Xem trước tin tuyển dụng</b><p className="text-xs text-slate-500">Kiểm tra toàn bộ nội dung trước khi đăng</p></div><button onClick={onClose} aria-label="Đóng xem trước" className="grid size-10 place-items-center rounded-full hover:bg-slate-100 sm:hidden"><X className="size-5"/></button><button onClick={onPublish} className="rounded-xl bg-[#00b14f] px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#009f47]">Đăng tin tuyển dụng</button></div></header><main className="mx-auto max-w-[1100px] space-y-5 px-4 py-6 sm:px-6 sm:py-8"><div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800"><b>Đây là giao diện ứng viên sẽ nhìn thấy.</b> Hãy rà soát tiêu đề, mức lương, yêu cầu và quyền lợi trước khi đăng.</div><Hero data={data}/><Overview data={data}/><Section title="Mô tả công việc" content={data.description}/><Section title="Yêu cầu ứng viên" content={data.requirements}/><Section title="Quyền lợi ứng viên" content={data.benefits}/><div className="flex flex-col-reverse justify-end gap-3 rounded-2xl bg-white p-5 shadow-sm sm:flex-row"><button onClick={onClose} className="rounded-xl border px-5 py-3 font-bold text-slate-700">Tiếp tục chỉnh sửa</button><button onClick={onPublish} className="rounded-xl bg-[#00b14f] px-6 py-3 font-bold text-white">Đăng tin tuyển dụng</button></div></main></div>}
-function Hero({data}:{data:Data}){return <section className="rounded-3xl bg-white p-8 shadow-sm"><h1 className="text-3xl font-bold">{data.title}</h1><p className="mt-3 text-slate-500">Công ty Onenet</p><p className="mt-4 text-2xl font-bold text-[#00a64f]">{money(data)}</p></section>}
-function Overview({data}:{data:Data}){const specialties=data.skills.split(",").map(x=>x.trim()).filter(Boolean),requirements=data.overviewRequirements.split(",").map(x=>x.trim()).filter(Boolean);return <section className="rounded-3xl bg-white p-8 shadow-sm"><h2 className="border-l-4 border-[#00b14f] pl-4 text-2xl font-bold">Tổng quan</h2><div className="mt-6 grid gap-4 text-sm sm:grid-cols-[120px_1fr]"><b>Yêu cầu:</b><div className="flex flex-wrap gap-2"><Tag>{data.experience} kinh nghiệm chuyên môn</Tag>{requirements.map(item=><Tag key={item}>{item}</Tag>)}</div><b>Chuyên môn:</b><div className="flex flex-wrap gap-2">{specialties.map(item=><Tag key={item}>{item}</Tag>)}</div></div></section>}
-function Tag({children}:{children:React.ReactNode}){return <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700">{children}</span>}
-function Section({title,content}:{title:string,content:string}){return <section className="rounded-3xl bg-white p-8 shadow-sm"><h2 className="border-l-4 border-green-500 pl-4 text-2xl font-bold">{title}</h2><div className="mt-6 space-y-3 text-slate-700">{content.split("\n").map((line,i)=>{const text=line.trim();if(!text)return <div key={i} className="h-2"/>;if(/^[-*•]\s*/.test(text))return <div key={i} className="flex gap-3 pl-2 leading-7"><span className="font-bold">•</span><span>{text.replace(/^[-*•]\s*/,"")}</span></div>;return <p key={i} className="leading-7">{text}</p>})}</div></section>}
+function Field({
+  label,
+  value,
+  change,
+  type = "text",
+  disabled = false,
+}: {
+  label: string;
+  value: string;
+  change: (v: string) => void;
+  type?: string;
+  disabled?: boolean;
+}) {
+  return (
+    <label className="font-bold">
+      {label}
+      <input
+        type={type}
+        min={type === "number" ? 0 : undefined}
+        disabled={disabled}
+        value={value}
+        onChange={(e) => change(e.target.value)}
+        className="mt-2 w-full rounded-xl border p-3 font-normal disabled:bg-slate-100"
+      />
+    </label>
+  );
+}
+function ContentEditor({
+  label,
+  value,
+  change,
+  job,
+}: {
+  label: string;
+  value: string;
+  change: (v: string) => void;
+  job: Data;
+}) {
+  const [prompt, setPrompt] = useState("");
+  const generate = () => {
+    const head =
+      label === "Mô tả công việc"
+        ? `Bạn sẽ đảm nhiệm vị trí ${job.title}, góp phần phát triển hoạt động ${job.category.toLowerCase()} của doanh nghiệp.`
+        : label === "Yêu cầu ứng viên"
+          ? `Chúng tôi tìm kiếm ứng viên phù hợp với vị trí ${job.title}.`
+          : `Các quyền lợi dành cho vị trí ${job.title}:`;
+    const lines =
+      label === "Mô tả công việc"
+        ? [
+            "Chủ động thực hiện các nhiệm vụ chuyên môn theo mục tiêu được giao.",
+            "Phối hợp với các bộ phận liên quan để bảo đảm tiến độ và chất lượng công việc.",
+            "Theo dõi kết quả, đề xuất giải pháp cải tiến và báo cáo định kỳ.",
+          ]
+        : label === "Yêu cầu ứng viên"
+          ? [
+              `${job.experience} kinh nghiệm ở vị trí tương đương.`,
+              job.overviewRequirements,
+              "Có kỹ năng giao tiếp, phối hợp và giải quyết vấn đề tốt.",
+            ]
+          : [
+              "Thu nhập cạnh tranh và thưởng theo hiệu quả công việc.",
+              "Được tham gia đầy đủ các chế độ bảo hiểm.",
+              "Có cơ hội đào tạo và phát triển nghề nghiệp.",
+            ];
+    change(
+      `${head}${prompt.trim() ? ` ${prompt.trim()}` : ""}\n\n${lines.map((x) => `- ${x}`).join("\n")}`,
+    );
+  };
+  return (
+    <section className="rounded-2xl border border-slate-200 p-5">
+      <h2 className="text-lg font-bold">{label}</h2>
+      <p className="mt-1 text-sm text-slate-500">
+        Nhập tự do. Dùng dòng trống để tách đoạn; bắt đầu dòng bằng “-” để tạo
+        gạch đầu dòng.
+      </p>
+      <div className="mt-4 rounded-xl bg-emerald-50 p-4">
+        <label className="text-sm font-bold text-[#087b43]">
+          Bạn muốn AI viết nội dung như thế nào?
+          <textarea
+            rows={2}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Ví dụ: Văn phong chuyên nghiệp, nhấn mạnh khách hàng SME và kỹ năng tư vấn..."
+            className="mt-2 w-full rounded-xl border border-emerald-200 bg-white p-3 font-normal text-slate-700"
+          />
+        </label>
+        <button
+          type="button"
+          onClick={generate}
+          className="mt-3 flex items-center gap-2 rounded-xl bg-[#00b14f] px-4 py-2.5 font-bold text-white"
+        >
+          <Sparkles className="size-4" />
+          Tạo nội dung bằng AI
+        </button>
+      </div>
+      <label className="mt-4 block text-sm font-bold">
+        Nội dung hiển thị
+        <textarea
+          rows={10}
+          value={value}
+          onChange={(e) => change(e.target.value)}
+          className="mt-2 w-full rounded-xl border p-4 font-normal leading-7"
+        />
+      </label>
+    </section>
+  );
+}
+function Preview({ data }: { data: Data }) {
+  return (
+    <aside className="h-fit min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-5 lg:sticky lg:top-24">
+      <b>Xem trước tin đăng</b>
+      <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 sm:p-5">
+        <h2 className="break-words text-lg font-bold sm:text-xl">
+          {data.title}
+        </h2>
+        <p className="mt-2 text-sm text-slate-500">
+          Công ty Onenet · Đã xác thực
+        </p>
+        <p className="mt-4 text-lg font-extrabold text-[#00a64f] sm:text-xl">
+          {money(data)}
+        </p>
+        <div className="mt-4 space-y-3 border-y py-4 text-sm">
+          <p className="flex gap-2">
+            <MapPin className="size-5 shrink-0 text-green-500" />
+            {data.location}
+          </p>
+          <p className="flex gap-2">
+            <UsersRound className="size-5 shrink-0 text-green-500" />
+            {data.experience} kinh nghiệm
+          </p>
+          <p className="flex gap-2">
+            <CalendarDays className="size-5 shrink-0 text-green-500" />
+            Hạn: {data.deadline}
+          </p>
+        </div>
+      </div>
+    </aside>
+  );
+}
+function FullPreview({
+  data,
+  onClose,
+  onPublish,
+}: {
+  data: Data;
+  onClose: () => void;
+  onPublish: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#f4f6f8]">
+      <header className="sticky top-0 z-10 border-b bg-white/95 shadow-sm backdrop-blur">
+        <div className="mx-auto flex max-w-[1100px] items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <button
+            onClick={onClose}
+            className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold text-slate-700"
+          >
+            <ArrowLeft className="size-4" />
+            Quay lại chỉnh sửa
+          </button>
+          <div className="hidden text-center sm:block">
+            <b>Xem trước tin tuyển dụng</b>
+            <p className="text-xs text-slate-500">
+              Kiểm tra toàn bộ nội dung trước khi đăng
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Đóng xem trước"
+            className="grid size-10 place-items-center rounded-full hover:bg-slate-100 sm:hidden"
+          >
+            <X className="size-5" />
+          </button>
+          <button
+            onClick={onPublish}
+            className="rounded-xl bg-[#00b14f] px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#009f47]"
+          >
+            Đăng tin tuyển dụng
+          </button>
+        </div>
+      </header>
+      <main className="mx-auto max-w-[1100px] space-y-5 px-4 py-6 sm:px-6 sm:py-8">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
+          <b>Đây là giao diện ứng viên sẽ nhìn thấy.</b> Hãy rà soát tiêu đề,
+          mức lương, yêu cầu và quyền lợi trước khi đăng.
+        </div>
+        <Hero data={data} />
+        <Overview data={data} />
+        <Section title="Mô tả công việc" content={data.description} />
+        <Section title="Yêu cầu ứng viên" content={data.requirements} />
+        <Section title="Quyền lợi ứng viên" content={data.benefits} />
+        <div className="flex flex-col-reverse justify-end gap-3 rounded-2xl bg-white p-5 shadow-sm sm:flex-row">
+          <button
+            onClick={onClose}
+            className="rounded-xl border px-5 py-3 font-bold text-slate-700"
+          >
+            Tiếp tục chỉnh sửa
+          </button>
+          <button
+            onClick={onPublish}
+            className="rounded-xl bg-[#00b14f] px-6 py-3 font-bold text-white"
+          >
+            Đăng tin tuyển dụng
+          </button>
+        </div>
+      </main>
+    </div>
+  );
+}
+function Hero({ data }: { data: Data }) {
+  return (
+    <section className="rounded-3xl bg-white p-8 shadow-sm">
+      <h1 className="text-3xl font-bold">{data.title}</h1>
+      <p className="mt-3 text-slate-500">Công ty Onenet</p>
+      <p className="mt-4 text-2xl font-bold text-[#00a64f]">{money(data)}</p>
+    </section>
+  );
+}
+function Overview({ data }: { data: Data }) {
+  const specialties = data.skills
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean),
+    requirements = data.overviewRequirements
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean);
+  return (
+    <section className="rounded-3xl bg-white p-8 shadow-sm">
+      <h2 className="border-l-4 border-[#00b14f] pl-4 text-2xl font-bold">
+        Tổng quan
+      </h2>
+      <div className="mt-6 grid gap-4 text-sm sm:grid-cols-[120px_1fr]">
+        <b>Yêu cầu:</b>
+        <div className="flex flex-wrap gap-2">
+          <Tag>{data.experience} kinh nghiệm chuyên môn</Tag>
+          {requirements.map((item) => (
+            <Tag key={item}>{item}</Tag>
+          ))}
+        </div>
+        <b>Chuyên môn:</b>
+        <div className="flex flex-wrap gap-2">
+          {specialties.map((item) => (
+            <Tag key={item}>{item}</Tag>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700">
+      {children}
+    </span>
+  );
+}
+function Section({ title, content }: { title: string; content: string }) {
+  return (
+    <section className="rounded-3xl bg-white p-8 shadow-sm">
+      <h2 className="border-l-4 border-green-500 pl-4 text-2xl font-bold">
+        {title}
+      </h2>
+      <div className="mt-6 space-y-3 text-slate-700">
+        {content.split("\n").map((line, i) => {
+          const text = line.trim();
+          if (!text) return <div key={i} className="h-2" />;
+          if (/^[-*•]\s*/.test(text))
+            return (
+              <div key={i} className="flex gap-3 pl-2 leading-7">
+                <span className="font-bold">•</span>
+                <span>{text.replace(/^[-*•]\s*/, "")}</span>
+              </div>
+            );
+          return (
+            <p key={i} className="leading-7">
+              {text}
+            </p>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

@@ -30,14 +30,14 @@ const industries = [
   {
     name: "Chăm sóc khách hàng",
     count: "840",
-    query: "chăm sóc khách hàng",
+    category: "customer-service",
     icon: Headphones,
     tone: "bg-cyan-50 text-cyan-700",
   },
   {
     name: "Nhân sự / Hành chính",
     count: "734",
-    query: "nhân sự",
+    category: "hr-admin",
     icon: UsersRound,
     tone: "bg-violet-50 text-violet-700",
   },
@@ -51,21 +51,21 @@ const industries = [
   {
     name: "Tài chính / Ngân hàng",
     count: "1.084",
-    query: "tài chính",
+    category: "finance-banking",
     icon: Landmark,
     tone: "bg-amber-50 text-amber-700",
   },
   {
     name: "Bất động sản",
     count: "388",
-    query: "bất động sản",
+    category: "real-estate",
     icon: Building2,
     tone: "bg-rose-50 text-rose-700",
   },
   {
     name: "Kế toán / Kiểm toán",
     count: "1.263",
-    category: "accounting",
+    category: "accounting-audit",
     icon: Calculator,
     tone: "bg-teal-50 text-teal-700",
   },
@@ -96,10 +96,10 @@ export function TopIndustries() {
         </div>
         <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {industries.map(
-            ({ name, count, category, query, icon: Icon, tone }) => {
+            ({ name, count, category, icon: Icon, tone }) => {
               const href = category
                 ? `/?category=${category}#jobs`
-                : `/?q=${encodeURIComponent(query ?? name)}#jobs`;
+                : "/#jobs";
               return (
                 <Link
                   key={name}

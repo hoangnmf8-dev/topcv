@@ -22,6 +22,8 @@ import { useForm, Controller } from "react-hook-form";
 import { LoginInput, loginSchema } from "@/validators/auth.validate";
 import { convertServerPatchToFullTree } from "next/dist/client/components/segment-cache/navigation";
 import { getAccesToken, loginAction } from "@/actions/auth.action";
+import authService from "@/services/auth.service";
+import { useAccountStore } from "@/stores/auth.store";
 
 export function LoginForm({
   onForgotPassword,
@@ -33,6 +35,7 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [isFault, setIsFault] = useState("");
   const router = useRouter();
+  const {setAccount} = useAccountStore(state => state);
   const { register, control, handleSubmit, setError, formState } =
     useForm<LoginInput>({
       mode: "onChange",
@@ -45,10 +48,19 @@ export function LoginForm({
   const { errors, isSubmitting } = formState;
   async function onSubmit(values: LoginInput) {
     const response = await loginAction(values);
-    router.push("/");
     if(!response.success) {
       setIsFault(response.errors.message);
     };
+    try {
+      const account = await setAccount();
+      if(account?.company) {
+        router.push("/employer");
+      } else {
+        router.push("/");
+      }
+    } catch(error) {
+      console.log(error);
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>

@@ -40,18 +40,15 @@ export function AuthCard() {
               </span>
               <RoleSelector value={role} onChange={setRole} />
             </div>
-
             <TabsContent value="login">
               <LoginForm onForgotPassword={() => setForgotOpen(true)} />
             </TabsContent>
-
             <TabsContent value="register">
               <RegisterForm role={role} onVerificationChange={setVerificationActive} />
             </TabsContent>
           </div>
         </Tabs>
       </div>
-
       <p className="mt-6 text-center text-xs text-muted-foreground text-balance">
         Bằng việc tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo
         mật của TopCV.

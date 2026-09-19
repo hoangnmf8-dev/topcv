@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useId, useState, type ChangeEvent } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { EmployerHeader as SiteHeader } from "@/components/employer-header";
 import { RoleFooter } from "@/components/role-footer";
+import { JOB_CATEGORY_NAMES } from "@/lib/job-categories";
 import { EmployerMobileSidebar } from "@/components/employer-mobile-sidebar";
 import {
   ChartContainer,
@@ -29,15 +30,21 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
-  COMPANY_SIZE_OPTIONS,
   CompanyProfile,
+  type CompanyProfileInput,
   companyProfileSchema,
 } from "@/validators/company.validate";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { FieldError } from "./ui/field";
+import { Skeleton } from "./ui/skeleton";
+import { useAccountStore } from "@/stores/auth.store";
+import uploadService from "@/services/upload.service";
+import { useCompanyStore } from "@/stores/company.store";
+import { refreshImage } from "@/lib/utils";
+import companyService from "@/services/company.service";
 
 const tabs = [
   ["overview", "Tổng quan", LayoutDashboard],
@@ -130,6 +137,7 @@ const reportRows = [
   },
 ];
 export function EmployerDashboard() {
+  const { company } = useCompanyStore((state) => state);
   const [tab, setTab] = useState("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   useEffect(() => {
@@ -142,12 +150,12 @@ export function EmployerDashboard() {
         menuOpen={mobileMenuOpen}
         onMenuClick={() => setMobileMenuOpen((open) => !open)}
       />
-      <section className="relative overflow-hidden bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-600">
+      <section className="relative overflow-hidden bg-linear-to-r from-emerald-950 via-emerald-800 to-emerald-600">
         <div
           aria-hidden
           className="absolute -right-20 -top-20 size-72 rounded-full bg-white/10 blur-3xl"
         />
-        <div className="relative mx-auto flex max-w-[1280px] flex-col items-start gap-5 px-4 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-9">
+        <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-5 px-4 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-9">
           <div className="text-white">
             <p className="text-sm text-emerald-100">
               Trung tâm Nhà tuyển dụng · Onenet
@@ -731,6 +739,11 @@ function TalentSearch() {
       "Digital Marketing",
       "Content Marketing",
     ],
+    "Chăm sóc khách hàng": ["Tất cả vị trí"],
+    "Nhân sự / Hành chính": ["Tất cả vị trí"],
+    "Tài chính / Ngân hàng": ["Tất cả vị trí"],
+    "Bất động sản": ["Tất cả vị trí"],
+    "Kế toán / Kiểm toán": ["Tất cả vị trí"],
   };
   const profiles = [
     {
@@ -809,9 +822,9 @@ function TalentSearch() {
             onChange={(e) => changeCategory(e.target.value)}
             className="mt-2 w-full rounded-xl border bg-white p-3 text-sm font-normal"
           >
-            <option>Công nghệ thông tin</option>
-            <option>Kinh doanh / Bán hàng</option>
-            <option>Marketing / Truyền thông</option>
+            {JOB_CATEGORY_NAMES.map((item) => (
+              <option key={item}>{item}</option>
+            ))}
           </select>
         </label>
         <label className="text-xs font-bold text-slate-600">
@@ -822,7 +835,7 @@ function TalentSearch() {
             onChange={(e) => setJobTitle(e.target.value)}
             className="mt-2 w-full rounded-xl border bg-white p-3 text-sm font-normal"
           >
-            {jobTitles[category].map((title) => (
+            {(jobTitles[category] ?? ["Tất cả vị trí"]).map((title) => (
               <option key={title}>{title}</option>
             ))}
           </select>
@@ -1876,23 +1889,142 @@ function Quota({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+function useImagePreview(file: File | undefined, fallback: string) {
+  const [preview, setPreview] = useState<{
+    file: File;
+    url: string;
+  } | null>(null);
+  useEffect(() => {
+    if (!file) {
+      setPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreview({ file, url });
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+  return file && preview?.file === file ? preview.url : fallback;
+}
 function Company() {
-  const [logoUrl, setLogoUrl] = useState("");
-  const [bannerUrl, setBannerUrl] = useState("");
-  const { register, control, handleSubmit, setError, formState: {errors, isSubmitting} } = useForm<CompanyProfile>({
+  const id = useId();
+  const { company, setCompany } = useCompanyStore((state) => state);
+  const {
+    register,
+    control,
+    handleSubmit,
+    clearErrors,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<CompanyProfileInput, unknown, CompanyProfile>({
     mode: "onChange",
     resolver: zodResolver(companyProfileSchema),
-    defaultValues: {},
+    defaultValues: {
+      name: company?.name ?? "",
+      phone: company?.phone ?? "",
+      website: company?.website ?? "",
+      taxCode: company?.taxCode ?? "",
+      address: company?.address ?? "",
+      sizeRange: company?.sizeRange ?? "",
+      description: company?.description ?? "",
+      logo: undefined,
+      banner: undefined,
+      logoUrl: company?.logoUrl ?? "",
+      bannerUrl: company?.bannerUrl ?? "",
+    },
   });
-  useEffect(() => {}, []);
-  const submit = () => {
-
+  useEffect(() => {
+    if (!company) return;
+    reset({
+      name: company.name ?? "",
+      phone: company.phone ?? "",
+      website: company.website ?? "",
+      taxCode: company.taxCode ?? "",
+      address: company.address ?? "",
+      sizeRange: company.sizeRange ?? "",
+      description: company.description ?? "",
+      logo: undefined,
+      banner: undefined,
+      logoUrl: company.logoUrl ?? "",
+      bannerUrl: company.bannerUrl ?? "",
+    });
+  }, [company]);
+  const [logoFile, setLogoFile] = useState<File>();
+  const [bannerFile, setBannerFile] = useState<File>();
+  const isCompanyLoading = !company;
+  const logoUrl = useImagePreview(logoFile, company?.logoUrl ?? "");
+  const bannerUrl = useImagePreview(bannerFile, company?.bannerUrl ?? "");
+  const description = useWatch({ control, name: "description" });
+  const inputClass =
+    "mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 " +
+    "outline-none focus:border-emerald-500 focus:ring-2 " +
+    "focus:ring-emerald-100";
+  const textFields = [
+    { name: "name", label: "Tên công ty", type: "text" },
+    { name: "phone", label: "Số điện thoại", type: "tel" },
+    { name: "website", label: "Website", type: "url" },
+    { name: "taxCode", label: "Mã số thuế", type: "text" },
+    { name: "address", label: "Địa chỉ", type: "text" },
+    { name: "sizeRange", label: "Quy mô", type: "text" },
+  ] as const;
+  async function submit(values: CompanyProfile) {
+    try {
+      if (!company?.id) throw new Error("Chưa tải được thông tin công ty.");
+      const { logo, banner, logoUrl, bannerUrl, ...newValues } = values;
+      if (values.logo) {
+        const presignedUrlLogo = await uploadService.getPresignedUrl(
+          values.logo,
+          "companyLogo",
+        );
+        const uploadReponse = await uploadService.uploadFile(
+          presignedUrlLogo.data.uploadUrl,
+          values.logo,
+        );
+        if (uploadReponse) {
+          const reponse = await uploadService.completeUploadFile(
+            "companyLogo",
+            presignedUrlLogo.data.objectKey,
+          );
+        }
+      }
+      if (values.banner) {
+        const presignedUrlBanner = await uploadService.getPresignedUrl(
+          values.banner,
+          "companyBanner",
+        );
+        const uploadReponse = await uploadService.uploadFile(
+          presignedUrlBanner.data.uploadUrl,
+          values.banner,
+        );
+        if (uploadReponse) {
+          const reponse = await uploadService.completeUploadFile(
+            "companyBanner",
+            presignedUrlBanner.data.objectKey,
+          );
+        }
+      }
+      const companyId = company.id;
+      const companyData = await companyService.updateCompany(
+        companyId,
+        newValues,
+      );
+      if (companyData.success) {
+        await setCompany(companyData.data);
+        setLogoFile(undefined);
+        setBannerFile(undefined);
+        toast.success(companyData.message || "Lưu thông tin thành công");
+        clearErrors("root.server");
+        clearErrors(["logo", "banner"]);
+      } else {
+        throw new Error(companyData.message || "Không thể lưu thông tin công ty.");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Không thể lưu thông tin công ty.");
+    }
   }
   return (
     <form
       noValidate
       onSubmit={handleSubmit(submit)}
-      onChange={() => {}}
     >
       <fieldset
         disabled={isSubmitting}
@@ -1900,143 +2032,96 @@ function Company() {
       >
         <Panel title="Hồ sơ doanh nghiệp">
           <div className="overflow-hidden rounded-2xl border border-slate-200">
-            <div
-              className="relative h-36 bg-[linear-gradient(110deg,#064e2d,#00b14f,#48d597)] bg-cover bg-center"
-              style={
-                bannerUrl
-                  ? { backgroundImage: `url(${JSON.stringify(bannerUrl)})` }
-                  : undefined
-              }
-            >
+            <div className="relative h-36 overflow-hidden bg-[linear-gradient(110deg,#064e2d,#00b14f,#48d597)]">
+              {isCompanyLoading ? (
+                <Skeleton className="absolute inset-0 rounded-none bg-slate-200" />
+              ) : bannerUrl ? (
+                <img
+                  key={company?.bannerKey}
+                  src={bannerUrl ?? "/images/company-banner-placeholder.png"}
+                  alt={`Banner công ty`}
+                  className="absolute inset-0 size-full object-cover"
+                  onError={refreshImage(company?.bannerKey)}
+                />
+              ) : null}
+              {!isCompanyLoading && (
+                <label className="absolute bottom-3 right-3 cursor-pointer rounded-lg bg-white px-3 py-2 text-sm font-semibold shadow">
+                  Đổi ảnh bìa
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    {...register("banner", {
+                      onChange: (e) => {
+                        setBannerFile(e.target.files?.[0]);
+                      },
+                    })}
+                  />
+                </label>
+              )}
             </div>
             <div className="flex flex-wrap items-end gap-4 bg-white px-5 pb-5">
-              <div className="relative -mt-10">
-                <Avatar className="size-24 rounded-2xl border-4 border-white bg-emerald-50">
-                  <AvatarImage
-                    src={logoUrl || undefined}
-                    // alt={`Logo ${companyName || "công ty"}`}
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="rounded-xl bg-emerald-50 text-2xl font-black text-[#008f40]">
-                    {/* {initials} */}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="pb-1">
-                <h3 className="font-bold text-slate-800">
-                  {/* {companyName || "Tên công ty"} */}
-                </h3>
-                <p className="mt-1 text-xs text-slate-500">
-                  {/* Mã công ty: {systemInfo?.companyCode || "—"} ·{" "}
-                  {systemInfo?.verificationStatus ||
-                    "Chưa có thông tin xác minh"} */}
-                </p>
-              </div>
+              <label className="block relative -mt-10">
+                {isCompanyLoading ? (
+                  <Skeleton className="size-24 rounded-full border-4 border-white bg-slate-200" />
+                ) : (
+                  <>
+                    <Avatar className="size-24 rounded-full border-4 border-white bg-emerald-50">
+                      <AvatarImage
+                        src={logoUrl || undefined}
+                        alt="Logo công ty"
+                        className="object-contain"
+                        onError={refreshImage(company?.logoKey)}
+                      />
+                      <AvatarFallback className="rounded-full bg-emerald-50 text-2xl font-black text-[#008f40]">
+                        <UsersRound />
+                      </AvatarFallback>
+                    </Avatar>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="sr-only"
+                      {...register("logo", {
+                        onChange: (e) => {
+                          setLogoFile(e.target.files?.[0]);
+                        },
+                      })}
+                    />
+                  </>
+                )}
+              </label>
+              <h3 className="pb-1 font-bold text-slate-800">{}</h3>
             </div>
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            Logo tối đa 2 MB, ảnh bìa tối đa 5 MB. Hỗ trợ JPG, PNG, WebP.
+            Ảnh tối đa 5 MB. Hỗ trợ JPG, PNG, WebP.
           </p>
-          <FieldError
-            // id={`${id}-logoFile-error`}
-            // message={errors.logoFile?.message}
-          />
-          <FieldError
-            // id={`${id}-coverFile-error`}
-            // message={errors.coverFile?.message}
-          />
+          <FieldError>{errors.logo?.message}</FieldError>
+          <FieldError>{errors.banner?.message}</FieldError>
           <div className="mt-6 grid gap-5 md:grid-cols-2">
-            {/* {textFields.map(({ name, label, type, required }) => (
-              <div key={name}>
-                <label htmlFor={`${id}-${name}`} className="text-sm font-bold">
-                  {label} {required && <span className="text-red-500">*</span>}
+            {textFields.map((field) => (
+              <div key={field.name}>
+                <label
+                  htmlFor={`${id}-${field.name}`}
+                  className="text-sm font-bold"
+                >
+                  {field.label}
                 </label>
+
                 <input
-                  id={`${id}-${name}`}
-                  type={type}
-                  required={required}
-                  {...register(name)}
+                  id={`${id}-${field.name}`}
+                  type={field.type}
+                  {...register(field.name)}
                   className={inputClass}
-                  aria-invalid={!!errors[name]}
-                  aria-describedby={
-                    errors[name] ? `${id}-${name}-error` : undefined
-                  }
+                  aria-invalid={!!errors[field.name]}
+                  aria-describedby={`${id}-${field.name}-error`}
                 />
-                <FieldError
-                  id={`${id}-${name}-error`}
-                  message={errors[name]?.message}
-                />
+
+                <FieldError id={`${id}-${field.name}-error`}>
+                  {errors[field.name]?.message}
+                </FieldError>
               </div>
-            ))} */}
-            <div>
-              <label
-                // htmlFor={`${id}-companySize`}
-                className="text-sm font-bold"
-              >
-                Quy mô doanh nghiệp
-              </label>
-              <select
-                // id={`${id}-companySize`}
-                {...register("size")}
-                // className={inputClass}
-                // aria-invalid={!!errors.companySize}
-                // aria-describedby={
-                //   errors.companySize ? `${id}-companySize-error` : undefined
-                // }
-              >
-                <option value="">Chọn quy mô</option>
-                {COMPANY_SIZE_OPTIONS.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-              <FieldError
-                // id={`${id}-companySize-error`}
-                // message={errors.companySize?.message}
-              />
-            </div>
-            <div>
-              <label htmlFor={`${id}-city`} className="text-sm font-bold">
-                Tỉnh/thành phố
-              </label>
-              <select
-                id={`${id}-city`}
-                {...register("city")}
-                className={inputClass}
-                aria-invalid={!!errors.city}
-                aria-describedby={errors.city ? `${id}-city-error` : undefined}
-              >
-                <option value="">Chọn tỉnh/thành phố</option>
-                {CITY_OPTIONS.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-              <FieldError
-                id={`${id}-city-error`}
-                message={errors.city?.message}
-              />
-            </div>
-            <div>
-              <label htmlFor={`${id}-address`} className="text-sm font-bold">
-                Địa chỉ chi tiết
-              </label>
-              <input
-                id={`${id}-address`}
-                {...register("address")}
-                className={inputClass}
-                aria-invalid={!!errors.address}
-                aria-describedby={
-                  errors.address ? `${id}-address-error` : undefined
-                }
-              />
-              <FieldError
-                id={`${id}-address-error`}
-                message={errors.address?.message}
-              />
-            </div>
+            ))}
             <div className="md:col-span-2">
               <label
                 htmlFor={`${id}-description`}
@@ -2048,56 +2133,25 @@ function Company() {
                 id={`${id}-description`}
                 {...register("description")}
                 maxLength={2000}
-                className={`${inputClass} h-32 resize-y leading-6`}
+                className={`${inputClass} h-32 resize-y`}
                 aria-invalid={!!errors.description}
-                aria-describedby={
-                  errors.description ? `${id}-description-error` : undefined
-                }
+                aria-describedby={`${id}-description-error`}
               />
               <span className="mt-1 block text-right text-xs text-slate-400">
-                {description.length}/2000 ký tự
+                {description?.length}/2000 ký tự
               </span>
-              <FieldError
-                id={`${id}-description-error`}
-                message={errors.description?.message}
-              />
+              <FieldError id={`${id}-description-error`}>
+                {errors.description?.message}
+              </FieldError>
             </div>
           </div>
         </Panel>
-        <Panel title="Thông tin hệ thống">
-          <dl className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {[
-              ["Mã công ty", systemInfo?.companyCode],
-              ["Tài khoản sở hữu", systemInfo?.ownerEmail],
-              ["Gói dịch vụ", systemInfo?.servicePlan],
-              ["Trạng thái xác minh", systemInfo?.verificationStatus],
-            ].map(([label, value]) => (
-              <div key={label}>
-                <dt className="text-xs text-slate-500">{label}</dt>
-                <dd className="mt-1 text-sm font-semibold">{value || "—"}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-4 text-xs text-slate-500">
-            Mã công ty, tài khoản sở hữu, gói dịch vụ và trạng thái xác minh
-            được hệ thống quản lý nên không thể sửa tại đây.
-          </p>
-        </Panel>
-        <div className="flex flex-wrap items-center justify-end gap-4 border-t border-slate-200 pt-5">
-          {errors.root?.server?.message && (
-            <p role="alert" className="text-sm text-red-600">
-              {errors.root.server.message}
-            </p>
-          )}
-          {saved && (
-            <p role="status" className="text-sm text-emerald-700">
-              Đã lưu thay đổi.
-            </p>
-          )}
+
+        <div className="flex items-center justify-end gap-4">
+          <FieldError>{errors.root?.server?.message}</FieldError>
           <button
             type="submit"
-            disabled={isSubmitting}
-            className="rounded-xl bg-[#00b14f] px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#009b45] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-200 disabled:cursor-not-allowed"
+            className="rounded-xl bg-[#00b14f] px-6 py-3 text-sm font-bold text-white disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Đang lưu..." : "Lưu thay đổi"}
           </button>

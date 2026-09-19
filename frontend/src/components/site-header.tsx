@@ -23,6 +23,8 @@ import {
 import authService from "@/services/auth.service";
 import { Unauthorized } from "@/exceptions";
 import { useRouter } from "next/navigation";
+import { useAccountStore } from "@/stores/auth.store";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 type MenuItem = {
   label: string;
   description: string;
@@ -127,28 +129,16 @@ export function SiteHeader({
   onMenuClick,
   menuOpen = false,
 }: { onMenuClick?: () => void; menuOpen?: boolean } = {}) {
-  const router = useRouter();
+  const { account } = useAccountStore((state) => state);
   const [open, setOpen] = useState<string | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  useEffect(() => {
-    const refeshToken = async () => {
-      try {
-        const profile = await authService.getProfile();
-      } catch(error) {
-        if(error instanceof Unauthorized) {
-          router.replace("/auth")
-        }
-      }
-    };
-    refeshToken();
-  }, []) 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
       <div className="mx-auto flex h-[76px] max-w-[1280px] items-center gap-5 px-4 sm:px-6">
         {onMenuClick && (
           <button
             onClick={onMenuClick}
-            className="grid size-9 shrink-0 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+            className="grid size-9 shrink-0 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
             aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
             aria-expanded={menuOpen}
           >
@@ -168,7 +158,7 @@ export function SiteHeader({
             <sup className="ml-0.5 text-[8px] text-[#00b14f]">®</sup>
           </span>
         </Link>
-        <nav className="hidden h-full items-center gap-1 lg:flex">
+        <nav className="hidden h-full items-center gap-1 xl:flex">
           {menus
             .filter((menu) => menu.label !== "Cẩm nang nghề nghiệp")
             .map((menu) => (
@@ -190,13 +180,13 @@ export function SiteHeader({
                   />
                 </button>
                 {open === menu.label && (
-                  <div className="absolute left-0 top-[68px] w-[560px] rounded-2xl border border-slate-100 bg-white p-3 shadow-2xl">
+                  <div className="absolute left-0 top-17 w-140 rounded-2xl border border-slate-100 bg-white p-3 shadow-2xl">
                     <p className="px-3 pb-2 pt-1 text-xs font-bold uppercase tracking-wide text-slate-400">
                       Khám phá {menu.label.toLowerCase()}
                     </p>
                     <div className="grid grid-cols-2 gap-1">
                       {menu.items?.map((item) => {
-                        if(!menu.items) return;
+                        if (!menu.items) return;
                         const Icon = item.icon;
                         return (
                           <Link
@@ -304,9 +294,14 @@ export function SiteHeader({
             className="hidden items-center gap-2 border-l border-slate-200 pl-3 text-sm font-semibold text-slate-700 sm:flex"
           >
             <span className="grid size-9 place-items-center rounded-full bg-slate-100">
-              <UserRound className="size-5 text-slate-500" />
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>
+                  <UserRound className="size-5 text-slate-500" />
+                </AvatarFallback>
+              </Avatar>
             </span>
-            <span className="hidden xl:block">Nguyễn Văn A</span>
+            <span className="hidden xl:block">{}</span>
           </Link>
         </div>
       </div>
