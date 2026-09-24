@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import { EmployerHeader as SiteHeader } from "@/components/employer-header";
 import { RoleFooter } from "@/components/role-footer";
-import { JOB_CATEGORY_NAMES } from "@/lib/job-categories";
+// Danh sách sẽ được cung cấp từ API danh mục nghề.
+const JOB_CATEGORY_NAMES: string[] = [];
 import { EmployerMobileSidebar } from "@/components/employer-mobile-sidebar";
 import {
   ChartContainer,
@@ -56,86 +57,9 @@ const tabs = [
   ["billing", "Dịch vụ, đơn hàng & thanh toán", ReceiptText],
   ["messages", "Tin nhắn", MessageCircle],
 ] as const;
-const jobRows = [
-  ["Senior Front-end Developer", "Đang hiển thị", "42", "30/09/2026"],
-  ["Nhân viên Kinh doanh B2B", "Chờ duyệt", "0", "25/08/2026"],
-  ["UI/UX Designer", "Tạm dừng", "18", "15/08/2026"],
-];
-const applicationSeed = [
-  {
-    id: "APP-001",
-    name: "Trần Minh Anh",
-    title: "Senior Front-end Developer",
-    skills: "ReactJS · TypeScript · Next.js",
-    experience: "2 năm",
-    score: 92,
-    status: "Mới nhận",
-    appliedAt: "28/08/2026",
-    note: "Ứng viên có portfolio tốt, cần kiểm tra khả năng giao tiếp.",
-  },
-  {
-    id: "APP-002",
-    name: "Lê Quốc Bảo",
-    title: "Senior Front-end Developer",
-    skills: "ReactJS · Redux · NodeJS",
-    experience: "3 năm",
-    score: 84,
-    status: "Đang xem",
-    appliedAt: "27/08/2026",
-    note: "Đã xem CV, kinh nghiệm phù hợp với yêu cầu.",
-  },
-  {
-    id: "APP-003",
-    name: "Nguyễn Hoài Nam",
-    title: "UI/UX Designer",
-    skills: "Figma · UI Design · Research",
-    experience: "4 năm",
-    score: 76,
-    status: "Mời phỏng vấn",
-    appliedAt: "26/08/2026",
-    note: "Mời phỏng vấn vòng 1, trao đổi thêm về case study.",
-  },
-  {
-    id: "APP-004",
-    name: "Phạm Thảo Vy",
-    title: "Nhân viên Kinh doanh B2B",
-    skills: "Sales · CRM · Đàm phán",
-    experience: "2 năm",
-    score: 88,
-    status: "Đang xem",
-    appliedAt: "25/08/2026",
-    note: "Có kinh nghiệm bán hàng B2B.",
-  },
-];
-const reportRows = [
-  {
-    title: "Senior Front-end Developer",
-    applications: 64,
-    reviewing: 31,
-    interviews: 14,
-    hired: 3,
-    rejected: 7,
-    averageFit: 86,
-  },
-  {
-    title: "Nhân viên Kinh doanh B2B",
-    applications: 51,
-    reviewing: 24,
-    interviews: 7,
-    hired: 2,
-    rejected: 8,
-    averageFit: 79,
-  },
-  {
-    title: "UI/UX Designer",
-    applications: 33,
-    reviewing: 16,
-    interviews: 3,
-    hired: 1,
-    rejected: 4,
-    averageFit: 82,
-  },
-];
+const jobRows = [] as string[][];
+const applicationRows = [] as { id: string; name: string; title: string; skills: string; experience: string; score: number; status: string; appliedAt: string; note: string; }[];
+const reportRows = [] as { title: string; applications: number; reviewing: number; interviews: number; hired: number; rejected: number; averageFit: number; }[];
 export function EmployerDashboard() {
   const { company } = useCompanyStore((state) => state);
   const [tab, setTab] = useState("overview");
@@ -158,7 +82,7 @@ export function EmployerDashboard() {
         <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-5 px-4 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-9">
           <div className="text-white">
             <p className="text-sm text-emerald-100">
-              Trung tâm Nhà tuyển dụng · Onenet
+              Trung tâm Nhà tuyển dụng
             </p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
               Tuyển đúng người, nhanh hơn
@@ -176,9 +100,9 @@ export function EmployerDashboard() {
       <div className="mx-auto grid max-w-[1280px] gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="hidden h-fit rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block">
           <div className="mb-3 border-b border-slate-100 px-3 pb-4">
-            <p className="font-semibold text-slate-900">Công ty Onenet</p>
+            <p className="font-semibold text-slate-900">{company?.name ?? "Tài khoản doanh nghiệp"}</p>
             <p className="mt-1 text-xs text-slate-500">
-              Đã xác thực · Một tài khoản chung cho HR
+              Hồ sơ doanh nghiệp
             </p>
           </div>
           <nav>
@@ -253,7 +177,7 @@ function Overview({ open }: { open: (id: string) => void }) {
       total - reviewing - interviews - hired - rejected,
     ),
     processed = total - unprocessed,
-    processedRate = Math.round((processed / total) * 100),
+    processedRate = Math.round((processed / Math.max(total, 1)) * 100),
     activeJobs = jobRows.filter((row) => row[1] === "Đang hiển thị").length,
     pendingJobs = jobRows.filter((row) => row[1] === "Chờ duyệt").length;
   return (
@@ -277,7 +201,7 @@ function Overview({ open }: { open: (id: string) => void }) {
         <Metric
           label="Ứng viên đã tuyển"
           value={hired}
-          note={`${Math.round((hired / total) * 100)}% tổng hồ sơ`}
+          note={`${Math.round((hired / Math.max(total, 1)) * 100)}% tổng hồ sơ`}
         />
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.35fr_.8fr]">
@@ -462,15 +386,15 @@ function Jobs() {
   );
 }
 function Candidates() {
-  const [applications, setApplications] = useState(applicationSeed);
+  const [applications, setApplications] = useState(applicationRows);
   const [query, setQuery] = useState("");
   const [job, setJob] = useState("Tất cả tin");
   const [status, setStatus] = useState("Tất cả trạng thái");
   const [noteTarget, setNoteTarget] = useState<
-    (typeof applicationSeed)[number] | null
+    (typeof applicationRows)[number] | null
   >(null);
   const [cvTarget, setCvTarget] = useState<
-    (typeof applicationSeed)[number] | null
+    (typeof applicationRows)[number] | null
   >(null);
   const [draftNote, setDraftNote] = useState("");
   const [notice, setNotice] = useState("");
@@ -480,28 +404,12 @@ function Candidates() {
       (status === "Tất cả trạng thái" || item.status === status) &&
       item.name.toLowerCase().includes(query.toLowerCase()),
   );
-  const changeStatus = (id: string, nextStatus: string) => {
-    setApplications((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, status: nextStatus } : item,
-      ),
-    );
-    setNotice(`Đã cập nhật trạng thái thành “${nextStatus}”.`);
-  };
-  const openNote = (item: (typeof applicationSeed)[number]) => {
+  const changeStatus = (id: string, nextStatus: string) => {toast.info("Cập nhật trạng thái hiện chưa khả dụng.");};
+  const openNote = (item: (typeof applicationRows)[number]) => {
     setNoteTarget(item);
     setDraftNote(item.note);
   };
-  const saveNote = () => {
-    if (!noteTarget) return;
-    setApplications((items) =>
-      items.map((item) =>
-        item.id === noteTarget.id ? { ...item, note: draftNote } : item,
-      ),
-    );
-    setNoteTarget(null);
-    setNotice("Đã lưu ghi chú nội bộ.");
-  };
+  const saveNote = () => {toast.info("Lưu ghi chú hiện chưa khả dụng.");};
   return (
     <>
       <Panel title="Mini ATS nâng cao · Ứng viên">
@@ -745,45 +653,8 @@ function TalentSearch() {
     "Bất động sản": ["Tất cả vị trí"],
     "Kế toán / Kiểm toán": ["Tất cả vị trí"],
   };
-  const profiles = [
-    {
-      name: "Phạm Quốc Huy",
-      category: "Công nghệ thông tin",
-      title: "Lập trình Front-end",
-      skills: "ReactJS · TypeScript · Next.js",
-      years: 3,
-      location: "Hà Nội",
-      score: 94,
-    },
-    {
-      name: "Nguyễn Thảo Vy",
-      category: "Marketing / Truyền thông",
-      title: "Digital Marketing",
-      skills: "SEO · Google Ads · Content",
-      years: 2,
-      location: "Hồ Chí Minh",
-      score: 88,
-    },
-    {
-      name: "Trần Minh Anh",
-      category: "Công nghệ thông tin",
-      title: "Lập trình Back-end",
-      skills: "NodeJS · PostgreSQL · Redis",
-      years: 4,
-      location: "Hà Nội",
-      score: 91,
-    },
-    {
-      name: "Lê Quốc Bảo",
-      category: "Kinh doanh / Bán hàng",
-      title: "Chuyên viên kinh doanh",
-      skills: "B2B · CRM · Đàm phán",
-      years: 5,
-      location: "Đà Nẵng",
-      score: 86,
-    },
-  ];
-  const [category, setCategory] = useState("Công nghệ thông tin");
+  const profiles = [] as { name: string; category: string; title: string; skills: string; years: number; location: string; score: number; }[];
+  const [category, setCategory] = useState("");
   const [jobTitle, setJobTitle] = useState("Tất cả vị trí");
   const [experience, setExperience] = useState("0");
   const [location, setLocation] = useState("Tất cả tỉnh/thành");
@@ -822,6 +693,7 @@ function TalentSearch() {
             onChange={(e) => changeCategory(e.target.value)}
             className="mt-2 w-full rounded-xl border bg-white p-3 text-sm font-normal"
           >
+            <option value="">Chưa có dữ liệu danh mục nghề</option>
             {JOB_CATEGORY_NAMES.map((item) => (
               <option key={item}>{item}</option>
             ))}
@@ -979,23 +851,7 @@ function Messages() {
   );
 }
 function AnalyticsV2() {
-  const reportCatalog = [
-    {
-      title: "Senior Front-end Developer",
-      category: "Công nghệ thông tin",
-      position: "Lập trình Front-end",
-    },
-    {
-      title: "UI/UX Designer",
-      category: "Công nghệ thông tin",
-      position: "Thiết kế UI/UX",
-    },
-    {
-      title: "Nhân viên Kinh doanh B2B",
-      category: "Kinh doanh / Bán hàng",
-      position: "Chuyên viên kinh doanh",
-    },
-  ];
+  const reportCatalog = [] as { title: string; category: string; position: string; }[];
   const [job, setJob] = useState("Tất cả tin tuyển dụng");
   const [jobMenuOpen, setJobMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(
@@ -1060,24 +916,14 @@ function AnalyticsV2() {
     ? Math.round((totals.hired / totals.applications) * 100)
     : 0;
   const trendBase =
-    period === "7 ngày gần nhất"
-      ? [4, 7, 5, 11, 8, 12, 9]
-      : period === "Trong thời hạn gói"
-        ? [18, 26, 31, 29, 37, 34]
-        : [22, 31, 28, 36, 31];
-  const trendScale = totals.applications ? totals.applications / 148 : 0;
-  const trendValues = trendBase.map((value) =>
-    Math.max(1, Math.round(value * trendScale)),
-  );
+    [] as number[];
+  const trendScale = 0;
+  const trendValues = [] as number[];
   const processedTrend = trendValues.map((value, index) =>
     Math.max(0, Math.round(value * (0.72 + index * 0.025))),
   );
   const trendLabels =
-    period === "7 ngày gần nhất"
-      ? ["23/08", "24/08", "25/08", "26/08", "27/08", "28/08", "29/08"]
-      : period === "Trong thời hạn gói"
-        ? ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4", "Tuần 5", "Tuần 6"]
-        : ["01–07", "08–14", "15–21", "22–28", "29–30"];
+    [] as string[];
   const trendData = trendLabels.map((label, index) => ({
     label,
     applications: trendValues[index],
@@ -1824,63 +1670,7 @@ function FunnelRow({
     </div>
   );
 }
-function Billing() {
-  const [payment, setPayment] = useState("VNPay");
-  return (
-    <div className="space-y-6">
-      <Panel title="Gói dịch vụ đang dùng">
-        <div className="rounded-xl bg-[#e7f9ef] p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <b className="text-[#087b43]">Gói Tuyển dụng Pro</b>
-              <p className="mt-1 text-sm text-slate-600">
-                Còn 18 ngày · hết hạn 15/09/2026
-              </p>
-            </div>
-            <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#008f40]">
-              Đang hoạt động
-            </span>
-          </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <Quota label="Tin đã đăng hôm nay" value="2/5" />
-            <Quota label="Lượt đẩy tin còn lại" value="4/5" />
-            <Quota label="CV đã mở liên hệ" value="28/100" />
-          </div>
-          <p className="mt-4 text-xs text-slate-500">
-            Giới hạn đăng tin được làm mới lúc 00:00 mỗi ngày. Hiện có 12/15 tin
-            đang hiển thị.
-          </p>
-          <button className="mt-4 rounded-xl bg-[#00b14f] px-4 py-2.5 text-sm font-bold text-white">
-            Gia hạn gói
-          </button>
-        </div>
-      </Panel>
-      <Panel title="Hóa đơn & thanh toán">
-        <div className="flex flex-wrap gap-3">
-          {["VNPay", "MoMo", "Chuyển khoản"].map((x) => (
-            <button
-              key={x}
-              onClick={() => setPayment(x)}
-              className={`rounded-xl border px-4 py-3 text-sm font-bold ${payment === x ? "border-[#00b14f] bg-[#e7f9ef] text-[#087b43]" : ""}`}
-            >
-              {x}
-            </button>
-          ))}
-        </div>
-        <div className="mt-5 rounded-xl bg-slate-50 p-4 text-sm">
-          <b>Hóa đơn #ON-0826</b>
-          <p className="mt-1 text-slate-500">
-            Gia hạn Tuyển dụng Pro 30 ngày · 1.990.000đ · Chờ thanh toán bằng{" "}
-            {payment}
-          </p>
-          <button className="mt-3 text-sm font-bold text-[#008f40]">
-            Thanh toán ngay →
-          </button>
-        </div>
-      </Panel>
-    </div>
-  );
-}
+function Billing() {return <div className="space-y-6"><Panel title="Gói dịch vụ đang dùng"><div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">Chưa có thông tin gói dịch vụ.</div></Panel><Panel title="Hóa đơn & thanh toán"><div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">Chưa có hóa đơn.</div></Panel></div>;}
 function Quota({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-white p-3">

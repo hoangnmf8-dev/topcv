@@ -18,15 +18,25 @@ class UploadController {
       const accountId = req.profile.id;
       const input = req.body;
       switch (input.purpose) {
-        // case "cv":
-        //   return completeCvUpload(accountId, input, res);
+        case "cv":
+          return successResponse(
+            res,
+            await uploadService.completeCvUpload(accountId, input),
+            "Tải CV thành công",
+            201,
+          );
         case "avatar":
           const avatarResponse = await uploadService.completeAvatarUpload(
             accountId,
             "avatar",
             input.objectKey,
           );
-          return successResponse(res, avatarResponse, "Tải ảnh thành công", 201);
+          return successResponse(
+            res,
+            avatarResponse,
+            "Tải ảnh thành công",
+            201,
+          );
         case "companyLogo":
           const logoReponse = await uploadService.completeCompanyImageUpload(
             accountId,
@@ -40,7 +50,12 @@ class UploadController {
             "companyBanner",
             input.objectKey,
           );
-          return successResponse(res, bannerResponse, "Tải ảnh thành công", 201);
+          return successResponse(
+            res,
+            bannerResponse,
+            "Tải ảnh thành công",
+            201,
+          );
       }
     } catch (error) {
       next(error);
@@ -48,13 +63,24 @@ class UploadController {
   }
   async getPresidnedDowload(req: Request, res: Response, next: NextFunction) {
     try {
-      const {objectKey} = req.body;
-      const presignedUpload = await uploadService.createDownloadUrl(objectKey);
-      return successResponse(res, presignedUpload, "Lấy đường dẫn ảnh thành công");
-    } catch(error) {
+      const { objectKey } = req.body;
+      if (typeof objectKey !== "string" || !objectKey)
+        return res
+          .status(400)
+          .json({ success: false, message: "Thiếu objectKey" });
+      const presignedUpload = await uploadService.createDownloadUrl(
+        objectKey,
+        req.profile.id,
+      );
+      return successResponse(
+        res,
+        presignedUpload,
+        "Lấy đường dẫn ảnh thành công",
+      );
+    } catch (error) {
       next(error);
     }
-  };
+  }
 }
 const uploadController = new UploadController();
 export default uploadController;

@@ -34,26 +34,21 @@ class UpLoadService {
     return response.data;
   }
   async getUrlFile(objectKey: string) {
-    try {
-      const response = await httpRequest.post("/upload/presign-dowload", {
+    const domain = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/+$/, "");
+    if (
+      domain &&
+      /^seed\/topcv\/(companies|candidates)\/[^/]+\/(logo|banner|avatar)[^/]*\.(png|jpe?g|webp)$/i.test(
         objectKey,
-      });
-      return response.data.data;
-    } catch (error) {
-      if (error instanceof AppError) {
-        return {
-          success: false,
-          status: error.status,
-          message: error.message,
-          code: error.code,
-        };
-      }
-      return {
-        success: false,
-        status: 500,
-        message: "Đã xảy ra lỗi",
-      };
+      )
+    ) {
+      return (
+        domain + "/" + objectKey.split("/").map(encodeURIComponent).join("/")
+      );
     }
+    const response = await httpRequest.post("/upload/presign-dowload", {
+      objectKey,
+    });
+    return response.data.data as string;
   }
 }
 const uploadService = new UpLoadService();

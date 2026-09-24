@@ -6,18 +6,12 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  Loader2,
   LockKeyhole,
   Mail,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
 
-import {
-  requestPasswordReset,
-  resetPassword,
-  verifyPasswordResetOtp,
-} from "@/lib/auth-mock";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -51,12 +45,9 @@ export function ForgotPasswordDialog({
   const [step, setStep] = React.useState<Step>("email");
   const [email, setEmail] = React.useState("");
   const [otp, setOtp] = React.useState("");
-  const [resetId, setResetId] = React.useState("");
-  const [resetToken, setResetToken] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [visible, setVisible] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState("");
 
   React.useEffect(() => {
@@ -73,67 +64,10 @@ export function ForgotPasswordDialog({
     }
   }, [open]);
 
-  async function sendOtp(event: React.FormEvent) {
-    event.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const data = await requestPasswordReset({
-        email: email.trim().toLowerCase(),
-      });
-      setResetId(data.resetId);
-      setStep("otp");
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Không thể gửi OTP.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function verifyOtp(event: React.FormEvent) {
-    event.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const data = await verifyPasswordResetOtp({ resetId, otp });
-      setResetToken(data.resetToken);
-      setStep("password");
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "OTP không hợp lệ.",
-      );
-      setOtp("");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function submitPassword(event: React.FormEvent) {
-    event.preventDefault();
-    setError("");
-    if (password.length < 8)
-      return setError("Mật khẩu phải có ít nhất 8 ký tự.");
-    if (password !== confirmPassword)
-      return setError("Mật khẩu xác nhận không khớp.");
-    setLoading(true);
-    try {
-      await resetPassword({ resetToken, password });
-      setStep("success");
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : "Không thể đặt lại mật khẩu.",
-      );
-    } finally {
-      setLoading(false);
-    }
+  // Connect the real password-reset API here before enabling these actions.
+  function handleUnavailable(event?: React.FormEvent) {
+    event?.preventDefault();
+    setError("Tính năng đặt lại mật khẩu hiện chưa khả dụng. Vui lòng thử lại sau.");
   }
 
   const descriptions: Record<Step, string> = {
@@ -169,7 +103,7 @@ export function ForgotPasswordDialog({
         )}
 
         {step === "email" && (
-          <form onSubmit={sendOtp}>
+          <form onSubmit={handleUnavailable}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="forgot-email">Email</FieldLabel>
@@ -189,8 +123,8 @@ export function ForgotPasswordDialog({
                 </InputGroup>
               </Field>
               <ErrorText error={error} />
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="animate-spin" /> : <Mail />}Gửi
+              <Button type="submit" className="w-full">
+                <Mail />Gửi
                 mã OTP
               </Button>
             </FieldGroup>
@@ -198,7 +132,7 @@ export function ForgotPasswordDialog({
         )}
 
         {step === "otp" && (
-          <form onSubmit={verifyOtp}>
+          <form onSubmit={handleUnavailable}>
             <div className="rounded-xl bg-emerald-50 p-3 text-center text-sm text-emerald-800">
               Kiểm tra cả thư mục Spam nếu bạn chưa thấy email.
             </div>
@@ -222,17 +156,14 @@ export function ForgotPasswordDialog({
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || otp.length !== 6}
+              disabled={otp.length !== 6}
             >
-              {loading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}
+              <ShieldCheck />
               Xác minh OTP
             </Button>
             <button
               type="button"
-              onClick={() => {
-                setOtp("");
-                setError("");
-              }}
+              onClick={() => handleUnavailable()}
               className="mx-auto mt-4 flex items-center gap-1 text-sm font-medium text-primary"
             >
               <RefreshCw className="size-3.5" />
@@ -242,7 +173,7 @@ export function ForgotPasswordDialog({
         )}
 
         {step === "password" && (
-          <form onSubmit={submitPassword}>
+          <form onSubmit={handleUnavailable}>
             <FieldGroup>
               <PasswordInput
                 id="new-password"
@@ -265,12 +196,8 @@ export function ForgotPasswordDialog({
                 tự đặc biệt.
               </p>
               <ErrorText error={error} />
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <LockKeyhole />
-                )}
+              <Button type="submit" className="w-full">
+                <LockKeyhole />
                 Đặt lại mật khẩu
               </Button>
             </FieldGroup>

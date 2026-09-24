@@ -1,4 +1,4 @@
-import type { CVData } from "@/lib/cv-data"
+import type { CVData } from "@/lib/cv-layout"
 import { BriefcaseBusiness, Code2, Mail, MapPin, Phone, Target, User } from "lucide-react"
 
 export type VariantProps={data:CVData;accent:string;soft:string;ink:string}

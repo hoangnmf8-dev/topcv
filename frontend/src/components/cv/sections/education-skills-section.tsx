@@ -3,7 +3,7 @@
 import { Plus, Star, Trash2 } from "lucide-react"
 import { Field, TextInput } from "@/components/cv/field"
 import { cn } from "@/lib/utils"
-import { uid, type EducationItem, type SkillItem } from "@/lib/cv-data"
+import { uid, type EducationItem, type SkillItem } from "@/lib/cv-layout"
 
 export function EducationSkillsSection({
   educations,

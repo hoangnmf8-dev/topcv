@@ -3,7 +3,7 @@
 import { useRef } from "react"
 import { Camera, Trash2, User } from "lucide-react"
 import { Field, TextInput } from "@/components/cv/field"
-import type { CVData } from "@/lib/cv-data"
+import type { CVData } from "@/lib/cv-layout"
 
 type Personal = CVData["personal"]
 

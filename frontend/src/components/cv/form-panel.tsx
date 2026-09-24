@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { ChevronDown, GraduationCap, Sparkles, Target, UserRound } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { buildContext } from "@/lib/ai-client"
-import type { CVData } from "@/lib/cv-data"
+import type { CVData } from "@/lib/cv-layout"
 import { PersonalSection } from "./sections/personal-section"
 import { ObjectiveSection } from "./sections/objective-section"
 import { ExperienceSection } from "./sections/experience-section"
@@ -25,7 +24,7 @@ export function FormPanel({
   })
   const toggle = (key: string) => setOpen((o) => ({ ...o, [key]: !o[key] }))
 
-  const context = buildContext(data)
+  const context = ""
 
   return (
     <div className="scrollbar-slim h-full overflow-y-auto bg-background p-4 sm:p-5">

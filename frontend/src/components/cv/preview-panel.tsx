@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Maximize2, Minus, Plus, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { CVDocument } from "./cv-document"
-import type { CVData, TemplateId, ThemeId } from "@/lib/cv-data"
+import type { CVData, TemplateId, ThemeId } from "@/lib/cv-layout"
 
 const A4_WIDTH = 794 // 210mm @ 96dpi
 const A4_HEIGHT = 1123 // 297mm @ 96dpi

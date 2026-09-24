@@ -4,9 +4,9 @@ function requiredEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
     throw new Error(`Missing environment variable: ${name}`);
-  };
+  }
   return value;
-};
+}
 
 export const R2_BUCKET_NAME = requiredEnv("R2_BUCKET_NAME");
 export const r2Client = new S3Client({
@@ -18,6 +18,16 @@ export const r2Client = new S3Client({
   },
 });
 
- 
-
-
+export const R2_PRIVATE_BUCKET_NAME =
+  process.env.R2_PRIVATE_BUCKET_NAME || R2_BUCKET_NAME;
+export const R2_PUBLIC_BUCKET_NAME =
+  process.env.R2_PUBLIC_BUCKET_NAME || R2_BUCKET_NAME;
+export const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL?.replace(/\/+$/, "");
+if (R2_PUBLIC_URL && R2_PUBLIC_BUCKET_NAME === R2_PRIVATE_BUCKET_NAME) {
+  throw new Error("Public images and private CVs must use different buckets");
+}
+export function publicImageUrl(key: string): string | null {
+  return R2_PUBLIC_URL
+    ? R2_PUBLIC_URL + "/" + key.split("/").map(encodeURIComponent).join("/")
+    : null;
+}

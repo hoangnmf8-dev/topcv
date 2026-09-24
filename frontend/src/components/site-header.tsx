@@ -25,6 +25,7 @@ import { Unauthorized } from "@/exceptions";
 import { useRouter } from "next/navigation";
 import { useAccountStore } from "@/stores/auth.store";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useCandidateStore } from "@/stores/candidate.store";
 type MenuItem = {
   label: string;
   description: string;
@@ -129,7 +130,7 @@ export function SiteHeader({
   onMenuClick,
   menuOpen = false,
 }: { onMenuClick?: () => void; menuOpen?: boolean } = {}) {
-  const { account } = useAccountStore((state) => state);
+  const { candidate } = useCandidateStore((state) => state);
   const [open, setOpen] = useState<string | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   return (
@@ -244,9 +245,7 @@ export function SiteHeader({
               aria-expanded={notificationsOpen}
             >
               <Bell className="size-5" />
-              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                3
-              </span>
+              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-red-500 text-[10px] font-bold text-white">0</span>
             </button>
             {notificationsOpen && (
               <div className="absolute right-0 top-12 w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
@@ -259,14 +258,7 @@ export function SiteHeader({
                     Đánh dấu đã đọc
                   </button>
                 </div>
-                {[
-                  ["Hồ sơ đã được xem", "Công ty Onenet vừa xem CV của bạn."],
-                  ["3 việc làm phù hợp", "Các vị trí Frontend mới tại Hà Nội."],
-                  [
-                    "Nhắc lịch ứng tuyển",
-                    "Hạn nộp Chuyên viên UI/UX còn 2 ngày.",
-                  ],
-                ].map(([title, detail], index) => (
+                {([] as string[][]).map(([title, detail], index) => (
                   <Link
                     href={index === 0 ? "/candidate" : "/#jobs"}
                     onClick={() => setNotificationsOpen(false)}
@@ -295,13 +287,13 @@ export function SiteHeader({
           >
             <span className="grid size-9 place-items-center rounded-full bg-slate-100">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src={candidate?.avatarUrl ?? ""} />
                 <AvatarFallback>
                   <UserRound className="size-5 text-slate-500" />
                 </AvatarFallback>
               </Avatar>
             </span>
-            <span className="hidden xl:block">{}</span>
+            <span className="hidden xl:block">{candidate?.fullName}</span>
           </Link>
         </div>
       </div>

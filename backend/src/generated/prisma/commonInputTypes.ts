@@ -405,11 +405,28 @@ export type EnumVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumVerificationStatusFilter<$PrismaModel>
 }
 
+export type EnumSaturdayScheduleNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaturdaySchedule | Prisma.EnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSaturdayScheduleNullableFilter<$PrismaModel> | $Enums.SaturdaySchedule | null
+}
+
 export type EnumJobStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.JobStatus | Prisma.EnumJobStatusFieldRefInput<$PrismaModel>
   in?: $Enums.JobStatus[] | Prisma.ListEnumJobStatusFieldRefInput<$PrismaModel>
   notIn?: $Enums.JobStatus[] | Prisma.ListEnumJobStatusFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumJobStatusFilter<$PrismaModel> | $Enums.JobStatus
+}
+
+export type EnumSaturdayScheduleNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaturdaySchedule | Prisma.EnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSaturdayScheduleNullableWithAggregatesFilter<$PrismaModel> | $Enums.SaturdaySchedule | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSaturdayScheduleNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSaturdayScheduleNullableFilter<$PrismaModel>
 }
 
 export type EnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -1012,11 +1029,28 @@ export type NestedEnumVerificationStatusWithAggregatesFilter<$PrismaModel = neve
   _max?: Prisma.NestedEnumVerificationStatusFilter<$PrismaModel>
 }
 
+export type NestedEnumSaturdayScheduleNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaturdaySchedule | Prisma.EnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSaturdayScheduleNullableFilter<$PrismaModel> | $Enums.SaturdaySchedule | null
+}
+
 export type NestedEnumJobStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.JobStatus | Prisma.EnumJobStatusFieldRefInput<$PrismaModel>
   in?: $Enums.JobStatus[] | Prisma.ListEnumJobStatusFieldRefInput<$PrismaModel>
   notIn?: $Enums.JobStatus[] | Prisma.ListEnumJobStatusFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumJobStatusFilter<$PrismaModel> | $Enums.JobStatus
+}
+
+export type NestedEnumSaturdayScheduleNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SaturdaySchedule | Prisma.EnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SaturdaySchedule[] | Prisma.ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSaturdayScheduleNullableWithAggregatesFilter<$PrismaModel> | $Enums.SaturdaySchedule | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSaturdayScheduleNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSaturdayScheduleNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {

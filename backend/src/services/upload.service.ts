@@ -6,14 +6,19 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { r2Client, R2_BUCKET_NAME } from "../utils/upload";
+import {
+  r2Client,
+  R2_PUBLIC_BUCKET_NAME,
+  R2_PRIVATE_BUCKET_NAME,
+  publicImageUrl,
+} from "../utils/upload";
 import type { PresignUploadInput, UploadPurpose } from "../types/upload.type";
 import { UPLOAD } from "../constants/upload.constant";
 import { prisma } from "../utils/prisma";
 import { AccountNotFoundError } from "../exceptions";
 import { ERROR_MESSAGE } from "../constants/message.constant";
 import { ERROR_CODE } from "../constants/code.constant";
-import { de } from "zod/v4/locales";
+import { AppError } from "../exceptions";
 
 class UploadService {
   private uploadRules: Record<
@@ -72,7 +77,8 @@ class UploadService {
     const extension = this.getFileExtension(input.fileName);
     const objectKey = `seed/topcv/${rule.folder}/${accountId}/${rule.name}-${uuidv7()}.${extension}`;
     const command = new PutObjectCommand({
-      Bucket: R2_BUCKET_NAME,
+      Bucket:
+        input.purpose === "cv" ? R2_PRIVATE_BUCKET_NAME : R2_PUBLIC_BUCKET_NAME,
       Key: objectKey,
       ContentType: input.contentType,
     });
@@ -89,7 +95,7 @@ class UploadService {
     await r2Client.send(
       new HeadObjectCommand({
         //lệnh lấy metadata của file để kiểm tra tồn tại, k tải toàn bộ thông tin file
-        Bucket: R2_BUCKET_NAME,
+        Bucket: R2_PUBLIC_BUCKET_NAME,
         Key: objectKey,
       }),
     );
@@ -97,18 +103,118 @@ class UploadService {
   async deleteFileExists(objectKey: string): Promise<void> {
     await r2Client.send(
       new DeleteObjectCommand({
-        Bucket: R2_BUCKET_NAME,
+        Bucket: R2_PUBLIC_BUCKET_NAME,
         Key: objectKey,
       }),
     );
   }
-  async createDownloadUrl(objectKey: string): Promise<string> {
-    //Tạo link để xem hoặc tải file
-    const command = new GetObjectCommand({
-      Bucket: R2_BUCKET_NAME,
-      Key: objectKey,
+  async createImageUrl(objectKey: string): Promise<string> {
+    if (
+      !/^seed\/topcv\/(companies|candidates)\/[^/]+\/(logo|banner|avatar)[^/]*\.(png|jpe?g|webp)$/i.test(
+        objectKey,
+      )
+    ) {
+      throw new AppError("Key ảnh không hợp lệ", "INVALID_IMAGE_KEY", 400);
+    }
+    return (
+      publicImageUrl(objectKey) ??
+      getSignedUrl(
+        r2Client,
+        new GetObjectCommand({ Bucket: R2_PUBLIC_BUCKET_NAME, Key: objectKey }),
+        { expiresIn: 3600 },
+      )
+    );
+  }
+  async createDownloadUrl(
+    objectKey: string,
+    accountId: string,
+  ): Promise<string> {
+    if (/\.(png|jpe?g|webp)$/i.test(objectKey))
+      return this.createImageUrl(objectKey);
+    const cv = await prisma.cv.findFirst({
+      where: {
+        fileKey: objectKey,
+        deletedAt: null,
+        OR: [
+          { candidate: { accountId, deletedAt: null } },
+          {
+            applications: {
+              some: {
+                deletedAt: null,
+                jobPost: {
+                  deletedAt: null,
+                  company: { accountId, deletedAt: null },
+                },
+              },
+            },
+          },
+        ],
+      },
+      select: { fileKey: true },
     });
-    return getSignedUrl(r2Client, command, { expiresIn: 3600 });
+    if (!cv?.fileKey)
+      throw new AppError("Không có quyền xem CV", "CV_ACCESS_DENIED", 403);
+    return getSignedUrl(
+      r2Client,
+      new GetObjectCommand({ Bucket: R2_PRIVATE_BUCKET_NAME, Key: cv.fileKey }),
+      { expiresIn: 300 },
+    );
+  }
+  async completeCvUpload(
+    accountId: string,
+    input: { objectKey: string; title: string; isDefault?: boolean },
+  ) {
+    if (
+      !input.objectKey.startsWith(
+        "seed/topcv/candidates/" + accountId + "/cv-",
+      ) ||
+      !input.objectKey.endsWith(".pdf")
+    ) {
+      throw new AppError("Key CV không hợp lệ", "INVALID_CV_KEY", 400);
+    }
+    const candidate = await prisma.candidate.findFirst({
+      where: { accountId, deletedAt: null },
+      select: { id: true },
+    });
+    if (!candidate)
+      throw new AppError("Không tìm thấy ứng viên", "CANDIDATE_NOT_FOUND", 404);
+    const metadata = await r2Client.send(
+      new HeadObjectCommand({
+        Bucket: R2_PRIVATE_BUCKET_NAME,
+        Key: input.objectKey,
+      }),
+    );
+    if (
+      metadata.ContentType !== "application/pdf" ||
+      !metadata.ContentLength ||
+      metadata.ContentLength > this.uploadRules.cv.maxSize
+    ) {
+      throw new AppError("File CV không hợp lệ", "INVALID_CV_FILE", 400);
+    }
+    return prisma.$transaction(async (tx) => {
+      if (input.isDefault)
+        await tx.cv.updateMany({
+          where: { candidateId: candidate.id, isDefault: true },
+          data: { isDefault: false },
+        });
+      const existing = await tx.cv.findFirst({
+        where: {
+          candidateId: candidate.id,
+          fileKey: input.objectKey,
+          deletedAt: null,
+        },
+      });
+      const data = { title: input.title, isDefault: input.isDefault ?? false };
+      return existing
+        ? tx.cv.update({ where: { id: existing.id }, data })
+        : tx.cv.create({
+            data: {
+              ...data,
+              candidateId: candidate.id,
+              fileKey: input.objectKey,
+            },
+          });
+    });
   }
   async completeAvatarUpload(
     accountId: string,
@@ -129,13 +235,13 @@ class UploadService {
       );
     }
     const rule = this.uploadRules[purpose];
-    const expectedPrefix = `seed/topcv/candidates/${accountId}/`;
+    const expectedPrefix = `seed/topcv/candidates/${accountId}/avatar-`;
     if (!objectKey.startsWith(expectedPrefix)) {
       throw new Error("File không thuộc tài khoản hoặc sai mục đích upload");
     }
     const metadata = await r2Client.send(
       new HeadObjectCommand({
-        Bucket: R2_BUCKET_NAME,
+        Bucket: R2_PUBLIC_BUCKET_NAME,
         Key: objectKey,
       }),
     );
@@ -150,10 +256,8 @@ class UploadService {
       throw new Error("Dung lượng file không hợp lệ");
     }
     //Xóa ảnh cũ trên r2 và cập nhật lại objectKey trong csdl
-    const imageUrl = await this.createDownloadUrl(objectKey);
-    if (candidate.avatarKey) {
-      await this.deleteFileExists(candidate.avatarKey);
-    }
+    const imageUrl = await this.createImageUrl(objectKey);
+
     await prisma.candidate.update({
       where: { accountId },
       data: {
@@ -186,13 +290,13 @@ class UploadService {
       );
     }
     const rule = this.uploadRules[purpose];
-    const expectedPrefix = `seed/topcv/companies/${accountId}/`;
+    const expectedPrefix = `seed/topcv/companies/${accountId}/${rule.name}-`;
     if (!objectKey.startsWith(expectedPrefix)) {
       throw new Error("File không thuộc tài khoản hoặc sai mục đích upload");
     }
     const metadata = await r2Client.send(
       new HeadObjectCommand({
-        Bucket: R2_BUCKET_NAME,
+        Bucket: R2_PUBLIC_BUCKET_NAME,
         Key: objectKey,
       }),
     );
@@ -207,12 +311,8 @@ class UploadService {
       throw new Error("Dung lượng file không hợp lệ");
     }
     // Tạo URL đọc ảnh để trả lại cho frontend.
-    const imageUrl = await this.createDownloadUrl(objectKey);
-    if (purpose === "companyLogo" && company.logoKey) {
-      await this.deleteFileExists(company.logoKey);
-    } else if (purpose === "companyBanner" && company.bannerKey) {
-      await this.deleteFileExists(company.bannerKey);
-    }
+    const imageUrl = await this.createImageUrl(objectKey);
+
     await prisma.company.update({
       where: { accountId },
       data:

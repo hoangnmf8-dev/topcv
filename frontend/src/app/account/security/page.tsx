@@ -4,7 +4,6 @@ import * as React from "react"
 import Link from "next/link"
 import { ArrowLeft, Check, CheckCircle2, Eye, EyeOff, KeyRound, Loader2, LockKeyhole, ShieldCheck } from "lucide-react"
 
-import { changePassword } from "@/lib/auth-mock"
 import { Button } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
@@ -26,16 +25,7 @@ export default function SecurityPage() {
   }
   const strongEnough = Object.values(rules).every(Boolean)
 
-  async function submit(event: React.FormEvent) {
-    event.preventDefault(); setError("")
-    if (!strongEnough) return setError("Mật khẩu mới chưa đáp ứng các yêu cầu bảo mật.")
-    if (form.newPassword !== form.confirmPassword) return setError("Mật khẩu xác nhận không khớp.")
-    if (form.currentPassword === form.newPassword) return setError("Mật khẩu mới phải khác mật khẩu hiện tại.")
-    setLoading(true)
-    try { await changePassword({ currentPassword: form.currentPassword, newPassword: form.newPassword }); setSuccess(true) }
-    catch (requestError) { setError(requestError instanceof Error ? requestError.message : "Không thể đổi mật khẩu.") }
-    finally { setLoading(false) }
-  }
+  async function submit(event: React.FormEvent) {event.preventDefault(); setError("Chức năng đổi mật khẩu hiện chưa khả dụng.");}
 
   return <div className="flex min-h-svh flex-col bg-background"><main className="relative flex-1 overflow-hidden px-4 py-10">
     <div aria-hidden className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [background-size:44px_44px] opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_15%,transparent_72%)]" />

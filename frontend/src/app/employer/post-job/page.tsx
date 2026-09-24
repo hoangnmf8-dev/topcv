@@ -12,26 +12,27 @@ import {
 } from "lucide-react";
 import { EmployerHeader } from "@/components/employer-header";
 import { RoleFooter } from "@/components/role-footer";
-import { JOB_CATEGORY_NAMES } from "@/lib/job-categories";
+// Danh sách sẽ được cung cấp từ API danh mục nghề.
+const JOB_CATEGORY_NAMES: string[] = [];
 
 const initial = {
-  title: "Chuyên viên Quan hệ Khách hàng Doanh nghiệp",
-  category: "Kinh doanh / Bán hàng",
-  location: "Hải Phòng",
-  salaryMin: "13",
-  salaryMax: "30",
+  title: "",
+  category: "",
+  location: "",
+  salaryMin: "",
+  salaryMax: "",
   currency: "triệu VNĐ/tháng",
   negotiable: false,
-  experience: "1 năm",
-  overviewRequirements: "Cao đẳng trở lên",
-  deadline: "31/08/2026",
+  experience: "",
+  overviewRequirements: "",
+  deadline: "",
   description:
-    "Bạn sẽ trực tiếp quản lý quan hệ khách hàng, phát triển cơ hội kinh doanh và tư vấn giải pháp phù hợp cho doanh nghiệp.\n\n- Quản lý và chăm sóc khách hàng doanh nghiệp hiện tại.\n- Tìm kiếm, tiếp thị và phát triển khách hàng doanh nghiệp mới.\n- Tư vấn giải pháp phù hợp với nhu cầu của khách hàng SME.",
+    "",
   requirements:
-    "Ứng viên phù hợp cần đáp ứng các tiêu chí sau:\n\n- Tốt nghiệp đại học khối Kinh tế, Tài chính hoặc Ngân hàng.\n- Có từ 01 năm kinh nghiệm trong lĩnh vực tài chính hoặc khách hàng doanh nghiệp.",
+    "",
   benefits:
-    "Gia nhập Onenet, bạn sẽ nhận được các quyền lợi:\n\n- Lương tháng 13 và thưởng theo kết quả.\n- Bảo hiểm toàn diện và khám sức khỏe định kỳ.\n- Đào tạo chuyên sâu và team building hằng năm.",
-  skills: "Giao tiếp, Chăm sóc khách hàng, Bán hàng",
+    "",
+  skills: "",
 };
 type Data = typeof initial;
 const money = (d: Data) =>
@@ -46,12 +47,7 @@ export default function Page() {
     setData((x) => ({ ...x, [k]: v }));
   const invalid =
     !data.negotiable && Number(data.salaryMin) > Number(data.salaryMax);
-  const publish = () => {
-    toast.success("Tạo tin tuyển dụng thành công", {
-      description: "Tin đã được chuyển vào danh sách quản lý tuyển dụng.",
-    });
-    router.push("/employer?tab=jobs");
-  };
+  const publish = () => {toast.info("Chức năng này hiện chưa khả dụng.");};
   const labels = [
     "Thông tin cơ bản",
     "Mô tả & yêu cầu",
@@ -95,6 +91,7 @@ export default function Page() {
                       onChange={(e) => set("category", e.target.value)}
                       className="mt-2 w-full rounded-xl border bg-white p-3 font-normal"
                     >
+                      <option value="">Chưa có dữ liệu danh mục nghề</option>
                       {JOB_CATEGORY_NAMES.map((category) => (
                         <option key={category}>{category}</option>
                       ))}
@@ -353,7 +350,7 @@ function Preview({ data }: { data: Data }) {
           {data.title}
         </h2>
         <p className="mt-2 text-sm text-slate-500">
-          Công ty Onenet · Đã xác thực
+          Thông tin nhà tuyển dụng
         </p>
         <p className="mt-4 text-lg font-extrabold text-[#00a64f] sm:text-xl">
           {money(data)}
@@ -449,7 +446,7 @@ function Hero({ data }: { data: Data }) {
   return (
     <section className="rounded-3xl bg-white p-8 shadow-sm">
       <h1 className="text-3xl font-bold">{data.title}</h1>
-      <p className="mt-3 text-slate-500">Công ty Onenet</p>
+      <p className="mt-3 text-slate-500">Nhà tuyển dụng</p>
       <p className="mt-4 text-2xl font-bold text-[#00a64f]">{money(data)}</p>
     </section>
   );

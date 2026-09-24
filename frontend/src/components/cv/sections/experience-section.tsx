@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { Loader2, Plus, Trash2, Wand2 } from "lucide-react"
 import { Field, TextArea, TextInput } from "@/components/cv/field"
-import { callAI } from "@/lib/ai-client"
-import { uid, type ExperienceItem } from "@/lib/cv-data"
+import { uid, type ExperienceItem } from "@/lib/cv-layout"
 
 export function ExperienceSection({
   value,
@@ -72,25 +71,7 @@ function ExperienceCard({
   const setBullets = (text: string) =>
     onUpdate({ bullets: text.split("\n") })
 
-  const improve = async () => {
-    setLoading(true)
-    setError("")
-    try {
-      const raw = await callAI("improve", {
-        text: exp.bullets.filter(Boolean).map((b) => `- ${b}`).join("\n"),
-        context: `${context} Công việc: ${exp.role} tại ${exp.company}.`,
-      })
-      const bullets = raw
-        .split("\n")
-        .map((l) => l.replace(/^[-*•]\s*/, "").trim())
-        .filter(Boolean)
-      onUpdate({ bullets: bullets.length ? bullets : exp.bullets })
-    } catch (err) {
-      setError((err as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const improve = async () => {setError("Tính năng AI hiện chưa khả dụng.");}
 
   return (
     <div className="rounded-xl border border-border bg-card p-3.5">
@@ -132,7 +113,7 @@ function ExperienceCard({
           <button
             type="button"
             onClick={improve}
-            disabled={loading}
+            disabled title="Tính năng AI hiện chưa khả dụng"
             className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-2 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
           >
             {loading ? (

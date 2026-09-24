@@ -3,7 +3,8 @@ import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, Clock3, UserRound } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
-import { careerArticles, getCareerArticle } from "@/lib/career-articles"
+import type { CareerArticle } from "@/types/career"
+const careerArticles: CareerArticle[] = [];
 
 export function generateStaticParams() {
   return careerArticles.map(({ slug }) => ({ slug }))
@@ -11,8 +12,8 @@ export function generateStaticParams() {
 
 export default async function CareerArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const article = getCareerArticle(slug)
-  if (!article) notFound()
+  const article = careerArticles.find(item => item.slug === slug)
+  if (!article) return <main className="route-home min-h-screen bg-slate-50"><SiteHeader/><section className="mx-auto max-w-4xl px-6 py-16"><h1 className="text-2xl font-bold">Cẩm nang nghề nghiệp</h1><p className="mt-5">Chưa có nội dung bài viết.</p><Link href="/career-guide" className="mt-5 block text-emerald-700">Quay lại cẩm nang</Link></section><SiteFooter/></main>
   const related = careerArticles.filter((item) => item.slug !== article.slug).slice(0, 3)
 
   return <main className="route-home min-h-screen bg-slate-50"><SiteHeader/>

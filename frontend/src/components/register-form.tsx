@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ArrowLeft, Building2, CheckCircle2, Clock3, Eye, EyeOff, Loader2, Lock, Mail, Phone, RefreshCw, ShieldCheck, User } from "lucide-react"
+import { ArrowLeft, Building2, CheckCircle2, Clock3, Eye, EyeOff, Lock, Mail, Phone, RefreshCw, ShieldCheck, User } from "lucide-react"
 
 import { GoogleButton } from "@/components/google-button"
 import type { Role } from "@/components/role-selector"
@@ -10,7 +10,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import { registerAccount, resendRegistrationOtp, verifyRegistrationOtp } from "@/lib/auth-mock"
 
 type Step = "form" | "otp" | "success"
 const OTP_TTL = 600
@@ -29,10 +28,8 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
   const [showPassword, setShowPassword] = React.useState(false)
   const [showConfirm, setShowConfirm] = React.useState(false)
   const [agreed, setAgreed] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState("")
   const [otp, setOtp] = React.useState("")
-  const [accountId, setAccountId] = React.useState("")
   const [otpSeconds, setOtpSeconds] = React.useState(OTP_TTL)
   const [resendSeconds, setResendSeconds] = React.useState(RESEND_TTL)
   const [form, setForm] = React.useState({ fullName: "", companyName: "", email: "", phone: "", password: "", confirmPassword: "" })
@@ -53,49 +50,23 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
 
   const update = (key: keyof typeof form, value: string) => setForm((current) => ({ ...current, [key]: value }))
 
-  async function register(event: React.FormEvent) {
+  // Connect the registration API before advancing to OTP verification.
+  function register(event: React.FormEvent) {
     event.preventDefault()
-    setError("")
-    if (form.password !== form.confirmPassword) return setError("Mật khẩu xác nhận không khớp.")
-    setLoading(true)
-    localStorage.setItem("topcv-role", role)
-    try {
-      const data = await registerAccount({
-          fullName: role === "employer" ? form.companyName : form.fullName,
-          contactName: role === "employer" ? form.fullName : undefined,
-          email: form.email.trim().toLowerCase(), phone: form.phone,
-          password: form.password, confirmPassword: form.confirmPassword,
-          role: role === "employer" ? "company" : "candidate",
-      })
-      setAccountId(data.accountId); setOtp(""); setOtpSeconds(data.expiresIn ?? OTP_TTL); setResendSeconds(RESEND_TTL); setStep("otp")
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Đã xảy ra lỗi.")
-    } finally { setLoading(false) }
+    if (form.password !== form.confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp.")
+      return
+    }
+    showUnavailable()
   }
 
-  async function verify(event: React.FormEvent) {
-    event.preventDefault()
-    if (otp.length !== 6 || otpSeconds === 0) return
-    setLoading(true); setError("")
-    try {
-      const data = await verifyRegistrationOtp({ accountId, otp })
-      if (data.accessToken) localStorage.setItem("accessToken", data.accessToken)
-      if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken)
-      setStep("success")
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Không thể xác minh OTP."); setOtp("")
-    } finally { setLoading(false) }
+  function showUnavailable() {
+    setError("Tính năng đăng ký hiện chưa khả dụng. Vui lòng thử lại sau.")
   }
 
-  async function resend() {
-    if (resendSeconds || loading) return
-    setLoading(true); setError("")
-    try {
-      const data = await resendRegistrationOtp({ accountId })
-      setOtp(""); setOtpSeconds(data.expiresIn ?? OTP_TTL); setResendSeconds(RESEND_TTL)
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Không thể gửi lại OTP.")
-    } finally { setLoading(false) }
+  function verify(event: React.FormEvent) {
+    event.preventDefault()
+    showUnavailable()
   }
 
   if (step === "success") return (
@@ -122,8 +93,8 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
       </InputOTP>
       <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground"><Clock3 className="size-4" />{otpSeconds ? <span>Mã có hiệu lực trong <strong className="text-foreground">{formatTime(otpSeconds)}</strong></span> : <span className="font-medium text-destructive">Mã OTP đã hết hạn</span>}</div>
       {error && <p role="alert" className="mt-4 rounded-xl bg-destructive/10 px-4 py-3 text-center text-sm text-destructive">{error}</p>}
-      <Button type="submit" size="lg" className="mt-5 w-full font-semibold" disabled={loading || otp.length !== 6 || otpSeconds === 0}>{loading ? <Loader2 className="animate-spin" /> : <ShieldCheck />}Xác nhận mã OTP</Button>
-      <div className="mt-5 text-center text-sm text-muted-foreground">Chưa nhận được mã?{" "}<button type="button" onClick={resend} disabled={resendSeconds > 0 || loading} className="inline-flex items-center gap-1 font-semibold text-primary disabled:cursor-not-allowed disabled:text-muted-foreground"><RefreshCw className="size-3.5" />{resendSeconds ? `Gửi lại sau ${resendSeconds}s` : "Gửi lại mã"}</button></div>
+      <Button type="submit" size="lg" className="mt-5 w-full font-semibold" disabled={otp.length !== 6 || otpSeconds === 0}><ShieldCheck />Xác nhận mã OTP</Button>
+      <div className="mt-5 text-center text-sm text-muted-foreground">Chưa nhận được mã?{" "}<button type="button" onClick={showUnavailable} disabled={resendSeconds > 0} className="inline-flex items-center gap-1 font-semibold text-primary disabled:cursor-not-allowed disabled:text-muted-foreground"><RefreshCw className="size-3.5" />{resendSeconds ? `Gửi lại sau ${resendSeconds}s` : "Gửi lại mã"}</button></div>
     </form>
   )
 
@@ -137,7 +108,7 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
       <PasswordField id="reg-confirm" label="Xác nhận mật khẩu" value={form.confirmPassword} placeholder="Nhập lại mật khẩu" visible={showConfirm} onVisible={() => setShowConfirm((value) => !value)} onChange={(value) => update("confirmPassword", value)} />
       {error && <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</p>}
       <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground"><Checkbox id="terms" className="mt-0.5" checked={agreed} onCheckedChange={(checked) => setAgreed(checked === true)} /><span className="leading-snug">Tôi đồng ý với <a href="#" className="font-medium text-primary hover:underline">Điều khoản dịch vụ</a> & <a href="#" className="font-medium text-primary hover:underline">Chính sách bảo mật</a></span></label>
-      <Button type="submit" size="lg" className="w-full font-semibold" disabled={!agreed || loading}>{loading ? <Loader2 className="animate-spin" /> : <Mail />}{loading ? "Đang tạo tài khoản..." : "Tạo tài khoản & nhận OTP"}</Button>
+      <Button type="submit" size="lg" className="w-full font-semibold" disabled={!agreed}><Mail />Tạo tài khoản & nhận OTP</Button>
       <GoogleButton label="Đăng ký với Google" />
     </FieldGroup></form>
   )

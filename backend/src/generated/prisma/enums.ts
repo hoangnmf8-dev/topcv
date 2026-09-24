@@ -69,6 +69,16 @@ export const JobStatus = {
 export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus]
 
 
+export const SaturdaySchedule = {
+  WORK: 'WORK',
+  OFF: 'OFF',
+  ALTERNATING: 'ALTERNATING',
+  FLEXIBLE: 'FLEXIBLE'
+} as const
+
+export type SaturdaySchedule = (typeof SaturdaySchedule)[keyof typeof SaturdaySchedule]
+
+
 export const MessageType = {
   text: 'text',
   image: 'image',

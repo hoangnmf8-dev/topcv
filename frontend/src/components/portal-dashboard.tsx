@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAccountStore } from "@/stores/auth.store";
-import { CandidateSavedJobs } from "@/components/candidate-saved-jobs";
+import { CandidateRecords } from "@/components/candidate-records";
+import { CandidateProfileForm } from "@/components/candidate-profile-form";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import uploadService from "@/services/upload.service";
@@ -30,6 +31,7 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { RoleFooter } from "@/components/role-footer";
 import { CandidateMobileSidebar } from "@/components/candidate-mobile-sidebar";
+import { useCandidateStore } from "@/stores/candidate.store";
 
 type Mode = "candidate" | "employer";
 const candidateTabs = [
@@ -55,6 +57,7 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const candidate = mode === "candidate";
   const tabs = candidate ? candidateTabs : employerTabs;
+  const { candidate: candidateStore } = useCandidateStore((state) => state);
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get("tab");
     if (requested && tabs.some(([id]) => id === requested)) setTab(requested);
@@ -78,7 +81,9 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
                 : "Trung tâm nhà tuyển dụng"}
             </p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              {candidate ? "Chào Nguyễn Văn A!" : "Chào mừng Công ty Onenet"}
+              {candidate
+                ? `Chào ${candidateStore?.fullName ?? "bạn"}`
+                : `Chào mừng nhà tuyển dụng`}
             </h1>
           </div>
           <Link
@@ -102,8 +107,8 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
             </p>
             <p className="mt-1 text-xs text-slate-500">
               {candidate
-                ? "Hồ sơ hoàn thiện 80%"
-                : "Gói tiêu chuẩn · Còn 18 ngày"}
+                ? `Hồ sơ hoàn thiện ${candidateStore?.profileCompletion ?? 0}%`
+                : "Chưa có thông tin gói dịch vụ"}
             </p>
           </div>
           <nav className="flex gap-1 overflow-x-auto lg:flex-col">
@@ -122,8 +127,8 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
         <section>
           {tab === "overview" && <Overview candidate={candidate} />}{" "}
           {tab === "profile" && <Profile />}{" "}
-          {tab === "applications" && <List title="Việc đã ứng tuyển" />}{" "}
-          {tab === "saved" && <CandidateSavedJobs />}{" "}
+          {tab === "applications" && <CandidateRecords kind="applications" />}{" "}
+          {tab === "saved" && <CandidateRecords kind="saved" />}{" "}
           {tab === "jobs" && <List title="Tin tuyển dụng của bạn" />}{" "}
           {tab === "candidates" && <MiniAts />}{" "}
           {tab === "analytics" && <Analytics />}{" "}
@@ -150,16 +155,16 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
 function Overview({ candidate }: { candidate: boolean }) {
   const stats = candidate
     ? [
-        ["12", "Việc phù hợp mới", "Cập nhật hôm nay"],
-        ["04", "Tin đã lưu", "2 tin sắp hết hạn"],
-        ["03", "Lượt ứng tuyển", "Trong 30 ngày gần nhất"],
-        ["80%", "Hồ sơ hoàn thiện", "Còn 2 mục cần bổ sung"],
+        ["—", "Việc phù hợp mới", "Cập nhật hôm nay"],
+        ["—", "Tin đã lưu", "Chưa có dữ liệu"],
+        ["—", "Lượt ứng tuyển", "Trong 30 ngày gần nhất"],
+        ["—", "Hồ sơ hoàn thiện", "Chưa có dữ liệu"],
       ]
     : [
-        ["12", "Tin đang hiển thị", "Đang hoạt động"],
-        ["148", "Ứng viên mới", "Trong 30 ngày gần nhất"],
-        ["24", "Lịch phỏng vấn", "5 lịch trong tuần"],
-        ["78%", "Tỷ lệ phù hợp", "Tăng 6% so với tháng trước"],
+        ["—", "Tin đang hiển thị", "Đang hoạt động"],
+        ["—", "Ứng viên mới", "Trong 30 ngày gần nhất"],
+        ["—", "Lịch phỏng vấn", "Chưa có dữ liệu"],
+        ["—", "Tỷ lệ phù hợp", "Chưa có dữ liệu"],
       ];
   const statIcons = [Search, Heart, ClipboardList, UserRound];
   return (
@@ -194,11 +199,7 @@ function Overview({ candidate }: { candidate: boolean }) {
           title={candidate ? "Việc làm dành cho bạn" : "Hoạt động tuyển dụng"}
         >
           <div className="space-y-3">
-            {[
-              "Senior ReactJS Developer tại FPT Software",
-              "Marketing Manager tại VNG Corporation",
-              "Automation Tester tại Techcombank",
-            ].map((x, i) => (
+            {([] as string[]).map((x, i) => (
               <div
                 key={x}
                 className="group flex flex-col gap-3 rounded-xl border border-slate-200/80 p-4 transition hover:border-emerald-200 hover:bg-emerald-50/30 sm:flex-row sm:items-center sm:justify-between"
@@ -243,15 +244,27 @@ function Overview({ candidate }: { candidate: boolean }) {
   );
 }
 function Profile() {
-  const profile = useAccountStore(state => state.account?.candidate);
-  const updateCandidate = useAccountStore(state => state.updateCandidate);
+  const profile = useCandidateStore((state) => state.candidate);
+  console.log("🚀 ~ Profile ~ profile:", profile)
+  const updateCandidate = useAccountStore((state) => state.updateCandidate);
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
-  const fullName = profile?.fullName || "Nguyễn Văn A";
-  const initials = fullName.trim().split(/\s+/).filter(Boolean).slice(-2).map(word => word[0]).join("").toUpperCase() || "UV";
+  const fullName = profile?.fullName || "Chưa cập nhật họ tên";
+  const initials =
+    fullName
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(-2)
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase() || "UV";
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState("");
   useEffect(() => {
-    if (!avatarFile) { setAvatarUrl(""); return; }
+    if (!avatarFile) {
+      setAvatarUrl("");
+      return;
+    }
     const url = URL.createObjectURL(avatarFile);
     setAvatarUrl(url);
     return () => URL.revokeObjectURL(url);
@@ -260,86 +273,138 @@ function Profile() {
     if (!avatarFile || !profile || isSavingAvatar) return;
     setIsSavingAvatar(true);
     try {
-      const presigned = await uploadService.getPresignedUrl(avatarFile, "avatar");
-      if (!presigned.success) throw new Error(presigned.message || "Không thể tải ảnh.");
+      const presigned = await uploadService.getPresignedUrl(
+        avatarFile,
+        "avatar",
+      );
+      if (!presigned.success)
+        throw new Error(presigned.message || "Không thể tải ảnh.");
       await uploadService.uploadFile(presigned.data.uploadUrl, avatarFile);
-      const result = await uploadService.completeUploadFile("avatar", presigned.data.objectKey);
-      if (!result.success) throw new Error(result.message || "Không thể lưu ảnh đại diện.");
+      const result = await uploadService.completeUploadFile(
+        "avatar",
+        presigned.data.objectKey,
+      );
+      if (!result.success)
+        throw new Error(result.message || "Không thể lưu ảnh đại diện.");
       if (!result.data?.imageUrl || !result.data?.objectKey) {
         throw new Error("Máy chủ chưa xác nhận ảnh đã lưu. Vui lòng thử lại.");
       }
-      updateCandidate({ avatarKey: result.data.objectKey, avatarUrl: result.data.imageUrl });
+      updateCandidate({
+        avatarKey: result.data.objectKey,
+        avatarUrl: result.data.imageUrl,
+      });
+      useCandidateStore.getState().updateCandidate({
+        ...profile,
+        avatarKey: result.data.objectKey,
+        avatarUrl: result.data.imageUrl,
+      });
       setAvatarFile(null);
       setAvatarUrl("");
       toast.success(result.message || "Lưu ảnh đại diện thành công");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Không thể lưu ảnh đại diện.");
+      toast.error(
+        error instanceof Error ? error.message : "Không thể lưu ảnh đại diện.",
+      );
     } finally {
       setIsSavingAvatar(false);
     }
   }
-  const cvs = [
-    {
-      id: "frontend",
-      title: "CV Front-end Developer",
-      template: "Modern",
-      completion: 92,
-      updated: "Hôm nay",
-      status: "CV mặc định",
-    },
-    {
-      id: "fullstack",
-      title: "CV Full-stack Developer",
-      template: "Chuyên nghiệp",
-      completion: 78,
-      updated: "18/08/2026",
-      status: "Bản nháp",
-    },
-    {
-      id: "english",
-      title: "CV Front-end Developer · English",
-      template: "Tối giản",
-      completion: 64,
-      updated: "03/08/2026",
-      status: "Bản nháp",
-    },
-  ];
+  const cvs = [] as {
+    id: string;
+    title: string;
+    template: string;
+    completion: number;
+    updated: string;
+    status: string;
+  }[];
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <label className="relative block size-24 shrink-0 cursor-pointer rounded-full transition hover:opacity-80 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2" title="Đổi ảnh đại diện">
+          <label
+            className="relative block size-24 shrink-0 cursor-pointer rounded-full transition hover:opacity-80 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2"
+            title="Đổi ảnh đại diện"
+          >
             <Avatar className="size-24 border-4 border-emerald-50">
-              <AvatarImage src={avatarUrl || profile?.avatarUrl || undefined} alt={"Ảnh đại diện " + fullName} />
-              <AvatarFallback className="bg-emerald-50 text-3xl font-bold text-emerald-700">{initials}</AvatarFallback>
+              <AvatarImage
+                src={avatarUrl || profile?.avatarUrl || undefined}
+                alt={"Ảnh đại diện " + fullName}
+              />
+              <AvatarFallback className="bg-emerald-50 text-3xl font-bold text-emerald-700">
+                {initials}
+              </AvatarFallback>
             </Avatar>
-            <input disabled={isSavingAvatar || !profile} type="file" aria-label="Đổi ảnh đại diện" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={event => {
-              const file = event.target.files?.[0]; event.target.value = "";
-              if (!file) return;
-              if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > UPLOAD.IMAGE_SIZE) { toast.error("Chọn ảnh JPG, PNG hoặc WebP tối đa 5 MB."); return; }
-              setAvatarFile(file);
-            }}/>
+            <input
+              disabled={isSavingAvatar || !profile}
+              type="file"
+              aria-label="Đổi ảnh đại diện"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = "";
+                if (!file) return;
+                if (
+                  !["image/jpeg", "image/png", "image/webp"].includes(
+                    file.type,
+                  ) ||
+                  file.size > UPLOAD.IMAGE_SIZE
+                ) {
+                  toast.error("Chọn ảnh JPG, PNG hoặc WebP tối đa 5 MB.");
+                  return;
+                }
+                setAvatarFile(file);
+              }}
+            />
           </label>
-          <div><h2 className="text-xl font-bold">{fullName}</h2><p className="mt-1 text-sm text-slate-500">{profile?.headline || "Front-end Developer"}</p>
-            {avatarFile && <div className="mt-3 flex items-center gap-3">
-              <button type="button" disabled={isSavingAvatar} onClick={saveAvatar} className="rounded-xl bg-[#00b14f] px-4 py-2 text-sm font-bold text-white disabled:opacity-50">
-                {isSavingAvatar ? "Đang lưu..." : "Lưu ảnh đại diện"}
-              </button>
-              <button type="button" disabled={isSavingAvatar} onClick={() => { setAvatarFile(null); setAvatarUrl(""); }} className="text-sm text-slate-500 disabled:opacity-50">Hủy</button>
-            </div>}
+          <div>
+            <h2 className="text-xl font-bold">{fullName}</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              {profile?.headline || "Chưa cập nhật chức danh"}
+            </p>
+            {avatarFile && (
+              <div className="mt-3 flex items-center gap-3">
+                <button
+                  type="button"
+                  disabled={isSavingAvatar}
+                  onClick={saveAvatar}
+                  className="rounded-xl bg-[#00b14f] px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                >
+                  {isSavingAvatar ? "Đang lưu..." : "Lưu ảnh đại diện"}
+                </button>
+                <button
+                  type="button"
+                  disabled={isSavingAvatar}
+                  onClick={() => {
+                    setAvatarFile(null);
+                    setAvatarUrl("");
+                  }}
+                  className="text-sm text-slate-500 disabled:opacity-50"
+                >
+                  Hủy
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">Tôi tập trung xây dựng trải nghiệm web hiệu quả, dễ dùng và có khả năng mở rộng.</p>
+        <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">
+          {profile?.careerGoal || "Chưa cập nhật mục tiêu nghề nghiệp."}
+        </p>
       </section>
+      <CandidateProfileForm />
       <Panel title="Hồ sơ & CV">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
           <div>
             <p className="text-sm text-slate-500">Mức độ hoàn thiện hồ sơ</p>
             <div className="mt-3 h-2 w-64 rounded-full bg-slate-100">
-              <div className="h-full w-4/5 rounded-full bg-[#00b14f]" />
+              <div
+                className="h-full rounded-full bg-[#00b14f]"
+                style={{ width: `${profile?.profileCompletion ?? 0}%` }}
+              />
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              80% · Bổ sung kinh nghiệm để tăng tỷ lệ phù hợp.
+              {profile?.profileCompletion ?? 0}% · Cập nhật thông tin để hoàn
+              thiện hồ sơ.
             </p>
           </div>
           <Link
@@ -356,74 +421,14 @@ function Profile() {
           <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
             <div>
               <h3 className="font-bold text-slate-800">Danh sách CV</h3>
-              <p className="mt-1 text-sm text-slate-500">
-                3/6 CV đã tạo trong gói dùng thử
-              </p>
+              <p className="mt-1 text-sm text-slate-500">Chưa có dữ liệu CV</p>
             </div>
             <span className="text-xs font-semibold text-slate-500">
               Sắp xếp: Cập nhật gần nhất
             </span>
           </div>
           <div className="grid gap-4 xl:grid-cols-2">
-            {cvs.map((cv) => (
-              <article
-                key={cv.id}
-                className="rounded-2xl border border-slate-200 p-4 transition hover:border-emerald-300 hover:shadow-sm"
-              >
-                <div className="flex gap-4">
-                  <div className="grid h-24 w-20 shrink-0 place-items-center rounded-lg border bg-[linear-gradient(135deg,#e7f9ef_0_34%,white_34%)] text-[#00a84f]">
-                    <FileText className="size-8" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <h4 className="font-bold text-slate-800">{cv.title}</h4>
-                      <span
-                        className={`rounded-full px-2 py-1 text-[11px] font-bold ${cv.status === "CV mặc định" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}
-                      >
-                        {cv.status}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-500">
-                      Mẫu {cv.template} · Cập nhật {cv.updated}
-                    </p>
-                    <div className="mt-4 flex items-center gap-3">
-                      <div className="h-2 flex-1 rounded-full bg-slate-100">
-                        <div
-                          className="h-full rounded-full bg-[#00b14f]"
-                          style={{ width: `${cv.completion}%` }}
-                        />
-                      </div>
-                      <b className="text-xs text-[#008f40]">{cv.completion}%</b>
-                    </div>
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      Độ hoàn thiện CV
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
-                  <Link
-                    href={`/cv-builder?cv=${cv.id}`}
-                    className="rounded-lg bg-[#00b14f] px-3 py-2 text-xs font-bold text-white"
-                  >
-                    Chỉnh sửa CV
-                  </Link>
-                  <button
-                    onClick={() =>
-                      toast.info(`Đang mở bản xem trước “${cv.title}”.`)
-                    }
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700"
-                  >
-                    Xem trước
-                  </button>
-                  <button
-                    onClick={() => toast.success(`Đã nhân bản “${cv.title}”.`)}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700"
-                  >
-                    Nhân bản
-                  </button>
-                </div>
-              </article>
-            ))}
+            <p className="text-sm text-slate-500">Chưa có CV.</p>
           </div>
         </div>
       </Panel>
@@ -434,7 +439,7 @@ function List({ title }: { title: string }) {
   return (
     <Panel title={title}>
       <div className="mb-4 flex justify-between">
-        <p className="text-sm text-slate-500">Hiển thị 3 kết quả mới nhất</p>
+        <p className="text-sm text-slate-500">Chưa có dữ liệu</p>
         <Link href="/" className="flex gap-1 text-sm font-bold text-[#008f40]">
           <Search className="size-4" />
           Tìm kiếm
@@ -451,11 +456,7 @@ function List({ title }: { title: string }) {
             </tr>
           </thead>
           <tbody>
-            {[
-              "Chuyên viên Kinh doanh B2B",
-              "Senior ReactJS Developer",
-              "Automation Tester",
-            ].map((x, i) => (
+            {([] as string[]).map((x, i) => (
               <tr key={x} className="border-b border-slate-100">
                 <td className="p-3 font-semibold">
                   {x}
@@ -481,111 +482,28 @@ function List({ title }: { title: string }) {
   );
 }
 function MiniAts() {
-  const [states, setStates] = useState([
-    "Mới nhận",
-    "Đang xem",
-    "Mời phỏng vấn",
-  ]);
   return (
-    <Panel title="Mini ATS · Ứng viên">
-      <p className="mb-5 text-sm text-slate-500">
-        Cập nhật trạng thái, ghi chú nội bộ và mời phỏng vấn ngay trên danh
-        sách.
-      </p>
-      <div className="space-y-3">
-        {["Trần Minh Anh", "Lê Quốc Bảo", "Nguyễn Hoài Nam"].map((n, i) => (
-          <div
-            key={n}
-            className="flex flex-col gap-3 rounded-xl border border-slate-100 p-4 sm:flex-row sm:items-center"
-          >
-            <div className="grid size-10 place-items-center rounded-full bg-slate-100 font-bold">
-              {n[0]}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-bold">{n}</p>
-              <p className="text-xs text-slate-500">
-                ReactJS · {i + 2} năm kinh nghiệm · Điểm phù hợp {92 - i * 7}%
-              </p>
-            </div>
-            <select
-              value={states[i]}
-              onChange={(e) =>
-                setStates((s) =>
-                  s.map((x, j) => (j === i ? e.target.value : x)),
-                )
-              }
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
-            >
-              <option>Mới nhận</option>
-              <option>Đang xem</option>
-              <option>Mời phỏng vấn</option>
-              <option>Từ chối</option>
-            </select>
-            <button className="rounded-lg bg-[#e7f9ef] px-3 py-2 text-sm font-bold text-[#008f40]">
-              Xem CV
-            </button>
-          </div>
-        ))}
+    <Panel title="Ứng viên · Mini ATS">
+      <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+        Chưa có dữ liệu.
       </div>
     </Panel>
   );
 }
 function Analytics() {
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <Panel title="Hiệu quả tuyển dụng">
-        <div className="flex h-48 items-end gap-3 pt-8">
-          {[42, 65, 48, 83, 57, 92, 70].map((h, i) => (
-            <div
-              key={i}
-              className="flex-1 rounded-t-lg bg-[#00b14f]/80"
-              style={{ height: `${h}%` }}
-            />
-          ))}
-        </div>
-        <p className="mt-3 text-center text-sm text-slate-500">
-          Lượt tiếp cận trong 7 ngày
-        </p>
-      </Panel>
-      <Panel title="Kênh ứng viên">
-        <div className="space-y-4">
-          {["Tìm kiếm TopCV", "Gợi ý phù hợp", "Chia sẻ tin"].map((x, i) => (
-            <div key={x}>
-              <div className="flex justify-between text-sm">
-                <span>{x}</span>
-                <b>{[68, 22, 10][i]}%</b>
-              </div>
-              <div className="mt-2 h-2 rounded bg-slate-100">
-                <div
-                  className="h-full rounded bg-[#00b14f]"
-                  style={{ width: `${[68, 22, 10][i]}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </Panel>
-    </div>
+    <Panel title="Báo cáo tuyển dụng">
+      <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+        Chưa có dữ liệu.
+      </div>
+    </Panel>
   );
 }
 function ServicesOnly() {
   return (
     <Panel title="TopCV Pro">
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-[#e7f9ef] p-5">
-        <div>
-          <p className="font-bold text-[#067a3d]">
-            Gói TopCV Pro đang hoạt động
-          </p>
-          <p className="mt-1 text-sm text-slate-600">
-            Còn 18 ngày · Tối ưu CV và ẩn biểu tượng @topcv.dev.
-          </p>
-        </div>
-        <Link
-          href="/services"
-          className="rounded-xl bg-[#00b14f] px-4 py-2.5 text-sm font-bold text-white"
-        >
-          Nâng cấp gói
-        </Link>
+      <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+        Chưa có thông tin gói dịch vụ.
       </div>
     </Panel>
   );
@@ -610,29 +528,7 @@ function Orders() {
             </tr>
           </thead>
           <tbody>
-            {[
-              [
-                "TCV-2026-0810",
-                "TopCV Pro 1 tháng",
-                "699.000đ",
-                "Đã thanh toán",
-                "10/08/2026",
-              ],
-              [
-                "TCV-2026-0624",
-                "Đánh giá CV AI",
-                "99.000đ",
-                "Đã thanh toán",
-                "24/06/2026",
-              ],
-              [
-                "TCV-2026-0512",
-                "TopCV Pro 1 tháng",
-                "699.000đ",
-                "Đã hoàn tiền",
-                "12/05/2026",
-              ],
-            ].map(([code, plan, amount, status, date]) => (
+            {([] as string[][]).map(([code, plan, amount, status, date]) => (
               <tr key={code} className="border-t border-slate-100">
                 <td className="p-3 font-bold text-[#008f40]">#{code}</td>
                 <td>
@@ -683,172 +579,44 @@ function Orders() {
   );
 }
 function Payments() {
-  const [method, setMethod] = useState("vnpay");
-  const [paid, setPaid] = useState(false);
   return (
     <Panel title="Thanh toán">
-      <p className="text-sm text-slate-500">
-        Chọn phương thức thanh toán cho đơn #TCV-2026-0810.
-      </p>
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {[
-          ["vnpay", "VNPay"],
-          ["momo", "MoMo"],
-          ["bank", "Chuyển khoản"],
-          ["card", "Thẻ quốc tế"],
-        ].map(([id, label]) => (
-          <button
-            onClick={() => setMethod(id)}
-            key={id}
-            className={`rounded-xl border p-4 text-left text-sm font-bold ${method === id ? "border-[#00b14f] bg-[#e7f9ef] text-[#087b43]" : "border-slate-200"}`}
-          >
-            {label}
-            <span className="mt-1 block text-xs font-normal text-slate-500">
-              Thanh toán an toàn, xác nhận tức thì
-            </span>
-          </button>
-        ))}
+      <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+        Chưa có đơn hàng để thanh toán.
       </div>
-      <button
-        onClick={() => setPaid(true)}
-        disabled={paid}
-        className="mt-6 rounded-xl bg-[#00b14f] px-5 py-3 text-sm font-bold text-white disabled:bg-emerald-200"
-      >
-        {paid ? "✓ Thanh toán thành công" : "Thanh toán 699.000đ"}
-      </button>
     </Panel>
   );
 }
 function Security() {
-  const [twoFactor, setTwoFactor] = useState(false);
-  const [dialog, setDialog] = useState<"email" | "devices" | null>(null);
-  const [email, setEmail] = useState("nguyenvana@email.com");
-  const [draftEmail, setDraftEmail] = useState(email);
+  const account = useAccountStore((s) => s.account);
   return (
     <div className="space-y-6">
       <Panel title="Cá nhân & bảo mật">
-        <div className="divide-y divide-slate-100">
-          <Setting
-            title="Email đăng nhập"
-            detail={email}
-            action="Thay đổi"
-            onAction={() => setDialog("email")}
-          />
-          <Setting
-            title="Mật khẩu"
-            detail="Cập nhật lần cuối 02/08/2026"
-            action="Đổi mật khẩu"
-            href="/account/security"
-          />
-          <div className="flex items-center justify-between gap-4 py-4">
-            <div>
-              <p className="font-bold">Xác thực hai lớp</p>
-              <p className="mt-1 text-sm text-slate-500">
-                Bảo vệ tài khoản bằng mã xác minh khi đăng nhập.
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                setTwoFactor(!twoFactor);
-                toast.success(
-                  twoFactor
-                    ? "Đã tắt xác thực hai lớp."
-                    : "Đã bật xác thực hai lớp.",
-                );
-              }}
-              aria-label="Bật hoặc tắt xác thực hai lớp"
-              className={`relative h-7 w-12 rounded-full ${twoFactor ? "bg-[#00b14f]" : "bg-slate-200"}`}
-            >
-              <span
-                className={`absolute top-1 size-5 rounded-full bg-white transition ${twoFactor ? "left-6" : "left-1"}`}
-              />
-            </button>
-          </div>
-          <Setting
-            title="Thiết bị đăng nhập"
-            detail="Windows · Hà Nội · Hoạt động lúc này"
-            action="Quản lý"
-            onAction={() => setDialog("devices")}
-          />
-        </div>
+        <Setting
+          title="Email đăng nhập"
+          detail={account?.email ?? "Chưa có thông tin"}
+          action="Thay đổi"
+          onAction={() => toast.info("Chức năng này hiện chưa khả dụng.")}
+        />
+        <Setting
+          title="Mật khẩu"
+          detail="Bảo mật tài khoản"
+          action="Đổi mật khẩu"
+          href="/account/security"
+        />
+        <Setting
+          title="Xác thực hai lớp"
+          detail="Chưa có thông tin"
+          action="Thiết lập"
+          onAction={() => toast.info("Chức năng này hiện chưa khả dụng.")}
+        />
+        <Setting
+          title="Thiết bị đăng nhập"
+          detail="Chưa có dữ liệu thiết bị"
+          action="Quản lý"
+          onAction={() => toast.info("Chức năng này hiện chưa khả dụng.")}
+        />
       </Panel>
-      {dialog && (
-        <div
-          className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 p-4"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-            {dialog === "email" ? (
-              <>
-                <h3 className="text-lg font-bold">Thay đổi email đăng nhập</h3>
-                <p className="mt-2 text-sm text-slate-500">
-                  Mã xác minh sẽ được gửi tới email mới.
-                </p>
-                <label className="mt-5 block text-sm font-bold">
-                  Email mới
-                </label>
-                <input
-                  value={draftEmail}
-                  onChange={(e) => setDraftEmail(e.target.value)}
-                  type="email"
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-500"
-                />
-                <div className="mt-5 flex justify-end gap-2">
-                  <button
-                    onClick={() => setDialog(null)}
-                    className="rounded-lg border px-4 py-2 text-sm font-bold"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (draftEmail.includes("@")) {
-                        setEmail(draftEmail);
-                        toast.success("Đã cập nhật email đăng nhập.");
-                        setDialog(null);
-                      } else toast.error("Email không hợp lệ.");
-                    }}
-                    className="rounded-lg bg-[#00b14f] px-4 py-2 text-sm font-bold text-white"
-                  >
-                    Lưu email
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h3 className="text-lg font-bold">Thiết bị đăng nhập</h3>
-                <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-                  <b>Windows · Chrome</b>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Hà Nội · Hoạt động lúc này · Thiết bị hiện tại
-                  </p>
-                </div>
-                <div className="mt-3 rounded-xl border p-4">
-                  <b>Android · Chrome</b>
-                  <p className="mt-1 text-sm text-slate-500">
-                    TP. Hồ Chí Minh · 2 ngày trước
-                  </p>
-                  <button
-                    onClick={() =>
-                      toast.success("Đã đăng xuất thiết bị Android.")
-                    }
-                    className="mt-3 text-sm font-bold text-red-600"
-                  >
-                    Đăng xuất thiết bị
-                  </button>
-                </div>
-                <button
-                  onClick={() => setDialog(null)}
-                  className="mt-5 w-full rounded-lg bg-slate-100 px-4 py-2 text-sm font-bold"
-                >
-                  Đóng
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

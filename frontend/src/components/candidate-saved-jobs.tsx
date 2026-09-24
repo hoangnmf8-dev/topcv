@@ -2,7 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Heart, Search } from "lucide-react";
-import { jobs } from "@/lib/jobs";
+import type { JobCardData } from "@/types";
+const jobs: JobCardData[] = [];
 import { useSavedJobs } from "@/hooks/use-saved-jobs";
 export function CandidateSavedJobs() {
   const { saved, toggle } = useSavedJobs();

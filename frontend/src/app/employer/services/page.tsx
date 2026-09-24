@@ -3,11 +3,7 @@ import Link from "next/link"
 import { EmployerHeader } from "@/components/employer-header"
 import { RoleFooter } from "@/components/role-footer"
 
-const plans = [
-  { name: "Dùng thử", price: "0đ", period: "không thời hạn", desc: "Các công cụ thiết yếu để bắt đầu tuyển dụng", features: ["Tạo và xác thực hồ sơ doanh nghiệp", "Đăng tối đa 01 tin/ngày, tối đa 01 tin đang hiển thị", "Nhận hồ sơ, nhắn tin và Mini ATS cơ bản"], button: "Gói hiện tại" },
-  { name: "Tuyển dụng Pro", price: "1.990.000đ", period: "30 ngày", desc: "Gói tuyển dụng cho doanh nghiệp vừa và nhỏ", popular: true, features: ["Đăng tối đa 05 tin/ngày, tối đa 15 tin đang hiển thị", "05 lượt đẩy tin, mỗi lượt ưu tiên 07 ngày", "Mở thông tin liên hệ của 100 CV công khai", "Mini ATS nâng cao và báo cáo tuyển dụng"], button: "Nâng cấp Pro" },
-  { name: "Tuyển dụng Premium", price: "Sắp ra mắt", period: "30 ngày", desc: "Giải pháp cho doanh nghiệp có nhu cầu tuyển dụng lớn", developing: true, features: ["Đăng tối đa 15 tin/ngày, tối đa 50 tin đang hiển thị", "20 lượt đẩy tin theo khung giờ ưu tiên", "Mở thông tin liên hệ của 500 CV công khai", "AI sàng lọc, báo cáo nâng cao và hỗ trợ ưu tiên"], button: "Đang phát triển" },
-]
+const plans = [] as ({ name: string; price: string; period: string; desc: string; features: string[]; button: string; popular?: undefined; developing?: undefined; } | { name: string; price: string; period: string; desc: string; popular: boolean; features: string[]; button: string; developing?: undefined; } | { name: string; price: string; period: string; desc: string; developing: boolean; features: string[]; button: string; popular?: undefined; })[]
 
 export default function EmployerServicesPage() {
   return <main className="min-h-screen bg-[#f6f8f7]">

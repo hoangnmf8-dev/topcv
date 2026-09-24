@@ -8,19 +8,18 @@ import { ControlBar } from "@/components/cv/control-bar"
 import { FormPanel } from "@/components/cv/form-panel"
 import { PreviewPanel } from "@/components/cv/preview-panel"
 import { CVDocument } from "@/components/cv/cv-document"
-import { buildContext, callAI } from "@/lib/ai-client"
 import { cn } from "@/lib/utils"
 import {
-  DEFAULT_CV,
+  EMPTY_CV,
   type CVData,
   type TemplateId,
   type ThemeId,
-} from "@/lib/cv-data"
+} from "@/lib/cv-layout"
 
 function CVBuilderPage() {
   const searchParams = useSearchParams()
-  const [data, setData] = useState<CVData>(DEFAULT_CV)
-  const [title, setTitle] = useState("CV Front-end Developer - Nguyễn Văn A")
+  const [data, setData] = useState<CVData>(EMPTY_CV)
+  const [title, setTitle] = useState("CV của bạn")
   const [template, setTemplate] = useState<TemplateId>("modern")
   const [theme, setTheme] = useState<ThemeId>("emerald")
   const requestedTemplate=searchParams.get("template") as TemplateId|null
@@ -32,32 +31,9 @@ function CVBuilderPage() {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "default-saved">("idle")
   const [mobileView, setMobileView] = useState<"edit" | "preview">("edit")
 
-  const handleOptimize = async () => {
-    setAiLoading(true)
-    setAiError("")
-    try {
-      const result = await callAI("optimize", { context: buildContext(data) })
-      setData((d) => ({ ...d, objective: result }))
-    } catch (err) {
-      setAiError((err as Error).message)
-    } finally {
-      setAiLoading(false)
-    }
-  }
+  const handleOptimize = async () => {setAiError("Tính năng AI hiện chưa khả dụng.");}
 
-  const persistCV = (isDefault: boolean) => {
-    setSaveState("saving")
-    window.setTimeout(() => {
-      const savedCV = { title, template, theme, data, isDefault, updatedAt: new Date().toISOString() }
-      localStorage.setItem("topcv-current-cv", JSON.stringify(savedCV))
-      if (isDefault) localStorage.setItem("topcv-default-cv", JSON.stringify(savedCV))
-      setSaveState(isDefault ? "default-saved" : "saved")
-      toast.success(isDefault ? "Đã lưu và đặt làm CV mặc định" : "Đã lưu CV", {
-        description: isDefault ? "CV này sẽ được ưu tiên khi bạn ứng tuyển nhanh." : "Các thay đổi trên CV đã được cập nhật.",
-      })
-      window.setTimeout(() => setSaveState("idle"), 2000)
-    }, 600)
-  }
+  const persistCV = (isDefault: boolean) => {toast.info("Chức năng này hiện chưa khả dụng.");}
 
   const handleDownloadPDF = () => window.print()
 

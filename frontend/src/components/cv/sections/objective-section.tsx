@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Loader2, Sparkles } from "lucide-react"
 import { TextArea } from "@/components/cv/field"
-import { callAI } from "@/lib/ai-client"
 
 export function ObjectiveSection({
   value,
@@ -17,18 +16,7 @@ export function ObjectiveSection({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const generate = async () => {
-    setLoading(true)
-    setError("")
-    try {
-      const result = await callAI("summary", { context })
-      onChange(result)
-    } catch (err) {
-      setError((err as Error).message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const generate = async () => {setError("Tính năng AI hiện chưa khả dụng.");}
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -39,7 +27,7 @@ export function ObjectiveSection({
         <button
           type="button"
           onClick={generate}
-          disabled={loading}
+          disabled title="Tính năng AI hiện chưa khả dụng"
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
         >
           {loading ? (

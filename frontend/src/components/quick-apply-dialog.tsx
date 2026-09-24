@@ -30,26 +30,20 @@ import { Textarea } from "@/components/ui/textarea"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
-import { savedCvOptions, type Job } from "@/lib/jobs"
+import type { JobCardData as Job, SavedCvOption } from "@/types"
 
 type QuickApplyDialogProps = {
   job: Job | null
+  savedCvOptions?: SavedCvOption[]
   open: boolean
   onOpenChange: (open: boolean) => void
 }
-
-const SAMPLE_LETTER = (job: Job | null) =>
-  `Kính gửi Bộ phận Tuyển dụng ${job?.company ?? ""},\n\n` +
-  `Tôi rất quan tâm đến vị trí ${job?.title ?? ""} mà quý công ty đang tuyển dụng. ` +
-  `Với kinh nghiệm và kỹ năng của mình, tôi tin rằng mình có thể đóng góp tích cực cho đội ngũ.\n\n` +
-  `Tôi mong muốn có cơ hội được trao đổi thêm về cách tôi có thể mang lại giá trị cho công ty. ` +
-  `Rất mong nhận được phản hồi từ quý công ty.\n\n` +
-  `Trân trọng cảm ơn!`
 
 export function QuickApplyDialog({
   job,
   open,
   onOpenChange,
+  savedCvOptions = [],
 }: QuickApplyDialogProps) {
   const [fileName, setFileName] = React.useState<string | null>(null)
   const [dragging, setDragging] = React.useState(false)
@@ -69,26 +63,9 @@ export function QuickApplyDialog({
     setFileName(file.name)
   }
 
-  function handleGenerate() {
-    setGenerating(true)
-    setTimeout(() => {
-      setCoverLetter(SAMPLE_LETTER(job))
-      setGenerating(false)
-      toast.success("AI đã gợi ý thư giới thiệu cho bạn!")
-    }, 1200)
-  }
+  function handleGenerate() {toast.info("Chức năng này hiện chưa khả dụng.");}
 
-  function handleSubmit() {
-    setSubmitting(true)
-    setTimeout(() => {
-      setSubmitting(false)
-      onOpenChange(false)
-      toast.success(`Đã gửi hồ sơ ứng tuyển vị trí "${job?.title}"!`)
-      // reset
-      setFileName(null)
-      setCoverLetter("")
-    }, 1200)
-  }
+  function handleSubmit() {toast.info("Chức năng này hiện chưa khả dụng.");}
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -113,9 +90,9 @@ export function QuickApplyDialog({
             {/* CV Select */}
             <Field>
               <FieldLabel htmlFor="cv-select">Chọn CV từ hệ thống</FieldLabel>
-              <Select defaultValue={savedCvOptions[0].value}>
+              <Select disabled={savedCvOptions.length === 0}>
                 <SelectTrigger id="cv-select" className="h-10 w-full">
-                  <SelectValue placeholder="Chọn CV có sẵn" />
+                  <SelectValue placeholder={savedCvOptions.length ? "Chọn CV có sẵn" : "Chưa có CV có sẵn"} />
                 </SelectTrigger>
                 <SelectContent>
                   {savedCvOptions.map((cv) => (
@@ -190,8 +167,8 @@ export function QuickApplyDialog({
                   type="button"
                   variant="secondary"
                   size="sm"
-                  onClick={handleGenerate}
-                  disabled={generating}
+                  disabled title="Tính năng AI hiện chưa khả dụng" onClick={handleGenerate}
+                  
                   className="gap-1.5"
                 >
                   {generating ? (
@@ -218,7 +195,7 @@ export function QuickApplyDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Hủy
           </Button>
-          <Button onClick={handleSubmit} disabled={submitting} className="gap-2">
+          <Button onClick={handleSubmit} disabled title="Ứng tuyển hiện chưa khả dụng" className="gap-2">
             {submitting ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (

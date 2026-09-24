@@ -239,6 +239,7 @@ export const JobPostScalarFieldEnum = {
   salaryMin: 'salaryMin',
   salaryMax: 'salaryMax',
   currency: 'currency',
+  saturdaySchedule: 'saturdaySchedule',
   employmentType: 'employmentType',
   experienceYearsMin: 'experienceYearsMin',
   deadlineAt: 'deadlineAt',

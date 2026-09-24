@@ -4,4 +4,5 @@ const companyRouter = express.Router();
 
 companyRouter.get("/", companyController.getCompanies);
 companyRouter.patch("/:id", companyController.updateCompany);
+companyRouter.get("/:id", companyController.getDetailCompany);
 export default companyRouter;

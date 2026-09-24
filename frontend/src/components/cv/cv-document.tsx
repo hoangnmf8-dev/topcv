@@ -1,5 +1,5 @@
-import type { CVData, TemplateId, ThemeId } from "@/lib/cv-data"
-import { getTheme } from "@/lib/cv-data"
+import type { CVData, TemplateId, ThemeId } from "@/lib/cv-layout"
+import { getTheme } from "@/lib/cv-layout"
 import { Globe, Link2, Mail, MapPin, Phone, User } from "lucide-react"
 import { AtsTemplate, CreativeTemplate, ExecutiveTemplate, GraduateTemplate, SalesTemplate, TechTemplate } from "@/components/cv/cv-template-variants"
 

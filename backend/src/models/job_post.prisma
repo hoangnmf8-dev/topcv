@@ -10,6 +10,14 @@ enum JobStatus {
   @@map("job_status")
 }
 
+enum SaturdaySchedule {
+  WORK
+  OFF
+  ALTERNATING
+  FLEXIBLE
+  @@map("saturday_schedule")
+}
+
 model JobPost {
   id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   companyId          String    @map("company_id") @db.Uuid
@@ -23,6 +31,7 @@ model JobPost {
   salaryMin          Decimal?  @map("salary_min") @db.Decimal(15, 2)
   salaryMax          Decimal?  @map("salary_max") @db.Decimal(15, 2)
   currency           String?   @default("VND") @db.VarChar(10)
+  saturdaySchedule   SaturdaySchedule? @map("saturday_schedule")
   employmentType     String?   @default("full_time") @map("employment_type") @db.VarChar(30)
   experienceYearsMin Decimal?  @map("experience_years_min") @db.Decimal(4, 1)
   deadlineAt         DateTime? @map("deadline_at") @db.Timestamptz

@@ -7,7 +7,7 @@ export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
-  const send = () => { if (!message.trim()) return; setMessages(items => [...items, message.trim()]); setMessage(""); };
+  const send = () => {return;};
   return (
     <div className="global-chat-widget fixed bottom-4 right-4 z-50 sm:bottom-5 sm:right-5">
       {open && (
@@ -28,7 +28,7 @@ export function ChatWidget() {
             </div>
             {messages.map((item,index)=><div key={`${item}-${index}`} className="ml-auto w-fit max-w-[250px] rounded-2xl rounded-tr-sm bg-[#00b14f] px-3 py-2 text-white">{item}</div>)}
             <p className="text-xs text-slate-400">
-              Thường phản hồi trong vài phút
+              Chưa có cuộc trò chuyện
             </p>
           </div>
           <div className="flex gap-2 border-t p-3">
@@ -39,7 +39,7 @@ export function ChatWidget() {
               className="min-w-0 flex-1 rounded-xl bg-slate-100 px-3 py-2 text-sm outline-none"
               placeholder="Nhập tin nhắn..."
             />
-            <button onClick={send} aria-label="Gửi tin nhắn" className="grid size-9 place-items-center rounded-xl bg-[#00b14f] text-white disabled:opacity-50" disabled={!message.trim()}>
+            <button onClick={send} aria-label="Gửi tin nhắn" className="grid size-9 place-items-center rounded-xl bg-[#00b14f] text-white disabled:opacity-50" disabled>
               <Send className="size-4" />
             </button>
           </div>

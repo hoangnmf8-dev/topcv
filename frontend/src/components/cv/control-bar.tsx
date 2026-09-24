@@ -21,7 +21,7 @@ import {
   THEMES,
   type TemplateId,
   type ThemeId,
-} from "@/lib/cv-data"
+} from "@/lib/cv-layout"
 
 function useClickOutside<T extends HTMLElement>(onClose: () => void) {
   const ref = useRef<T>(null)
@@ -174,7 +174,7 @@ export function ControlBar({
         variant="outline"
         size="sm"
         onClick={onOptimize}
-        disabled={aiLoading}
+        disabled title="Tính năng AI hiện chưa khả dụng"
         className="gap-1.5"
       >
         {aiLoading ? (
@@ -185,7 +185,7 @@ export function ControlBar({
         <span className="hidden sm:inline">Tối ưu bằng AI</span>
       </Button>
 
-      <Button variant="outline" size="sm" onClick={onSave} disabled={saveState === "saving"} className="gap-1.5">
+      <Button variant="outline" size="sm" onClick={onSave} disabled title="Lưu CV hiện chưa khả dụng" className="gap-1.5">
         {saveState === "saving" ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : saveState === "saved" ? (
@@ -198,7 +198,7 @@ export function ControlBar({
         </span>
       </Button>
 
-      <Button variant="outline" size="sm" onClick={onSaveAsDefault} disabled={saveState === "saving"} className="gap-1.5 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800">
+      <Button variant="outline" size="sm" onClick={onSaveAsDefault} disabled title="Lưu CV hiện chưa khả dụng" className="gap-1.5 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800">
         {saveState === "default-saved" ? <Check className="h-4 w-4" /> : <Star className="h-4 w-4" />}
         <span className="hidden lg:inline">
           {saveState === "default-saved" ? "Đã đặt mặc định" : "Lưu thành mặc định"}

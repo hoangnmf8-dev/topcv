@@ -2031,6 +2031,7 @@ export const JobPostScalarFieldEnum = {
   salaryMin: 'salaryMin',
   salaryMax: 'salaryMax',
   currency: 'currency',
+  saturdaySchedule: 'saturdaySchedule',
   employmentType: 'employmentType',
   experienceYearsMin: 'experienceYearsMin',
   deadlineAt: 'deadlineAt',
@@ -2389,6 +2390,20 @@ export type EnumVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'VerificationStatus[]'
  */
 export type ListEnumVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SaturdaySchedule'
+ */
+export type EnumSaturdayScheduleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SaturdaySchedule'>
+    
+
+
+/**
+ * Reference to a field of type 'SaturdaySchedule[]'
+ */
+export type ListEnumSaturdayScheduleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SaturdaySchedule[]'>
     
 
 

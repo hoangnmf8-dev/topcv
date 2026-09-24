@@ -3,9 +3,6 @@ import { hashString } from "../utils/hashing";
 import { prisma } from "../utils/prisma";
 
 class CandidateService {
-  constructor() {
-
-  };
   async createCandidate(candidateInfo: CandidateInfoRegister) {
     const {fullName, email, phone, password, confirmPassword, role} = candidateInfo;
     return await prisma.$transaction(async (tx) => {
@@ -25,6 +22,9 @@ class CandidateService {
       });
       return newCandidateAccount;
     });
+  };
+  async updateCandidate() {
+
   };
 };
 const candidateService = new CandidateService();

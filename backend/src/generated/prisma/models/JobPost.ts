@@ -51,6 +51,7 @@ export type JobPostMinAggregateOutputType = {
   salaryMin: runtime.Decimal | null
   salaryMax: runtime.Decimal | null
   currency: string | null
+  saturdaySchedule: $Enums.SaturdaySchedule | null
   employmentType: string | null
   experienceYearsMin: runtime.Decimal | null
   deadlineAt: Date | null
@@ -75,6 +76,7 @@ export type JobPostMaxAggregateOutputType = {
   salaryMin: runtime.Decimal | null
   salaryMax: runtime.Decimal | null
   currency: string | null
+  saturdaySchedule: $Enums.SaturdaySchedule | null
   employmentType: string | null
   experienceYearsMin: runtime.Decimal | null
   deadlineAt: Date | null
@@ -99,6 +101,7 @@ export type JobPostCountAggregateOutputType = {
   salaryMin: number
   salaryMax: number
   currency: number
+  saturdaySchedule: number
   employmentType: number
   experienceYearsMin: number
   deadlineAt: number
@@ -137,6 +140,7 @@ export type JobPostMinAggregateInputType = {
   salaryMin?: true
   salaryMax?: true
   currency?: true
+  saturdaySchedule?: true
   employmentType?: true
   experienceYearsMin?: true
   deadlineAt?: true
@@ -161,6 +165,7 @@ export type JobPostMaxAggregateInputType = {
   salaryMin?: true
   salaryMax?: true
   currency?: true
+  saturdaySchedule?: true
   employmentType?: true
   experienceYearsMin?: true
   deadlineAt?: true
@@ -185,6 +190,7 @@ export type JobPostCountAggregateInputType = {
   salaryMin?: true
   salaryMax?: true
   currency?: true
+  saturdaySchedule?: true
   employmentType?: true
   experienceYearsMin?: true
   deadlineAt?: true
@@ -296,6 +302,7 @@ export type JobPostGroupByOutputType = {
   salaryMin: runtime.Decimal | null
   salaryMax: runtime.Decimal | null
   currency: string | null
+  saturdaySchedule: $Enums.SaturdaySchedule | null
   employmentType: string | null
   experienceYearsMin: runtime.Decimal | null
   deadlineAt: Date | null
@@ -343,6 +350,7 @@ export type JobPostWhereInput = {
   salaryMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"JobPost"> | string | null
+  saturdaySchedule?: Prisma.EnumSaturdayScheduleNullableFilter<"JobPost"> | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.StringNullableFilter<"JobPost"> | string | null
   experienceYearsMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
@@ -373,6 +381,7 @@ export type JobPostOrderByWithRelationInput = {
   salaryMin?: Prisma.SortOrderInput | Prisma.SortOrder
   salaryMax?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
+  saturdaySchedule?: Prisma.SortOrderInput | Prisma.SortOrder
   employmentType?: Prisma.SortOrderInput | Prisma.SortOrder
   experienceYearsMin?: Prisma.SortOrderInput | Prisma.SortOrder
   deadlineAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -406,6 +415,7 @@ export type JobPostWhereUniqueInput = Prisma.AtLeast<{
   salaryMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"JobPost"> | string | null
+  saturdaySchedule?: Prisma.EnumSaturdayScheduleNullableFilter<"JobPost"> | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.StringNullableFilter<"JobPost"> | string | null
   experienceYearsMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
@@ -436,6 +446,7 @@ export type JobPostOrderByWithAggregationInput = {
   salaryMin?: Prisma.SortOrderInput | Prisma.SortOrder
   salaryMax?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
+  saturdaySchedule?: Prisma.SortOrderInput | Prisma.SortOrder
   employmentType?: Prisma.SortOrderInput | Prisma.SortOrder
   experienceYearsMin?: Prisma.SortOrderInput | Prisma.SortOrder
   deadlineAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -468,6 +479,7 @@ export type JobPostScalarWhereWithAggregatesInput = {
   salaryMin?: Prisma.DecimalNullableWithAggregatesFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableWithAggregatesFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"JobPost"> | string | null
+  saturdaySchedule?: Prisma.EnumSaturdayScheduleNullableWithAggregatesFilter<"JobPost"> | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.StringNullableWithAggregatesFilter<"JobPost"> | string | null
   experienceYearsMin?: Prisma.DecimalNullableWithAggregatesFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.DateTimeNullableWithAggregatesFilter<"JobPost"> | Date | string | null
@@ -488,6 +500,7 @@ export type JobPostCreateInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -518,6 +531,7 @@ export type JobPostUncheckedCreateInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -540,6 +554,7 @@ export type JobPostUpdateInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -570,6 +585,7 @@ export type JobPostUncheckedUpdateInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -596,6 +612,7 @@ export type JobPostCreateManyInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -616,6 +633,7 @@ export type JobPostUpdateManyMutationInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -640,6 +658,7 @@ export type JobPostUncheckedUpdateManyInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -679,6 +698,7 @@ export type JobPostCountOrderByAggregateInput = {
   salaryMin?: Prisma.SortOrder
   salaryMax?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  saturdaySchedule?: Prisma.SortOrder
   employmentType?: Prisma.SortOrder
   experienceYearsMin?: Prisma.SortOrder
   deadlineAt?: Prisma.SortOrder
@@ -709,6 +729,7 @@ export type JobPostMaxOrderByAggregateInput = {
   salaryMin?: Prisma.SortOrder
   salaryMax?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  saturdaySchedule?: Prisma.SortOrder
   employmentType?: Prisma.SortOrder
   experienceYearsMin?: Prisma.SortOrder
   deadlineAt?: Prisma.SortOrder
@@ -733,6 +754,7 @@ export type JobPostMinOrderByAggregateInput = {
   salaryMin?: Prisma.SortOrder
   salaryMax?: Prisma.SortOrder
   currency?: Prisma.SortOrder
+  saturdaySchedule?: Prisma.SortOrder
   employmentType?: Prisma.SortOrder
   experienceYearsMin?: Prisma.SortOrder
   deadlineAt?: Prisma.SortOrder
@@ -848,6 +870,10 @@ export type JobPostUncheckedUpdateManyWithoutCategoryNestedInput = {
   deleteMany?: Prisma.JobPostScalarWhereInput | Prisma.JobPostScalarWhereInput[]
 }
 
+export type NullableEnumSaturdayScheduleFieldUpdateOperationsInput = {
+  set?: $Enums.SaturdaySchedule | null
+}
+
 export type EnumJobStatusFieldUpdateOperationsInput = {
   set?: $Enums.JobStatus
 }
@@ -959,6 +985,7 @@ export type JobPostCreateWithoutApplicationsInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -988,6 +1015,7 @@ export type JobPostUncheckedCreateWithoutApplicationsInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1025,6 +1053,7 @@ export type JobPostUpdateWithoutApplicationsInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1054,6 +1083,7 @@ export type JobPostUncheckedUpdateWithoutApplicationsInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1075,6 +1105,7 @@ export type JobPostCreateWithoutCompanyInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1103,6 +1134,7 @@ export type JobPostUncheckedCreateWithoutCompanyInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1158,6 +1190,7 @@ export type JobPostScalarWhereInput = {
   salaryMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"JobPost"> | string | null
+  saturdaySchedule?: Prisma.EnumSaturdayScheduleNullableFilter<"JobPost"> | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.StringNullableFilter<"JobPost"> | string | null
   experienceYearsMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
@@ -1178,6 +1211,7 @@ export type JobPostCreateWithoutCategoryInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1206,6 +1240,7 @@ export type JobPostUncheckedCreateWithoutCategoryInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1254,6 +1289,7 @@ export type JobPostCreateWithoutJobTitleInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1282,6 +1318,7 @@ export type JobPostUncheckedCreateWithoutJobTitleInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1330,6 +1367,7 @@ export type JobPostCreateWithoutLocationInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1358,6 +1396,7 @@ export type JobPostUncheckedCreateWithoutLocationInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1406,6 +1445,7 @@ export type JobPostCreateWithoutSavedJobsInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1435,6 +1475,7 @@ export type JobPostUncheckedCreateWithoutSavedJobsInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1472,6 +1513,7 @@ export type JobPostUpdateWithoutSavedJobsInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1501,6 +1543,7 @@ export type JobPostUncheckedUpdateWithoutSavedJobsInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1525,6 +1568,7 @@ export type JobPostCreateManyCompanyInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1545,6 +1589,7 @@ export type JobPostUpdateWithoutCompanyInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1573,6 +1618,7 @@ export type JobPostUncheckedUpdateWithoutCompanyInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1598,6 +1644,7 @@ export type JobPostUncheckedUpdateManyWithoutCompanyInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1621,6 +1668,7 @@ export type JobPostCreateManyCategoryInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1641,6 +1689,7 @@ export type JobPostUpdateWithoutCategoryInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1669,6 +1718,7 @@ export type JobPostUncheckedUpdateWithoutCategoryInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1694,6 +1744,7 @@ export type JobPostUncheckedUpdateManyWithoutCategoryInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1717,6 +1768,7 @@ export type JobPostCreateManyJobTitleInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1737,6 +1789,7 @@ export type JobPostUpdateWithoutJobTitleInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1765,6 +1818,7 @@ export type JobPostUncheckedUpdateWithoutJobTitleInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1790,6 +1844,7 @@ export type JobPostUncheckedUpdateManyWithoutJobTitleInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1813,6 +1868,7 @@ export type JobPostCreateManyLocationInput = {
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
   employmentType?: string | null
   experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Date | string | null
@@ -1833,6 +1889,7 @@ export type JobPostUpdateWithoutLocationInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1861,6 +1918,7 @@ export type JobPostUncheckedUpdateWithoutLocationInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1886,6 +1944,7 @@ export type JobPostUncheckedUpdateManyWithoutLocationInput = {
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
   employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1950,6 +2009,7 @@ export type JobPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
+  saturdaySchedule?: boolean
   employmentType?: boolean
   experienceYearsMin?: boolean
   deadlineAt?: boolean
@@ -1981,6 +2041,7 @@ export type JobPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
+  saturdaySchedule?: boolean
   employmentType?: boolean
   experienceYearsMin?: boolean
   deadlineAt?: boolean
@@ -2009,6 +2070,7 @@ export type JobPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
+  saturdaySchedule?: boolean
   employmentType?: boolean
   experienceYearsMin?: boolean
   deadlineAt?: boolean
@@ -2037,6 +2099,7 @@ export type JobPostSelectScalar = {
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
+  saturdaySchedule?: boolean
   employmentType?: boolean
   experienceYearsMin?: boolean
   deadlineAt?: boolean
@@ -2048,7 +2111,7 @@ export type JobPostSelectScalar = {
   deletedAt?: boolean
 }
 
-export type JobPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "jobTitleId" | "jobCategoryId" | "locationId" | "title" | "description" | "requirements" | "benefits" | "salaryMin" | "salaryMax" | "currency" | "employmentType" | "experienceYearsMin" | "deadlineAt" | "status" | "publishedAt" | "isBoosted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobPost"]>
+export type JobPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "jobTitleId" | "jobCategoryId" | "locationId" | "title" | "description" | "requirements" | "benefits" | "salaryMin" | "salaryMax" | "currency" | "saturdaySchedule" | "employmentType" | "experienceYearsMin" | "deadlineAt" | "status" | "publishedAt" | "isBoosted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobPost"]>
 export type JobPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
@@ -2094,6 +2157,7 @@ export type $JobPostPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     salaryMin: runtime.Decimal | null
     salaryMax: runtime.Decimal | null
     currency: string | null
+    saturdaySchedule: $Enums.SaturdaySchedule | null
     employmentType: string | null
     experienceYearsMin: runtime.Decimal | null
     deadlineAt: Date | null
@@ -2544,6 +2608,7 @@ export interface JobPostFieldRefs {
   readonly salaryMin: Prisma.FieldRef<"JobPost", 'Decimal'>
   readonly salaryMax: Prisma.FieldRef<"JobPost", 'Decimal'>
   readonly currency: Prisma.FieldRef<"JobPost", 'String'>
+  readonly saturdaySchedule: Prisma.FieldRef<"JobPost", 'SaturdaySchedule'>
   readonly employmentType: Prisma.FieldRef<"JobPost", 'String'>
   readonly experienceYearsMin: Prisma.FieldRef<"JobPost", 'Decimal'>
   readonly deadlineAt: Prisma.FieldRef<"JobPost", 'DateTime'>
