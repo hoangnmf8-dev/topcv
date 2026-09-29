@@ -6,6 +6,7 @@ import companyRouter from "./company.route";
 import jobPostRouter from "./job-post.route";
 import locationRouter from "./location.route";
 import jobCategoryRouter from "./job-category.route";
+import aiRouter from "./ai.route";
 
 const indexRouter = express.Router();
 indexRouter.use("/auth", authRouter);
@@ -15,4 +16,5 @@ indexRouter.use("/job-post", jobPostRouter);
 indexRouter.use("/location", locationRouter);
 indexRouter.use("/job-category", jobCategoryRouter);
 indexRouter.use("/candidate", candidateRouter);
+indexRouter.use("/ai", aiRouter);
 export default indexRouter;

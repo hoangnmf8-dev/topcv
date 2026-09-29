@@ -6,6 +6,7 @@ import { vi } from "react-day-picker/locale";
 import { formatJobSalary } from "@/lib/job-salary";
 import { httpRequest } from "@/lib/utils";
 import axios from "axios";
+import aiService from "@/services/ai.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -13,6 +14,7 @@ import {
   CalendarDays,
   UsersRound,
   Sparkles,
+  Loader2,
   ArrowLeft,
   X,
 } from "lucide-react";
@@ -337,75 +339,49 @@ function ContentEditor({
   change: (v: string) => void;
   job: Data;
 }) {
-  const [prompt, setPrompt] = useState("");
-  const generate = () => {
-    const head =
-      label === "Mô tả công việc"
-        ? `Bạn sẽ đảm nhiệm vị trí ${job.title}, góp phần phát triển hoạt động ${job.category.toLowerCase()} của doanh nghiệp.`
-        : label === "Yêu cầu ứng viên"
-          ? `Chúng tôi tìm kiếm ứng viên phù hợp với vị trí ${job.title}.`
-          : `Các quyền lợi dành cho vị trí ${job.title}:`;
-    const lines =
-      label === "Mô tả công việc"
-        ? [
-            "Chủ động thực hiện các nhiệm vụ chuyên môn theo mục tiêu được giao.",
-            "Phối hợp với các bộ phận liên quan để bảo đảm tiến độ và chất lượng công việc.",
-            "Theo dõi kết quả, đề xuất giải pháp cải tiến và báo cáo định kỳ.",
-          ]
-        : label === "Yêu cầu ứng viên"
-          ? [
-              `${job.experience} kinh nghiệm ở vị trí tương đương.`,
-              job.overviewRequirements,
-              "Có kỹ năng giao tiếp, phối hợp và giải quyết vấn đề tốt.",
-            ]
-          : [
-              "Thu nhập cạnh tranh và thưởng theo hiệu quả công việc.",
-              "Được tham gia đầy đủ các chế độ bảo hiểm.",
-              "Có cơ hội đào tạo và phát triển nghề nghiệp.",
-            ];
-    change(
-      `${head}${prompt.trim() ? ` ${prompt.trim()}` : ""}\n\n${lines.map((x) => `- ${x}`).join("\n")}`,
-    );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const pending = useRef(false);
+  const generate = async () => {
+    if (pending.current || !value.trim()) return;
+    pending.current = true;
+    setLoading(true);
+    setError("");
+    try {
+      const task = label === "Mô tả công việc" ? "job_description"
+        : label === "Yêu cầu ứng viên" ? "job_requirements" : "job_benefits";
+      const response = await aiService.generateTextAI(task, {
+        currentText: value, jobTitle: job.title,
+      });
+      if (!response.success || typeof response.data !== "string" || !response.data.trim()) {
+        throw new Error(response.message || "AI chưa trả về nội dung. Vui lòng thử lại.");
+      }
+      change(response.data.trim());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Không thể cải thiện nội dung. Vui lòng thử lại.");
+    } finally {
+      pending.current = false;
+      setLoading(false);
+    }
   };
   return (
     <section className="rounded-2xl border border-slate-200 p-5">
-      <h2 className="text-lg font-bold">{label}</h2>
-      <p className="mt-1 text-sm text-slate-500">
-        Nhập tự do. Dùng dòng trống để tách đoạn; bắt đầu dòng bằng “-” để tạo
-        gạch đầu dòng.
-      </p>
-      <div className="mt-4 rounded-xl bg-emerald-50 p-4">
-        <label className="text-sm font-bold text-[#087b43]">
-          Bạn muốn AI viết nội dung như thế nào?
-          <textarea
-            rows={2}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Ví dụ: Văn phong chuyên nghiệp, nhấn mạnh khách hàng SME và kỹ năng tư vấn..."
-            className="mt-2 w-full rounded-xl border border-emerald-200 bg-white p-3 font-normal text-slate-700"
-          />
-        </label>
-        <button
-          type="button"
-          onClick={generate}
-          className="mt-3 flex items-center gap-2 rounded-xl bg-[#00b14f] px-4 py-2.5 font-bold text-white"
-        >
-          <Sparkles className="size-4" />
-          Tạo nội dung bằng AI
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-bold">{label}</h2>
+        <button type="button" onClick={generate} disabled={loading || !value.trim()}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#00b14f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#009b45] disabled:opacity-60">
+          {loading ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+          {loading ? "Đang cải thiện..." : "Cải thiện văn phong với AI"}
         </button>
       </div>
-      <label className="mt-4 block text-sm font-bold">
-        Nội dung hiển thị
-        <textarea
-          rows={10}
-          value={value}
-          onChange={(e) => change(e.target.value)}
-          className="mt-2 w-full rounded-xl border p-4 font-normal leading-7"
-        />
-      </label>
+      <textarea aria-label={label} rows={10} value={value} readOnly={loading}
+        onChange={(e) => change(e.target.value)}
+        className="mt-4 w-full rounded-xl border p-4 font-normal leading-7" />
+      {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
     </section>
   );
 }
+
 function Preview({ data }: { data: Data & { location: string } }) {
   return (
     <aside className="h-fit min-w-0 rounded-2xl bg-white p-4 shadow-sm sm:p-5 lg:sticky lg:top-24">

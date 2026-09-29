@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Loader2, Plus, Trash2, Wand2 } from "lucide-react"
+import aiService from "@/services/ai.service"
 import { Field, TextArea, TextInput } from "@/components/cv/field"
 import { uid, type ExperienceItem } from "@/lib/cv-layout"
 
@@ -71,7 +72,27 @@ function ExperienceCard({
   const setBullets = (text: string) =>
     onUpdate({ bullets: text.split("\n") })
 
-  const improve = async () => {setError("Tính năng AI hiện chưa khả dụng.");}
+  const pending = useRef(false)
+  const improve = async () => {
+    if (pending.current || !bulletsText.trim()) return
+    pending.current = true
+    setLoading(true)
+    setError("")
+    try {
+      const response = await aiService.generateTextAI("experience", {
+        currentText: bulletsText, company: exp.company, role: exp.role, timeline: exp.timeline,
+      })
+      if (!response.success || typeof response.data !== "string" || !response.data.trim()) {
+        throw new Error(response.message || "AI chưa trả về nội dung. Vui lòng thử lại.")
+      }
+      onUpdate({ bullets: response.data.trim().split("\n").map((line: string) => line.replace(/^\s*[-*•]\s+/, "")).filter((line: string) => line.trim()) })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Không thể cải thiện nội dung. Vui lòng thử lại.")
+    } finally {
+      pending.current = false
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="rounded-xl border border-border bg-card p-3.5">
@@ -113,18 +134,19 @@ function ExperienceCard({
           <button
             type="button"
             onClick={improve}
-            disabled title="Tính năng AI hiện chưa khả dụng"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-2 py-1 text-xs font-semibold text-primary transition-colors hover:bg-primary/10 disabled:opacity-60"
+            disabled={loading || !bulletsText.trim()}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#00b14f] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#009b45] disabled:opacity-60"
           >
             {loading ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <Wand2 className="h-3.5 w-3.5" />
             )}
-            Cải thiện văn phong AI
+            {loading ? "Đang cải thiện..." : "Cải thiện văn phong với AI"}
           </button>
         </div>
         <TextArea
+          readOnly={loading}
           value={bulletsText}
           onChange={(e) => setBullets(e.target.value)}
           rows={4}

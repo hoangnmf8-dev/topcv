@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Loader2, Sparkles } from "lucide-react"
 import { TextArea } from "@/components/cv/field"
+import aiService from "@/services/ai.service"
 
 export function ObjectiveSection({
   value,
@@ -14,9 +15,15 @@ export function ObjectiveSection({
   context: string
 }) {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-
-  const generate = async () => {setError("Tính năng AI hiện chưa khả dụng.");}
+  const [error, setError] = useState("");
+  const generate = async () => {
+    setLoading(true);
+    const reponse = await aiService.generateTextAI("objective", {
+      currentText: value
+    })
+    onChange(reponse.data);
+    setLoading(false);
+  }
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -26,8 +33,8 @@ export function ObjectiveSection({
         </p>
         <button
           type="button"
+          disabled={loading}
           onClick={generate}
-          disabled title="Tính năng AI hiện chưa khả dụng"
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
         >
           {loading ? (
@@ -35,7 +42,7 @@ export function ObjectiveSection({
           ) : (
             <Sparkles className="h-3.5 w-3.5" />
           )}
-          Gemini AI viết giúp
+          Cải thiện văn phong với AI
         </button>
       </div>
       <TextArea
