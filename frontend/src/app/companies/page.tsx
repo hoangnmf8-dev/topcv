@@ -1,23 +1,21 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Building2, Search, X } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
-const companies = [] as string[][];
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { httpRequest } from "@/lib/utils";
+type Directory={items:{id:string;code:string;name:string;description:string|null;logoUrl:string|null;address:string|null;_count:{jobPosts:number}}[];total:number;totalPages:number};
 
 export default function CompaniesPage() {
   const [query, setQuery] = useState("");
   const [keyword, setKeyword] = useState("");
-  const results = useMemo(
-    () =>
-      companies.filter(([name, field]) =>
-        `${name} ${field}`.toLowerCase().includes(keyword.toLowerCase()),
-      ),
-    [keyword],
-  );
-  const search = () => setKeyword(query.trim());
+  const [page,setPage]=useState(1);
+  const directory=useQuery({queryKey:["company-directory",keyword,page],placeholderData:keepPreviousData,queryFn:async({signal})=>(await httpRequest.get<Directory>("/company/directory",{signal,params:{page,query:keyword}})).data});
+  const results=directory.data?.items??[];
+  const search=()=>{setKeyword(query.trim());setPage(1);};
   return (
     <main className="route-home min-h-screen bg-[#f6f8f7]">
       <SiteHeader />
@@ -58,7 +56,7 @@ export default function CompaniesPage() {
               {keyword ? `Kết quả cho “${keyword}”` : "Thương hiệu tiêu biểu"}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              {results.length} công ty phù hợp và đang có cơ hội tuyển dụng.
+              {directory.data?.total ?? "…"} công ty phù hợp.
             </p>
           </div>
           {keyword && (
@@ -66,6 +64,7 @@ export default function CompaniesPage() {
               onClick={() => {
                 setQuery("");
                 setKeyword("");
+                setPage(1);
               }}
               className="inline-flex items-center gap-1 rounded-full border bg-white px-3 py-1.5 text-sm font-bold"
             >
@@ -74,31 +73,27 @@ export default function CompaniesPage() {
             </button>
           )}
         </div>
-        {results.length ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {results.map(([name, field], i) => (
+        {directory.isPending ? <p role="status">Đang tải công ty...</p> : directory.isError ? <p role="alert">Không tải được danh sách công ty. <button onClick={()=>void directory.refetch()} className="text-emerald-700">Thử lại</button></p> : results.length ? (
+          <div aria-busy={directory.isFetching} className={"grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-opacity " + (directory.isFetching?"opacity-60":"")}>
+            {results.map((company) => (
               <Link
-                href={`/companies/${name.toLowerCase().replaceAll(" ", "-")}`}
-                key={name}
+                href={`/companies/${company.code}`}
+                key={company.id}
                 className="group rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#00b14f]/40 hover:shadow-md"
               >
                 <div className="flex items-start justify-between">
                   <span className="grid size-12 place-items-center rounded-xl bg-[#e7f9ef] text-lg font-black text-[#087b43]">
-                    {name
-                      .split(" ")
-                      .map((x) => x[0])
-                      .slice(0, 2)
-                      .join("")}
+                    {company.logoUrl ? <img src={company.logoUrl} alt="" className="size-12 rounded-xl bg-white object-contain" /> : <Building2 className="size-6" />}
                   </span>
                   <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700">
-                    Pro Company
+                    Doanh nghiệp
                   </span>
                 </div>
-                <h3 className="mt-5 text-lg font-bold">{name}</h3>
-                <p className="mt-1 text-sm text-slate-500">{field}</p>
+                <h3 className="mt-5 text-lg font-bold">{company.name}</h3>
+                <p className="mt-1 line-clamp-3 whitespace-pre-line text-sm text-slate-500">{company.description || "Chưa cập nhật giới thiệu."}</p>
                 <p className="mt-5 flex items-center gap-1.5 text-sm font-bold text-[#008f40]">
                   <Building2 className="size-4" />
-                  {12 + i * 5} việc đang tuyển
+                  {company._count.jobPosts} việc đang tuyển
                   <ArrowRight className="ml-auto size-4 transition group-hover:translate-x-1" />
                 </p>
               </Link>
@@ -110,6 +105,7 @@ export default function CompaniesPage() {
           </div>
         )}
       </section>
+      {directory.data && directory.data.totalPages>1 && <nav aria-label="Phân trang công ty" className="mb-10 flex justify-center gap-5"><button disabled={page===1||directory.isFetching} onClick={()=>setPage(p=>p-1)} className="disabled:opacity-40">Trước</button><span>{page}/{directory.data.totalPages}</span><button disabled={page>=directory.data.totalPages||directory.isFetching} onClick={()=>setPage(p=>p+1)} className="disabled:opacity-40">Sau</button></nav>}
       <SiteFooter />
     </main>
   );

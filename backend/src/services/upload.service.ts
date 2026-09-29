@@ -20,7 +20,16 @@ import { ERROR_MESSAGE } from "../constants/message.constant";
 import { ERROR_CODE } from "../constants/code.constant";
 import { AppError } from "../exceptions";
 
+const UUID_V7_PATTERN =
+  "[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
+
 class UploadService {
+  private readonly extensionByContentType: Record<string, string> = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+    "application/pdf": "pdf",
+  };
   private uploadRules: Record<
     UploadPurpose,
     {
@@ -33,34 +42,48 @@ class UploadService {
     avatar: {
       folder: "candidates",
       allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-      maxSize: 5 * UPLOAD.IMAGE_SIZE,
+      maxSize: UPLOAD.IMAGE_SIZE,
       name: "avatar",
     },
     companyLogo: {
       folder: "companies",
       allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-      maxSize: 5 * UPLOAD.IMAGE_SIZE,
+      maxSize: UPLOAD.IMAGE_SIZE,
       name: "logo",
     },
     companyBanner: {
       folder: "companies",
       allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-      maxSize: 10 * UPLOAD.IMAGE_SIZE,
+      maxSize: UPLOAD.IMAGE_SIZE,
       name: "banner",
     },
     cv: {
       folder: "candidates",
       allowedTypes: ["application/pdf"],
-      maxSize: 10 * UPLOAD.IMAGE_SIZE,
+      maxSize: UPLOAD.CV_SIZE,
       name: "cv",
     },
   };
-  getFileExtension(fileName: string): string {
-    const extension = fileName.split(".").pop()?.toLowerCase(); //kiểm tra đuôi file
-    if (!extension || !/^[a-z0-9]+$/.test(extension)) {
-      throw new Error("Tên file không hợp lệ");
-    }
+  private getFileExtension(contentType: string): string {
+    const extension = this.extensionByContentType[contentType];
+    if (!extension) throw new Error("Định dạng file không được hỗ trợ");
     return extension;
+  }
+
+  private isExpectedObjectKey(
+    accountId: string,
+    purpose: UploadPurpose,
+    objectKey: string,
+  ): boolean {
+    const rule = this.uploadRules[purpose];
+    const extensionPattern = purpose === "cv" ? "pdf" : "jpg|png|webp";
+    const escapedAccountId = accountId.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp(
+      `^seed/topcv/${rule.folder}/${escapedAccountId}/${rule.name}-${UUID_V7_PATTERN}\\.(${extensionPattern})$`,
+      "i",
+    );
+
+    return pattern.test(objectKey);
   }
   validateFile(input: PresignUploadInput): void {
     const rule = this.uploadRules[input.purpose];
@@ -74,7 +97,7 @@ class UploadService {
   async createUploadUrl(accountId: string, input: PresignUploadInput) {
     this.validateFile(input);
     const rule = this.uploadRules[input.purpose];
-    const extension = this.getFileExtension(input.fileName);
+    const extension = this.getFileExtension(input.contentType);
     const objectKey = `seed/topcv/${rule.folder}/${accountId}/${rule.name}-${uuidv7()}.${extension}`;
     const command = new PutObjectCommand({
       Bucket:
@@ -164,12 +187,7 @@ class UploadService {
     accountId: string,
     input: { objectKey: string; title: string; isDefault?: boolean },
   ) {
-    if (
-      !input.objectKey.startsWith(
-        "seed/topcv/candidates/" + accountId + "/cv-",
-      ) ||
-      !input.objectKey.endsWith(".pdf")
-    ) {
+    if (!this.isExpectedObjectKey(accountId, "cv", input.objectKey)) {
       throw new AppError("Key CV không hợp lệ", "INVALID_CV_KEY", 400);
     }
     const candidate = await prisma.candidate.findFirst({
@@ -235,8 +253,7 @@ class UploadService {
       );
     }
     const rule = this.uploadRules[purpose];
-    const expectedPrefix = `seed/topcv/candidates/${accountId}/avatar-`;
-    if (!objectKey.startsWith(expectedPrefix)) {
+    if (!this.isExpectedObjectKey(accountId, purpose, objectKey)) {
       throw new Error("File không thuộc tài khoản hoặc sai mục đích upload");
     }
     const metadata = await r2Client.send(
@@ -256,8 +273,8 @@ class UploadService {
       throw new Error("Dung lượng file không hợp lệ");
     }
     //Xóa ảnh cũ trên r2 và cập nhật lại objectKey trong csdl
+    this.deleteFileExists(candidate.avatarKey!)
     const imageUrl = await this.createImageUrl(objectKey);
-
     await prisma.candidate.update({
       where: { accountId },
       data: {
@@ -290,8 +307,7 @@ class UploadService {
       );
     }
     const rule = this.uploadRules[purpose];
-    const expectedPrefix = `seed/topcv/companies/${accountId}/${rule.name}-`;
-    if (!objectKey.startsWith(expectedPrefix)) {
+    if (!this.isExpectedObjectKey(accountId, purpose, objectKey)) {
       throw new Error("File không thuộc tài khoản hoặc sai mục đích upload");
     }
     const metadata = await r2Client.send(

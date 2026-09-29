@@ -1,40 +1,253 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { candidateService, type ProfileInput } from "@/services/candidate.service";
 import locationService from "@/services/location.service";
 import { useCandidateStore } from "@/stores/candidate.store";
 import { useAccountStore } from "@/stores/auth.store";
 import type { Candidate, Provice } from "@/types";
-export function CandidateProfileForm(){
-  const accountId=useAccountStore(s=>s.account?.id);
-  const query=useQuery({queryKey:["candidate-profile",accountId],queryFn:candidateService.profile,enabled:!!accountId});
-  if(query.isPending)return <p className="p-6">Đang tải hồ sơ...</p>;
-  if(query.isError)return <p className="p-6 text-red-600">{query.error.message} <button onClick={()=>query.refetch()}>Thử lại</button></p>;
-  return <ProfileEditor key={JSON.stringify(query.data.data)} profile={query.data.data}/>;
-}
-function ProfileEditor({profile}:{profile:Candidate}){
-  const [draft,setDraft]=useState<ProfileInput>({fullName:profile.fullName,phone:profile.phone??"",headline:profile.headline??"",careerGoal:profile.careerGoal??"",experienceYears:Number(profile.experienceYears??0),currentLocationId:profile.currentLocationId?String(profile.currentLocationId):null,isSearchable:profile.isSearchable??false});
-  const client=useQueryClient();
-  const provinces=useQuery({queryKey:["profile-provinces"],queryFn:async()=>{const r=await locationService.getProvince();if(!r.success)throw new Error(r.message);return r.data as Provice[];}});
-  const mutation=useMutation({mutationFn:candidateService.update,onSuccess:async result=>{
-    const current=useCandidateStore.getState().candidate;
-    useCandidateStore.getState().updateCandidate({...result.data,avatarUrl:current?.avatarUrl??null});
-    useAccountStore.getState().updateCandidate(result.data);
-    toast.success(result.message);
-    await client.invalidateQueries({queryKey:["candidate-profile"]});
-  },onError:error=>toast.error(error.message)});
-  function submit(event:FormEvent){event.preventDefault();mutation.mutate(draft);}
-  const input="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 font-normal";
-  return <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="text-xl font-bold">Chỉnh sửa hồ sơ ứng viên</h2><form onSubmit={submit}><fieldset disabled={mutation.isPending} className="mt-5 grid gap-5 sm:grid-cols-2 disabled:opacity-60">
-    <label className="text-sm font-semibold">Họ và tên<input required maxLength={150} className={input} value={draft.fullName} onChange={e=>setDraft({...draft,fullName:e.target.value})}/></label>
-    <label className="text-sm font-semibold">Số điện thoại<input type="tel" maxLength={30} className={input} value={draft.phone} onChange={e=>setDraft({...draft,phone:e.target.value})}/></label>
-    <label className="text-sm font-semibold">Tiêu đề nghề nghiệp<input maxLength={255} className={input} value={draft.headline} onChange={e=>setDraft({...draft,headline:e.target.value})}/></label>
-    <label className="text-sm font-semibold">Số năm kinh nghiệm<input required type="number" min={0} max={80} step="0.1" className={input} value={draft.experienceYears} onChange={e=>setDraft({...draft,experienceYears:Number(e.target.value)})}/></label>
-    <label className="text-sm font-semibold">Địa điểm hiện tại<select className={input} value={draft.currentLocationId??""} onChange={e=>setDraft({...draft,currentLocationId:e.target.value||null})}><option value="">Chưa chọn địa điểm</option>{provinces.data?.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select>{provinces.isError&&<button type="button" onClick={()=>provinces.refetch()} className="text-red-600">Không tải được địa điểm. Thử lại</button>}</label>
-    <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.isSearchable} onChange={e=>setDraft({...draft,isSearchable:e.target.checked})}/>Cho phép nhà tuyển dụng tìm thấy hồ sơ</label>
-    <label className="text-sm font-semibold sm:col-span-2">Mục tiêu nghề nghiệp<textarea rows={4} maxLength={10000} className={input} value={draft.careerGoal} onChange={e=>setDraft({...draft,careerGoal:e.target.value})}/></label>
-    <div className="sm:col-span-2"><button className="rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white">{mutation.isPending?"Đang lưu...":"Lưu hồ sơ"}</button></div>
-  </fieldset></form></section>;
+import { provinceKey } from "@/cache-key";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useForm, useWatch } from "react-hook-form";
+import {
+  CandidateInput,
+  candidateProfileSchema,
+} from "@/validators/candidate.validate";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FieldError } from "./ui/field";
+import { useImagePreview } from "@/lib/hook";
+import uploadService from "@/services/upload.service";
+import candidateService from "@/services/candidate.service";
+
+export function CandidateProfileForm() {
+  const id = useId();
+  const { candidate, setCandidate } = useCandidateStore((state) => state);
+  const [avatarFile, setAvatarUrl] = useState<File>();
+  const avatarUrl = useImagePreview(avatarFile, candidate?.avatarUrl ?? "");
+  const {
+    data: provinces,
+    isFetching: provincesFetching,
+    isError: provincesError,
+    refetch,
+  } = useQuery({
+    queryKey: provinceKey,
+    queryFn: ({ signal }) => locationService.getProvince(signal),
+  });
+  const { register, formState, control, handleSubmit, reset, clearErrors, } =
+    useForm<CandidateInput>({
+      resolver: zodResolver(candidateProfileSchema),
+      mode: "onChange",
+      defaultValues: {
+        fullName: candidate?.fullName,
+        phone: candidate?.phone ?? "",
+        headline: candidate?.headline ?? "",
+        experienceYears: candidate?.experienceYears ?? 0,
+        address: candidate?.address,
+        isSearchable: candidate?.isSearchable,
+      },
+    });
+  const input =
+    "mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 " +
+    "outline-none focus:border-emerald-500 focus:ring-2 " +
+    "focus:ring-emerald-100";
+  const careerGoal = useWatch({ control, name: "careerGoal" });
+  async function onSubmit(values: CandidateInput) {
+    const { avatar, ...newValue } = values;
+    try {
+      if (avatar && avatar instanceof File) {
+        const avatarPresignedResponse = await uploadService.getPresignedUrl(
+          avatar,
+          "avatar",
+        );
+        if (avatarPresignedResponse.data.objectKey) {
+          const avatarResponse = await uploadService.uploadFile(
+            avatarPresignedResponse.data.uploadUrl,
+            avatar,
+          );
+          if (avatarResponse) {
+            const response = await uploadService.completeUploadFile(
+              "avatar",
+              avatarPresignedResponse.data.objectKey,
+            );
+          }
+        }
+      }
+      const candidateReponse = await candidateService.updateCandidate(
+        candidate?.id!,
+        newValue,
+      );
+      if (candidateReponse.success) {
+        await setCandidate(candidateReponse.data);
+        setAvatarUrl(undefined);
+        toast.success(candidateReponse.message || "Lưu thông tin thành công");
+        clearErrors("root.server");
+        clearErrors(["avatar"]);
+      } else {
+        throw new Error(candidateReponse.message || "Không thể lưu thông tin.");
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Không thể lưu thông tin công ty.",
+      );
+    }
+  }
+  useEffect(() => {
+    if (!candidate) return;
+    reset({
+      fullName: candidate?.fullName,
+      phone: candidate?.phone ?? "",
+      headline: candidate?.headline ?? "",
+      experienceYears: candidate?.experienceYears ?? 0,
+      address: candidate?.address,
+      isSearchable: candidate?.isSearchable,
+    });
+  }, []);
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="text-xl font-bold">Chỉnh sửa hồ sơ ứng viên</h2>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <fieldset
+          disabled={formState.isSubmitting}
+          className="mt-5 grid gap-5 sm:grid-rows-2 disabled:opacity-60"
+        >
+          <label
+            className="relative block size-24 shrink-0 cursor-pointer rounded-full transition hover:opacity-80 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2"
+            title="Đổi ảnh đại diện"
+          >
+            <Avatar className="size-24 border-4 border-emerald-50">
+              <AvatarImage src={`${avatarUrl}`} alt={"Ảnh đại diện "} />
+              <AvatarFallback className="bg-emerald-50 text-3xl font-bold text-emerald-700">
+                AV
+              </AvatarFallback>
+            </Avatar>
+            <input
+              type="file"
+              aria-label="Đổi ảnh đại diện"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              {...register("avatar", {
+                onChange: (e) => setAvatarUrl(e.target.files?.[0]),
+              })}
+            />
+          </label>
+          <label htmlFor={`${id}-name`} className="text-sm font-semibold">
+            Họ và tên
+            <input
+              id={`${id}-name`}
+              className={input}
+              {...register("fullName")}
+            />
+            {formState.errors.fullName?.message && (
+              <FieldError id={`${id}-name-error`}>
+                {formState.errors.fullName?.message}
+              </FieldError>
+            )}
+          </label>
+          <label htmlFor={`${id}-phone`} className="text-sm font-semibold">
+            Số điện thoại
+            <input
+              id={`${id}-phone`}
+              type="tel"
+              {...register("phone")}
+              className={input}
+            />
+            {formState.errors.phone?.message && (
+              <FieldError id={`${id}-phone-error`}>
+                {formState.errors.phone?.message}
+              </FieldError>
+            )}
+          </label>
+          <label htmlFor={`${id}-headline`} className="text-sm font-semibold">
+            Tiêu đề nghề nghiệp
+            <input
+              id={`${id}-headline`}
+              className={input}
+              {...register("headline")}
+            />
+            {formState.errors.headline?.message && (
+              <FieldError id={`${id}-headline-error`}>
+                {formState.errors.headline?.message}
+              </FieldError>
+            )}
+          </label>
+          <label
+            htmlFor={`${id}-experienceYears`}
+            className="text-sm font-semibold"
+          >
+            Số năm kinh nghiệm
+            <input
+              id={`${id}-experienceYears`}
+              type="number"
+              min={0}
+              max={80}
+              step="1"
+              className={input}
+              {...register("experienceYears", {
+                setValueAs: (value) =>
+                  value === "" ? undefined : Number(value),
+              })}
+            />
+            {formState.errors.experienceYears?.message && (
+              <FieldError id={`${id}-experienceYears-error`}>
+                {formState.errors.experienceYears?.message}
+              </FieldError>
+            )}
+          </label>
+          <label htmlFor={`${id}-address`} className="text-sm font-semibold">
+            Địa điểm hiện tại
+            <input
+              id={`${id}-address`}
+              type="text"
+              className={input}
+              {...register("address")}
+            />
+            {formState.errors.address?.message && (
+              <FieldError id={`${id}-address-error`}>
+                {formState.errors.address?.message}
+              </FieldError>
+            )}
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" {...register("isSearchable")} />
+            Cho phép nhà tuyển dụng tìm thấy hồ sơ
+          </label>
+          <label
+            htmlFor={`${id}-careerGoal`}
+            className="text-sm font-semibold sm:col-span-2"
+          >
+            Mục tiêu nghề nghiệp
+            <textarea
+              id={`${id}-careerGoal`}
+              rows={4}
+              maxLength={2000}
+              className={input}
+              {...register("careerGoal")}
+            />
+            <span className="mt-1 block text-right text-xs text-slate-400">
+              {careerGoal?.length ? careerGoal.length : 0}/300 ký tự
+            </span>
+            {formState.errors.careerGoal?.message && (
+              <FieldError id={`${id}.careerGoal-error`}>
+                {formState.errors.careerGoal?.message}
+              </FieldError>
+            )}
+          </label>
+          <div className="sm:col-span-2">
+            <button className="rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white">
+              {formState.isSubmitting ? "Đang lưu..." : "Lưu hồ sơ"}
+            </button>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  );
 }

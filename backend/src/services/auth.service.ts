@@ -108,10 +108,16 @@ class AuthService {
     //Kiểm tra otp
     const otpHash = await redisClient.get(`otp:register:${newAccount.id}`);
     if (!otpHash) {
-      throw new BadRequest(ERROR_MESSAGE.AUTH_SERVICE.OTP_INVALID, ERROR_CODE.AUTH_SERVICE.OTP_INVALID);
+      throw new BadRequest(
+        ERROR_MESSAGE.AUTH_SERVICE.OTP_INVALID,
+        ERROR_CODE.AUTH_SERVICE.OTP_INVALID,
+      );
     }
     if (!verifyString(otp, otpHash)) {
-      throw new BadRequest(ERROR_MESSAGE.AUTH_SERVICE.OTP_INVALID, ERROR_CODE.AUTH_SERVICE.OTP_INVALID);
+      throw new BadRequest(
+        ERROR_MESSAGE.AUTH_SERVICE.OTP_INVALID,
+        ERROR_CODE.AUTH_SERVICE.OTP_INVALID,
+      );
     }
     await prisma.account.update({
       where: {
@@ -212,36 +218,57 @@ class AuthService {
         ERROR_CODE.AUTH_SERVICE.UNAUTHORIZED,
       );
     }
-    let options: any = {};
-    if (role === "candidate") {
-      options.role = "candidate";
-      options.condition = {
-        omit: {
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
-        },
-      };
-    }
-    if (role === "company") {
-      options.role = "company";
-      options.condition = {
-        omit: {
-          createdAt: true,
-          updatedAt: true,
-          deletedAt: true,
-        },
-      };
-    }
-    const existProfile = await prisma.account.findUnique({
+    const existProfile = await prisma.account.findFirst({
       where: {
         id: accountId,
         status: "active",
+        deletedAt: null,
       },
       select: {
         id: true,
         email: true,
-        [options.role]: options.condition,
+        role: true,
+        status: true,
+        company: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            phone: true,
+            logoKey: true,
+            bannerKey: true,
+            address: true,
+            sizeRange: true,
+            verificationStatus: true,
+            location: {
+              select: {
+                id: true,
+                code: true,
+                name: true,
+                fullName: true,
+              },
+            },
+          },
+        },
+        candidate: {
+          select: {
+            id: true,
+            fullName: true,
+            phone: true,
+            avatarKey: true,
+            headline: true,
+            address: true,
+            isSearchable: true,
+            currentLocation: {
+              select: {
+                id: true,
+                code: true,
+                name: true,
+                fullName: true,
+              },
+            },
+          },
+        },
       },
     });
     return existProfile;
@@ -289,7 +316,7 @@ class AuthService {
         ERROR_MESSAGE.AUTH_SERVICE.INVALID_TOKEN,
         ERROR_CODE.AUTH_SERVICE.INVALID_TOKEN,
       );
-    };
+    }
     const newAccessToken = jwtService.createAccessToken(
       decodedRefreshToken.accountId,
       decodedRefreshToken.role,
@@ -363,7 +390,7 @@ class AuthService {
     picture?: string,
   ) {
     const role = await redisClient.get(`oauth2:${state}`);
-    console.log("🚀 ~ AuthService ~ authGoogle ~ role:", role)
+    console.log("🚀 ~ AuthService ~ authGoogle ~ role:", role);
     let newAccount: any;
     const existAccount = await prisma.account.findUnique({
       where: {
@@ -386,10 +413,10 @@ class AuthService {
           fullName: name,
         });
       }
-    };
-    if(existAccount) {
+    }
+    if (existAccount) {
       newAccount = existAccount;
-    };
+    }
     const accessToken = jwtService.createAccessToken(
       newAccount.id,
       newAccount.role,
@@ -400,7 +427,7 @@ class AuthService {
     );
     //Lưu refresh token vào redis
     await this.saveRefreshToken(accessToken, refreshToken);
-    return {accessToken, refreshToken};
+    return { accessToken, refreshToken };
   }
 }
 const authService = new AuthService();

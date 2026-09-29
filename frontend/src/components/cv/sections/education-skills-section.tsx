@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Plus, Star, Trash2 } from "lucide-react"
-import { Field, TextInput } from "@/components/cv/field"
-import { cn } from "@/lib/utils"
-import { uid, type EducationItem, type SkillItem } from "@/lib/cv-layout"
+import { Plus, Star, Trash2 } from "lucide-react";
+import { Field, TextInput } from "@/components/cv/field";
+import { cn } from "@/lib/utils";
+import { uid, type EducationItem, type SkillItem } from "@/lib/cv-layout";
 
 export function EducationSkillsSection({
   educations,
@@ -11,41 +11,44 @@ export function EducationSkillsSection({
   onEducationsChange,
   onSkillsChange,
 }: {
-  educations: EducationItem[]
-  skills: SkillItem[]
-  onEducationsChange: (v: EducationItem[]) => void
-  onSkillsChange: (v: SkillItem[]) => void
+  educations: EducationItem[];
+  skills: SkillItem[];
+  onEducationsChange: (v: EducationItem[]) => void;
+  onSkillsChange: (v: SkillItem[]) => void;
 }) {
-  /* Education */
   const updateEdu = (id: string, patch: Partial<EducationItem>) =>
-    onEducationsChange(educations.map((e) => (e.id === id ? { ...e, ...patch } : e)))
+    onEducationsChange(
+      educations.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+    );
   const addEdu = () =>
     onEducationsChange([
       ...educations,
       { id: uid("edu"), school: "", degree: "", timeline: "" },
-    ])
+    ]);
   const removeEdu = (id: string) =>
-    onEducationsChange(educations.filter((e) => e.id !== id))
-
-  /* Skills */
+    onEducationsChange(educations.filter((e) => e.id !== id));
   const updateSkill = (id: string, patch: Partial<SkillItem>) =>
-    onSkillsChange(skills.map((s) => (s.id === id ? { ...s, ...patch } : s)))
+    onSkillsChange(skills.map((s) => (s.id === id ? { ...s, ...patch } : s)));
   const addSkill = () =>
-    onSkillsChange([...skills, { id: uid("sk"), name: "", level: 3 }])
+    onSkillsChange([...skills, { id: uid("sk"), name: "", level: 3 }]);
   const removeSkill = (id: string) =>
-    onSkillsChange(skills.filter((s) => s.id !== id))
+    onSkillsChange(skills.filter((s) => s.id !== id));
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Education */}
       <div className="flex flex-col gap-3">
         <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Học vấn
         </h4>
         {educations.map((edu) => (
-          <div key={edu.id} className="rounded-xl border border-border bg-card p-3.5">
+          <div
+            key={edu.id}
+            className="rounded-xl border border-border bg-card p-3.5"
+          >
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-medium text-muted-foreground">Bằng cấp</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Bằng cấp
+              </span>
               <button
                 type="button"
                 onClick={() => removeEdu(edu.id)}
@@ -57,13 +60,28 @@ export function EducationSkillsSection({
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Trường" className="col-span-2">
-                <TextInput value={edu.school} onChange={(e) => updateEdu(edu.id, { school: e.target.value })} />
+                <TextInput
+                  value={edu.school}
+                  onChange={(e) =>
+                    updateEdu(edu.id, { school: e.target.value })
+                  }
+                />
               </Field>
               <Field label="Chuyên ngành / Bằng cấp">
-                <TextInput value={edu.degree} onChange={(e) => updateEdu(edu.id, { degree: e.target.value })} />
+                <TextInput
+                  value={edu.degree}
+                  onChange={(e) =>
+                    updateEdu(edu.id, { degree: e.target.value })
+                  }
+                />
               </Field>
               <Field label="Thời gian">
-                <TextInput value={edu.timeline} onChange={(e) => updateEdu(edu.id, { timeline: e.target.value })} />
+                <TextInput
+                  value={edu.timeline}
+                  onChange={(e) =>
+                    updateEdu(edu.id, { timeline: e.target.value })
+                  }
+                />
               </Field>
             </div>
           </div>
@@ -134,5 +152,5 @@ export function EducationSkillsSection({
         </button>
       </div>
     </div>
-  )
+  );
 }

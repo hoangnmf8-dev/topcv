@@ -233,7 +233,7 @@ export type ProvinceCreateInput = {
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
-  jobPosts?: Prisma.JobPostCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceUncheckedCreateInput = {
@@ -244,7 +244,7 @@ export type ProvinceUncheckedCreateInput = {
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
-  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceUpdateInput = {
@@ -255,7 +255,7 @@ export type ProvinceUpdateInput = {
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
-  jobPosts?: Prisma.JobPostUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceUncheckedUpdateInput = {
@@ -266,7 +266,7 @@ export type ProvinceUncheckedUpdateInput = {
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
-  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceCreateManyInput = {
@@ -388,7 +388,7 @@ export type ProvinceCreateWithoutCandidatesInput = {
   fullName: string
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
-  jobPosts?: Prisma.JobPostCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceUncheckedCreateWithoutCandidatesInput = {
@@ -398,7 +398,7 @@ export type ProvinceUncheckedCreateWithoutCandidatesInput = {
   fullName: string
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
-  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceCreateOrConnectWithoutCandidatesInput = {
@@ -424,7 +424,7 @@ export type ProvinceUpdateWithoutCandidatesInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
-  jobPosts?: Prisma.JobPostUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceUncheckedUpdateWithoutCandidatesInput = {
@@ -434,7 +434,7 @@ export type ProvinceUncheckedUpdateWithoutCandidatesInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
-  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceCreateWithoutCompaniesInput = {
@@ -444,7 +444,7 @@ export type ProvinceCreateWithoutCompaniesInput = {
   fullName: string
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
-  jobPosts?: Prisma.JobPostCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceUncheckedCreateWithoutCompaniesInput = {
@@ -454,7 +454,7 @@ export type ProvinceUncheckedCreateWithoutCompaniesInput = {
   fullName: string
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
-  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceCreateOrConnectWithoutCompaniesInput = {
@@ -480,7 +480,7 @@ export type ProvinceUpdateWithoutCompaniesInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
-  jobPosts?: Prisma.JobPostUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceUncheckedUpdateWithoutCompaniesInput = {
@@ -490,7 +490,7 @@ export type ProvinceUncheckedUpdateWithoutCompaniesInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
-  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceCreateWithoutJobPostsInput = {
@@ -556,7 +556,7 @@ export type ProvinceCreateWithoutWardsInput = {
   fullName: string
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
-  jobPosts?: Prisma.JobPostCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceUncheckedCreateWithoutWardsInput = {
@@ -566,7 +566,7 @@ export type ProvinceUncheckedCreateWithoutWardsInput = {
   fullName: string
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
-  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutLocationInput
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
 }
 
 export type ProvinceCreateOrConnectWithoutWardsInput = {
@@ -592,7 +592,7 @@ export type ProvinceUpdateWithoutWardsInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
-  jobPosts?: Prisma.JobPostUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
 }
 
 export type ProvinceUncheckedUpdateWithoutWardsInput = {
@@ -602,7 +602,7 @@ export type ProvinceUncheckedUpdateWithoutWardsInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
-  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutLocationNestedInput
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
 }
 
 

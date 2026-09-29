@@ -2,7 +2,19 @@ import { prisma } from "../utils/prisma";
 
 class JobCategoryService {
   async getJobCategory() {
-    return await prisma.jobCategory.findMany();
+    return await prisma.jobCategory.findMany({
+      where: {
+        isActive: true,
+        deletedAt: null,
+      },
+      include: {
+        jobTitles: {
+          where: { deletedAt: null },
+          select: { id: true, code: true, name: true, jobCategoryId: true },
+          orderBy: { name: "asc" },
+        },
+      },
+    });
   }
   async getTopJob() {
     return prisma.jobCategory.findMany({
@@ -21,10 +33,10 @@ class JobCategoryService {
       },
       orderBy: {
         jobPosts: {
-          _count: "desc"
-        }
+          _count: "desc",
+        },
       },
-      take: 8
+      take: 8,
     });
   }
 }

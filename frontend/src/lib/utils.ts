@@ -1,3 +1,4 @@
+import { formatJobSalary } from "@/lib/job-salary";
 import type { Job } from "@/types";
 import type { JobCardData } from "@/types";
 import { clsx, type ClassValue } from "clsx";
@@ -5,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import axios from "axios";
 import { getAccesToken, makeRefreshToken } from "@/actions/auth.action";
 import { Unauthorized } from "@/exceptions";
-import type { SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 import uploadService from "@/services/upload.service";
 import { useCompanyStore } from "@/stores/company.store";
 
@@ -72,16 +73,7 @@ export const formatAmount = (value: number | string, currency: string) =>
   new Intl.NumberFormat("vi-VN").format(Number(value)) + " " + currency;
 export function toJobCard(item: Job): JobCardData {
   const currency = item.currency || "VND";
-  const salary =
-    item.salaryMin != null && item.salaryMax != null
-      ? formatAmount(item.salaryMin, currency) +
-        " – " +
-        formatAmount(item.salaryMax, currency)
-      : item.salaryMin != null
-        ? "Từ " + formatAmount(item.salaryMin, currency)
-        : item.salaryMax != null
-          ? "Đến " + formatAmount(item.salaryMax, currency)
-          : "Thỏa thuận";
+  const salary = formatJobSalary(item.salaryMin, item.salaryMax, currency);
   return {
     id: item.id,
     title: item.title,
@@ -89,8 +81,11 @@ export function toJobCard(item: Job): JobCardData {
     logo: item.company?.logoUrl ?? "/placeholder.svg",
     salary,
     salaryMin: Number(item.salaryMin ?? 0) / 1000000,
-    location: item.location?.name ?? "Chưa có thông tin địa điểm",
-    district: "",
+    location: item.province?.name ?? "Chưa có thông tin địa điểm",
+    district: item.ward?.fullName ?? "",
+    address: [item.address, item.ward?.fullName, item.province?.name]
+      .filter(Boolean)
+      .join(", "),
     deadline: item.deadlineAt
       ? new Date(item.deadlineAt).toLocaleDateString("vi-VN")
       : "Chưa cập nhật",
@@ -105,18 +100,19 @@ export function toJobCard(item: Job): JobCardData {
         } as Record<string, string>
       )[item.employmentType ?? ""] ?? "Chưa cập nhật",
     category: item.category?.name ?? "",
-    tags: [],
+    tags: item.overview?.specialties ?? [],
+    overviewRequirements: item.overview?.requirements ?? [],
     hot: item.isBoosted,
     updatedAt: item.createdAt,
     description: item.description ? [item.description] : [],
     requirements: item.requirements ? [item.requirements] : [],
     benefits: item.benefits ? [item.benefits] : [],
     company_info: {
-      size: item.company?.sizeRange ?? "",
-      field: item.category?.name ?? "",
-      website: item.company?.website ?? "",
-      address: item.company?.address ?? "",
-      about: item.company?.description ?? "",
+      size: item.company?.sizeRange ?? "Chưa cập nhật thông tin",
+      field: item.category?.name ?? "Chưa cập nhật thông tin",
+      website: item.company?.website ?? "Chưa cập nhật thông tin",
+      address: item.company?.address ?? "Chưa cập nhật thông tin",
+      about: item.company?.description ?? "Chưa cập nhật thông tin",
     },
   };
 }

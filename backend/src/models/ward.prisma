@@ -6,6 +6,9 @@ model Ward {
 
   province Province @relation(fields: [provinceId], references: [id], onDelete: Restrict)
 
+  jobPosts JobPost[]
+
+  @@unique([id, provinceId])
   @@index([provinceId])
   @@index([fullName])
   @@map("ward")

@@ -175,6 +175,7 @@ export type WardWhereInput = {
   code?: Prisma.StringFilter<"Ward"> | string
   fullName?: Prisma.StringFilter<"Ward"> | string
   province?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
+  jobPosts?: Prisma.JobPostListRelationFilter
 }
 
 export type WardOrderByWithRelationInput = {
@@ -183,18 +184,21 @@ export type WardOrderByWithRelationInput = {
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   province?: Prisma.ProvinceOrderByWithRelationInput
+  jobPosts?: Prisma.JobPostOrderByRelationAggregateInput
 }
 
 export type WardWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   code?: string
+  id_provinceId?: Prisma.WardIdProvinceIdCompoundUniqueInput
   AND?: Prisma.WardWhereInput | Prisma.WardWhereInput[]
   OR?: Prisma.WardWhereInput[]
   NOT?: Prisma.WardWhereInput | Prisma.WardWhereInput[]
   provinceId?: Prisma.UuidFilter<"Ward"> | string
   fullName?: Prisma.StringFilter<"Ward"> | string
   province?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
-}, "id" | "code">
+  jobPosts?: Prisma.JobPostListRelationFilter
+}, "id" | "code" | "id_provinceId">
 
 export type WardOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -221,6 +225,7 @@ export type WardCreateInput = {
   code: string
   fullName: string
   province: Prisma.ProvinceCreateNestedOneWithoutWardsInput
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutWardInput
 }
 
 export type WardUncheckedCreateInput = {
@@ -228,6 +233,7 @@ export type WardUncheckedCreateInput = {
   provinceId: string
   code: string
   fullName: string
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutWardInput
 }
 
 export type WardUpdateInput = {
@@ -235,6 +241,7 @@ export type WardUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   province?: Prisma.ProvinceUpdateOneRequiredWithoutWardsNestedInput
+  jobPosts?: Prisma.JobPostUpdateManyWithoutWardNestedInput
 }
 
 export type WardUncheckedUpdateInput = {
@@ -242,6 +249,7 @@ export type WardUncheckedUpdateInput = {
   provinceId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutWardNestedInput
 }
 
 export type WardCreateManyInput = {
@@ -264,6 +272,11 @@ export type WardUncheckedUpdateManyInput = {
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
+export type WardScalarRelationFilter = {
+  is?: Prisma.WardWhereInput
+  isNot?: Prisma.WardWhereInput
+}
+
 export type WardListRelationFilter = {
   every?: Prisma.WardWhereInput
   some?: Prisma.WardWhereInput
@@ -272,6 +285,11 @@ export type WardListRelationFilter = {
 
 export type WardOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type WardIdProvinceIdCompoundUniqueInput = {
+  id: string
+  provinceId: string
 }
 
 export type WardCountOrderByAggregateInput = {
@@ -293,6 +311,20 @@ export type WardMinOrderByAggregateInput = {
   provinceId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+}
+
+export type WardCreateNestedOneWithoutJobPostsInput = {
+  create?: Prisma.XOR<Prisma.WardCreateWithoutJobPostsInput, Prisma.WardUncheckedCreateWithoutJobPostsInput>
+  connectOrCreate?: Prisma.WardCreateOrConnectWithoutJobPostsInput
+  connect?: Prisma.WardWhereUniqueInput
+}
+
+export type WardUpdateOneRequiredWithoutJobPostsNestedInput = {
+  create?: Prisma.XOR<Prisma.WardCreateWithoutJobPostsInput, Prisma.WardUncheckedCreateWithoutJobPostsInput>
+  connectOrCreate?: Prisma.WardCreateOrConnectWithoutJobPostsInput
+  upsert?: Prisma.WardUpsertWithoutJobPostsInput
+  connect?: Prisma.WardWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.WardUpdateToOneWithWhereWithoutJobPostsInput, Prisma.WardUpdateWithoutJobPostsInput>, Prisma.WardUncheckedUpdateWithoutJobPostsInput>
 }
 
 export type WardCreateNestedManyWithoutProvinceInput = {
@@ -337,16 +369,62 @@ export type WardUncheckedUpdateManyWithoutProvinceNestedInput = {
   deleteMany?: Prisma.WardScalarWhereInput | Prisma.WardScalarWhereInput[]
 }
 
+export type WardCreateWithoutJobPostsInput = {
+  id?: string
+  code: string
+  fullName: string
+  province: Prisma.ProvinceCreateNestedOneWithoutWardsInput
+}
+
+export type WardUncheckedCreateWithoutJobPostsInput = {
+  id?: string
+  provinceId: string
+  code: string
+  fullName: string
+}
+
+export type WardCreateOrConnectWithoutJobPostsInput = {
+  where: Prisma.WardWhereUniqueInput
+  create: Prisma.XOR<Prisma.WardCreateWithoutJobPostsInput, Prisma.WardUncheckedCreateWithoutJobPostsInput>
+}
+
+export type WardUpsertWithoutJobPostsInput = {
+  update: Prisma.XOR<Prisma.WardUpdateWithoutJobPostsInput, Prisma.WardUncheckedUpdateWithoutJobPostsInput>
+  create: Prisma.XOR<Prisma.WardCreateWithoutJobPostsInput, Prisma.WardUncheckedCreateWithoutJobPostsInput>
+  where?: Prisma.WardWhereInput
+}
+
+export type WardUpdateToOneWithWhereWithoutJobPostsInput = {
+  where?: Prisma.WardWhereInput
+  data: Prisma.XOR<Prisma.WardUpdateWithoutJobPostsInput, Prisma.WardUncheckedUpdateWithoutJobPostsInput>
+}
+
+export type WardUpdateWithoutJobPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutWardsNestedInput
+}
+
+export type WardUncheckedUpdateWithoutJobPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type WardCreateWithoutProvinceInput = {
   id?: string
   code: string
   fullName: string
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutWardInput
 }
 
 export type WardUncheckedCreateWithoutProvinceInput = {
   id?: string
   code: string
   fullName: string
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutWardInput
 }
 
 export type WardCreateOrConnectWithoutProvinceInput = {
@@ -395,12 +473,14 @@ export type WardUpdateWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  jobPosts?: Prisma.JobPostUpdateManyWithoutWardNestedInput
 }
 
 export type WardUncheckedUpdateWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutWardNestedInput
 }
 
 export type WardUncheckedUpdateManyWithoutProvinceInput = {
@@ -410,6 +490,35 @@ export type WardUncheckedUpdateManyWithoutProvinceInput = {
 }
 
 
+/**
+ * Count Type WardCountOutputType
+ */
+
+export type WardCountOutputType = {
+  jobPosts: number
+}
+
+export type WardCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  jobPosts?: boolean | WardCountOutputTypeCountJobPostsArgs
+}
+
+/**
+ * WardCountOutputType without action
+ */
+export type WardCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WardCountOutputType
+   */
+  select?: Prisma.WardCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * WardCountOutputType without action
+ */
+export type WardCountOutputTypeCountJobPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.JobPostWhereInput
+}
+
 
 export type WardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -417,6 +526,8 @@ export type WardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   code?: boolean
   fullName?: boolean
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  jobPosts?: boolean | Prisma.Ward$jobPostsArgs<ExtArgs>
+  _count?: boolean | Prisma.WardCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ward"]>
 
 export type WardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -445,6 +556,8 @@ export type WardSelectScalar = {
 export type WardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provinceId" | "code" | "fullName", ExtArgs["result"]["ward"]>
 export type WardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  jobPosts?: boolean | Prisma.Ward$jobPostsArgs<ExtArgs>
+  _count?: boolean | Prisma.WardCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WardIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
@@ -457,6 +570,7 @@ export type $WardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Ward"
   objects: {
     province: Prisma.$ProvincePayload<ExtArgs>
+    jobPosts: Prisma.$JobPostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -858,6 +972,7 @@ readonly fields: WardFieldRefs;
 export interface Prisma__WardClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   province<T extends Prisma.ProvinceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProvinceDefaultArgs<ExtArgs>>): Prisma.Prisma__ProvinceClient<runtime.Types.Result.GetResult<Prisma.$ProvincePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  jobPosts<T extends Prisma.Ward$jobPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ward$jobPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1289,6 +1404,30 @@ export type WardDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Wards to delete.
    */
   limit?: number
+}
+
+/**
+ * Ward.jobPosts
+ */
+export type Ward$jobPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the JobPost
+   */
+  select?: Prisma.JobPostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the JobPost
+   */
+  omit?: Prisma.JobPostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.JobPostInclude<ExtArgs> | null
+  where?: Prisma.JobPostWhereInput
+  orderBy?: Prisma.JobPostOrderByWithRelationInput | Prisma.JobPostOrderByWithRelationInput[]
+  cursor?: Prisma.JobPostWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.JobPostScalarFieldEnum | Prisma.JobPostScalarFieldEnum[]
 }
 
 /**

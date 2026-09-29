@@ -34,8 +34,8 @@ export function HeroSearch() {
     isError: categoriesError,
     refetch: refetchCategories,
   } = useQuery({
-    queryKey: [jobCategoryKey],
-    queryFn: jobCategoryService.getJobCategory,
+    queryKey: jobCategoryKey,
+    queryFn: ({ signal }) => jobCategoryService.getJobCategory(signal),
     retry: 3,
     staleTime: 3600 * 365,
   });
@@ -45,8 +45,8 @@ export function HeroSearch() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: [provinceKey],
-    queryFn: locationService.getProvince,
+    queryKey: provinceKey,
+    queryFn: ({ signal }) => locationService.getProvince(signal),
     retry: 3,
     staleTime: 3600 * 365,
   });
@@ -172,7 +172,7 @@ export function HeroSearch() {
                   )}
                   {!categoriesPending &&
                     !categoriesError &&
-                    categories.length === 0 && (
+                    categories?.data.length === 0 && (
                       <p className="px-3 py-2 text-sm text-slate-500">
                         Chưa có danh mục nghề.
                       </p>
@@ -223,7 +223,7 @@ export function HeroSearch() {
                       </button>
                     </div>
                   )}
-                  {!isPending && !isError && provinces.length === 0 && (
+                  {!isPending && !isError && provinces?.data.length === 0 && (
                     <p className="px-3 py-2 text-sm text-slate-500">
                       Chưa có địa điểm.
                     </p>

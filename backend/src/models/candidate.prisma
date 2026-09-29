@@ -3,10 +3,11 @@ model Candidate {
   accountId         String    @unique @map("account_id") @db.Uuid
   fullName          String    @map("full_name") @db.VarChar(150)
   phone             String?   @db.VarChar(30)
+  address           String?   @db.Text
   avatarKey         String?   @map("avatar_key") @db.VarChar(500)
   headline          String?   @db.VarChar(255)
   careerGoal        String?   @map("career_goal") @db.Text
-  experienceYears   Decimal?  @default(0) @map("experience_years") @db.Decimal(4, 1)
+  experienceYears   Decimal?  @default(0) @map("experience_years") @db.Decimal(4, 0)
   currentLocationId String?   @map("current_location_id") @db.Uuid
   profileCompletion Int?      @default(0) @map("profile_completion") @db.SmallInt
   isSearchable      Boolean?  @default(true) @map("is_searchable")
@@ -26,3 +27,4 @@ model Candidate {
 
   @@map("candidate")
 }
+

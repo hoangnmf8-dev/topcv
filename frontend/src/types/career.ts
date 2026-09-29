@@ -1,1 +1,13 @@
-export type CareerArticle = { slug: string; title: string; category: string; categoryId: string; excerpt: string; author: string; publishedAt: string; readTime: string; image: string; intro: string; sections: {title: string; paragraphs: string[]; bullets?: string[]}[] };
+export type CareerArticle = {
+  slug: string;
+  title: string;
+  category: string;
+  categoryId: string;
+  excerpt: string;
+  author: string;
+  publishedAt: string;
+  readTime: string;
+  image: string;
+  intro: string;
+  sections: { title: string; paragraphs: string[]; bullets?: string[] }[];
+};

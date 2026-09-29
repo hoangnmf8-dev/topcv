@@ -1,23 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import { ChatWidget } from "@/components/chat-widget";
-import { SonnerStatusBridge } from "@/components/sonner-status-bridge";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
-import AuthInitializer from "@/providers/auth-initial";
+import AuthProvider from "@/providers/auth-provider";
 
 export const metadata: Metadata = {
   title: "TopViec / TopCV",
   description:
-    "Nền tảng tuyển dụng với các giao diện gốc được chuyển sang một ứng dụng Next.js duy nhất.",
+    "Nền tảng tuyển dụng hàng đầu.",
   icons: {
-    icon: [
-      { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
-      { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-    ],
-    apple: "/apple-icon.png",
-  },
+    icon: "/favicon.ico"
+  }
 };
 
 export const viewport: Viewport = {
@@ -32,9 +26,8 @@ export default function RootLayout({
     <html lang="vi">
       <body className="font-sans antialiased">
         <QueryProvider>
-          <AuthInitializer>{children}</AuthInitializer>
+          <AuthProvider>{children}</AuthProvider>
         </QueryProvider>
-        <SonnerStatusBridge />
         <ChatWidget />
         <Toaster position="top-center" richColors />
       </body>

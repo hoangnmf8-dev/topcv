@@ -41,6 +41,7 @@ export type CandidateMinAggregateOutputType = {
   accountId: string | null
   fullName: string | null
   phone: string | null
+  address: string | null
   avatarKey: string | null
   headline: string | null
   careerGoal: string | null
@@ -58,6 +59,7 @@ export type CandidateMaxAggregateOutputType = {
   accountId: string | null
   fullName: string | null
   phone: string | null
+  address: string | null
   avatarKey: string | null
   headline: string | null
   careerGoal: string | null
@@ -75,6 +77,7 @@ export type CandidateCountAggregateOutputType = {
   accountId: number
   fullName: number
   phone: number
+  address: number
   avatarKey: number
   headline: number
   careerGoal: number
@@ -104,6 +107,7 @@ export type CandidateMinAggregateInputType = {
   accountId?: true
   fullName?: true
   phone?: true
+  address?: true
   avatarKey?: true
   headline?: true
   careerGoal?: true
@@ -121,6 +125,7 @@ export type CandidateMaxAggregateInputType = {
   accountId?: true
   fullName?: true
   phone?: true
+  address?: true
   avatarKey?: true
   headline?: true
   careerGoal?: true
@@ -138,6 +143,7 @@ export type CandidateCountAggregateInputType = {
   accountId?: true
   fullName?: true
   phone?: true
+  address?: true
   avatarKey?: true
   headline?: true
   careerGoal?: true
@@ -242,6 +248,7 @@ export type CandidateGroupByOutputType = {
   accountId: string
   fullName: string
   phone: string | null
+  address: string | null
   avatarKey: string | null
   headline: string | null
   careerGoal: string | null
@@ -282,6 +289,7 @@ export type CandidateWhereInput = {
   accountId?: Prisma.UuidFilter<"Candidate"> | string
   fullName?: Prisma.StringFilter<"Candidate"> | string
   phone?: Prisma.StringNullableFilter<"Candidate"> | string | null
+  address?: Prisma.StringNullableFilter<"Candidate"> | string | null
   avatarKey?: Prisma.StringNullableFilter<"Candidate"> | string | null
   headline?: Prisma.StringNullableFilter<"Candidate"> | string | null
   careerGoal?: Prisma.StringNullableFilter<"Candidate"> | string | null
@@ -305,6 +313,7 @@ export type CandidateOrderByWithRelationInput = {
   accountId?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarKey?: Prisma.SortOrderInput | Prisma.SortOrder
   headline?: Prisma.SortOrderInput | Prisma.SortOrder
   careerGoal?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -331,6 +340,7 @@ export type CandidateWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CandidateWhereInput | Prisma.CandidateWhereInput[]
   fullName?: Prisma.StringFilter<"Candidate"> | string
   phone?: Prisma.StringNullableFilter<"Candidate"> | string | null
+  address?: Prisma.StringNullableFilter<"Candidate"> | string | null
   avatarKey?: Prisma.StringNullableFilter<"Candidate"> | string | null
   headline?: Prisma.StringNullableFilter<"Candidate"> | string | null
   careerGoal?: Prisma.StringNullableFilter<"Candidate"> | string | null
@@ -354,6 +364,7 @@ export type CandidateOrderByWithAggregationInput = {
   accountId?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
   avatarKey?: Prisma.SortOrderInput | Prisma.SortOrder
   headline?: Prisma.SortOrderInput | Prisma.SortOrder
   careerGoal?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -379,6 +390,7 @@ export type CandidateScalarWhereWithAggregatesInput = {
   accountId?: Prisma.UuidWithAggregatesFilter<"Candidate"> | string
   fullName?: Prisma.StringWithAggregatesFilter<"Candidate"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Candidate"> | string | null
+  address?: Prisma.StringNullableWithAggregatesFilter<"Candidate"> | string | null
   avatarKey?: Prisma.StringNullableWithAggregatesFilter<"Candidate"> | string | null
   headline?: Prisma.StringNullableWithAggregatesFilter<"Candidate"> | string | null
   careerGoal?: Prisma.StringNullableWithAggregatesFilter<"Candidate"> | string | null
@@ -395,6 +407,7 @@ export type CandidateCreateInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -417,6 +430,7 @@ export type CandidateUncheckedCreateInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -437,6 +451,7 @@ export type CandidateUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -459,6 +474,7 @@ export type CandidateUncheckedUpdateInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -480,6 +496,7 @@ export type CandidateCreateManyInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -496,6 +513,7 @@ export type CandidateUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -512,6 +530,7 @@ export type CandidateUncheckedUpdateManyInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -539,6 +558,7 @@ export type CandidateCountOrderByAggregateInput = {
   accountId?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   avatarKey?: Prisma.SortOrder
   headline?: Prisma.SortOrder
   careerGoal?: Prisma.SortOrder
@@ -561,6 +581,7 @@ export type CandidateMaxOrderByAggregateInput = {
   accountId?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   avatarKey?: Prisma.SortOrder
   headline?: Prisma.SortOrder
   careerGoal?: Prisma.SortOrder
@@ -578,6 +599,7 @@ export type CandidateMinOrderByAggregateInput = {
   accountId?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   avatarKey?: Prisma.SortOrder
   headline?: Prisma.SortOrder
   careerGoal?: Prisma.SortOrder
@@ -751,6 +773,7 @@ export type CandidateCreateWithoutAccountInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -771,6 +794,7 @@ export type CandidateUncheckedCreateWithoutAccountInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -807,6 +831,7 @@ export type CandidateUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -827,6 +852,7 @@ export type CandidateUncheckedUpdateWithoutAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -847,6 +873,7 @@ export type CandidateCreateWithoutApplicationsInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -868,6 +895,7 @@ export type CandidateUncheckedCreateWithoutApplicationsInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -903,6 +931,7 @@ export type CandidateUpdateWithoutApplicationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -924,6 +953,7 @@ export type CandidateUncheckedUpdateWithoutApplicationsInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -943,6 +973,7 @@ export type CandidateCreateWithoutConversationsInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -964,6 +995,7 @@ export type CandidateUncheckedCreateWithoutConversationsInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -999,6 +1031,7 @@ export type CandidateUpdateWithoutConversationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1020,6 +1053,7 @@ export type CandidateUncheckedUpdateWithoutConversationsInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1039,6 +1073,7 @@ export type CandidateCreateWithoutCvsInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1060,6 +1095,7 @@ export type CandidateUncheckedCreateWithoutCvsInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1095,6 +1131,7 @@ export type CandidateUpdateWithoutCvsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1116,6 +1153,7 @@ export type CandidateUncheckedUpdateWithoutCvsInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1135,6 +1173,7 @@ export type CandidateCreateWithoutCurrentLocationInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1156,6 +1195,7 @@ export type CandidateUncheckedCreateWithoutCurrentLocationInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1205,6 +1245,7 @@ export type CandidateScalarWhereInput = {
   accountId?: Prisma.UuidFilter<"Candidate"> | string
   fullName?: Prisma.StringFilter<"Candidate"> | string
   phone?: Prisma.StringNullableFilter<"Candidate"> | string | null
+  address?: Prisma.StringNullableFilter<"Candidate"> | string | null
   avatarKey?: Prisma.StringNullableFilter<"Candidate"> | string | null
   headline?: Prisma.StringNullableFilter<"Candidate"> | string | null
   careerGoal?: Prisma.StringNullableFilter<"Candidate"> | string | null
@@ -1221,6 +1262,7 @@ export type CandidateCreateWithoutSavedJobsInput = {
   id?: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1242,6 +1284,7 @@ export type CandidateUncheckedCreateWithoutSavedJobsInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1277,6 +1320,7 @@ export type CandidateUpdateWithoutSavedJobsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1298,6 +1342,7 @@ export type CandidateUncheckedUpdateWithoutSavedJobsInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1318,6 +1363,7 @@ export type CandidateCreateManyCurrentLocationInput = {
   accountId: string
   fullName: string
   phone?: string | null
+  address?: string | null
   avatarKey?: string | null
   headline?: string | null
   careerGoal?: string | null
@@ -1333,6 +1379,7 @@ export type CandidateUpdateWithoutCurrentLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1354,6 +1401,7 @@ export type CandidateUncheckedUpdateWithoutCurrentLocationInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1374,6 +1422,7 @@ export type CandidateUncheckedUpdateManyWithoutCurrentLocationInput = {
   accountId?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1448,6 +1497,7 @@ export type CandidateSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   accountId?: boolean
   fullName?: boolean
   phone?: boolean
+  address?: boolean
   avatarKey?: boolean
   headline?: boolean
   careerGoal?: boolean
@@ -1472,6 +1522,7 @@ export type CandidateSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   accountId?: boolean
   fullName?: boolean
   phone?: boolean
+  address?: boolean
   avatarKey?: boolean
   headline?: boolean
   careerGoal?: boolean
@@ -1491,6 +1542,7 @@ export type CandidateSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   accountId?: boolean
   fullName?: boolean
   phone?: boolean
+  address?: boolean
   avatarKey?: boolean
   headline?: boolean
   careerGoal?: boolean
@@ -1510,6 +1562,7 @@ export type CandidateSelectScalar = {
   accountId?: boolean
   fullName?: boolean
   phone?: boolean
+  address?: boolean
   avatarKey?: boolean
   headline?: boolean
   careerGoal?: boolean
@@ -1522,7 +1575,7 @@ export type CandidateSelectScalar = {
   deletedAt?: boolean
 }
 
-export type CandidateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountId" | "fullName" | "phone" | "avatarKey" | "headline" | "careerGoal" | "experienceYears" | "currentLocationId" | "profileCompletion" | "isSearchable" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["candidate"]>
+export type CandidateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "accountId" | "fullName" | "phone" | "address" | "avatarKey" | "headline" | "careerGoal" | "experienceYears" | "currentLocationId" | "profileCompletion" | "isSearchable" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["candidate"]>
 export type CandidateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   currentLocation?: boolean | Prisma.Candidate$currentLocationArgs<ExtArgs>
@@ -1556,6 +1609,7 @@ export type $CandidatePayload<ExtArgs extends runtime.Types.Extensions.InternalA
     accountId: string
     fullName: string
     phone: string | null
+    address: string | null
     avatarKey: string | null
     headline: string | null
     careerGoal: string | null
@@ -1999,6 +2053,7 @@ export interface CandidateFieldRefs {
   readonly accountId: Prisma.FieldRef<"Candidate", 'String'>
   readonly fullName: Prisma.FieldRef<"Candidate", 'String'>
   readonly phone: Prisma.FieldRef<"Candidate", 'String'>
+  readonly address: Prisma.FieldRef<"Candidate", 'String'>
   readonly avatarKey: Prisma.FieldRef<"Candidate", 'String'>
   readonly headline: Prisma.FieldRef<"Candidate", 'String'>
   readonly careerGoal: Prisma.FieldRef<"Candidate", 'String'>

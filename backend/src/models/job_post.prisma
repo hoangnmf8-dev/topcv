@@ -13,8 +13,7 @@ enum JobStatus {
 enum SaturdaySchedule {
   WORK
   OFF
-  ALTERNATING
-  FLEXIBLE
+  UNSPECIFIED
   @@map("saturday_schedule")
 }
 
@@ -23,17 +22,20 @@ model JobPost {
   companyId          String    @map("company_id") @db.Uuid
   jobTitleId         String?   @map("job_title_id") @db.Uuid
   jobCategoryId      String    @map("job_category_id") @db.Uuid
-  locationId         String    @map("location_id") @db.Uuid
+  provinceId         String    @map("province_id") @db.Uuid
+  wardId             String    @map("ward_id") @db.Uuid
+  address            String    @db.Text
   title              String    @db.VarChar(255)
   description        String?   @db.Text
   requirements       String?   @db.Text
   benefits           String?   @db.Text
+  overview           Json      @default("{\"requirements\":[],\"specialties\":[]}") @db.JsonB
   salaryMin          Decimal?  @map("salary_min") @db.Decimal(15, 2)
   salaryMax          Decimal?  @map("salary_max") @db.Decimal(15, 2)
   currency           String?   @default("VND") @db.VarChar(10)
   saturdaySchedule   SaturdaySchedule? @map("saturday_schedule")
   employmentType     String?   @default("full_time") @map("employment_type") @db.VarChar(30)
-  experienceYearsMin Decimal?  @map("experience_years_min") @db.Decimal(4, 1)
+  experienceYearsMin Decimal?  @map("experience_years_min") @db.Decimal(4, 0)
   deadlineAt         DateTime? @map("deadline_at") @db.Timestamptz
   status             JobStatus @default(DRAFT)
   publishedAt        DateTime? @map("published_at") @db.Timestamptz
@@ -45,13 +47,15 @@ model JobPost {
   company  Company     @relation(fields: [companyId], references: [id], onDelete: Restrict)
   jobTitle JobTitle?   @relation(fields: [jobTitleId], references: [id], onDelete: SetNull)
   category JobCategory @relation(fields: [jobCategoryId], references: [id], onDelete: Restrict)
-  location Province    @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  province Province    @relation(fields: [provinceId], references: [id], onDelete: Restrict)
+  ward Ward @relation(fields: [wardId, provinceId], references: [id, provinceId], onDelete: Restrict)
   applications Application[]
   savedJobs    SavedJob[]
 
   @@index([companyId, status, createdAt])
   @@index([jobCategoryId, jobTitleId])
-  @@index([locationId, status])
+  @@index([provinceId, status])
+  @@index([wardId, provinceId])
   @@index([status, deadlineAt])
 
   @@map("job_post")

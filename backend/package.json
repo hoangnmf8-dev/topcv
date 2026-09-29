@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx --watch src/app.ts",
     "worker": "tsx --watch src/workers/index.ts",
-    "seed:job-posts": "node scripts/seed-job-posts.mjs"
+    "seed:job-posts": "node scripts/seed-job-posts.mjs",
+    "migrate:demo-media-keys": "node scripts/migrate-demo-media-keys.cjs"
   },
   "keywords": [],
   "author": "",

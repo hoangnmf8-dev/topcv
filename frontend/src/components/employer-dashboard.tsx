@@ -46,6 +46,7 @@ import uploadService from "@/services/upload.service";
 import { useCompanyStore } from "@/stores/company.store";
 import { refreshImage } from "@/lib/utils";
 import companyService from "@/services/company.service";
+import { useImagePreview } from "@/lib/hook";
 
 const tabs = [
   ["overview", "Tổng quan", LayoutDashboard],
@@ -58,8 +59,26 @@ const tabs = [
   ["messages", "Tin nhắn", MessageCircle],
 ] as const;
 const jobRows = [] as string[][];
-const applicationRows = [] as { id: string; name: string; title: string; skills: string; experience: string; score: number; status: string; appliedAt: string; note: string; }[];
-const reportRows = [] as { title: string; applications: number; reviewing: number; interviews: number; hired: number; rejected: number; averageFit: number; }[];
+const applicationRows = [] as {
+  id: string;
+  name: string;
+  title: string;
+  skills: string;
+  experience: string;
+  score: number;
+  status: string;
+  appliedAt: string;
+  note: string;
+}[];
+const reportRows = [] as {
+  title: string;
+  applications: number;
+  reviewing: number;
+  interviews: number;
+  hired: number;
+  rejected: number;
+  averageFit: number;
+}[];
 export function EmployerDashboard() {
   const { company } = useCompanyStore((state) => state);
   const [tab, setTab] = useState("overview");
@@ -81,9 +100,7 @@ export function EmployerDashboard() {
         />
         <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-5 px-4 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-9">
           <div className="text-white">
-            <p className="text-sm text-emerald-100">
-              Trung tâm Nhà tuyển dụng
-            </p>
+            <p className="text-sm text-emerald-100">Trung tâm Nhà tuyển dụng</p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
               Tuyển đúng người, nhanh hơn
             </h1>
@@ -100,10 +117,10 @@ export function EmployerDashboard() {
       <div className="mx-auto grid max-w-[1280px] gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside className="hidden h-fit rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block">
           <div className="mb-3 border-b border-slate-100 px-3 pb-4">
-            <p className="font-semibold text-slate-900">{company?.name ?? "Tài khoản doanh nghiệp"}</p>
-            <p className="mt-1 text-xs text-slate-500">
-              Hồ sơ doanh nghiệp
+            <p className="font-semibold text-slate-900">
+              {company?.name ?? "Tài khoản doanh nghiệp"}
             </p>
+            <p className="mt-1 text-xs text-slate-500">Hồ sơ doanh nghiệp</p>
           </div>
           <nav>
             {tabs.map(([id, label, Icon]) => (
@@ -404,12 +421,16 @@ function Candidates() {
       (status === "Tất cả trạng thái" || item.status === status) &&
       item.name.toLowerCase().includes(query.toLowerCase()),
   );
-  const changeStatus = (id: string, nextStatus: string) => {toast.info("Cập nhật trạng thái hiện chưa khả dụng.");};
+  const changeStatus = (id: string, nextStatus: string) => {
+    toast.info("Cập nhật trạng thái hiện chưa khả dụng.");
+  };
   const openNote = (item: (typeof applicationRows)[number]) => {
     setNoteTarget(item);
     setDraftNote(item.note);
   };
-  const saveNote = () => {toast.info("Lưu ghi chú hiện chưa khả dụng.");};
+  const saveNote = () => {
+    toast.info("Lưu ghi chú hiện chưa khả dụng.");
+  };
   return (
     <>
       <Panel title="Mini ATS nâng cao · Ứng viên">
@@ -653,7 +674,15 @@ function TalentSearch() {
     "Bất động sản": ["Tất cả vị trí"],
     "Kế toán / Kiểm toán": ["Tất cả vị trí"],
   };
-  const profiles = [] as { name: string; category: string; title: string; skills: string; years: number; location: string; score: number; }[];
+  const profiles = [] as {
+    name: string;
+    category: string;
+    title: string;
+    skills: string;
+    years: number;
+    location: string;
+    score: number;
+  }[];
   const [category, setCategory] = useState("");
   const [jobTitle, setJobTitle] = useState("Tất cả vị trí");
   const [experience, setExperience] = useState("0");
@@ -851,7 +880,11 @@ function Messages() {
   );
 }
 function AnalyticsV2() {
-  const reportCatalog = [] as { title: string; category: string; position: string; }[];
+  const reportCatalog = [] as {
+    title: string;
+    category: string;
+    position: string;
+  }[];
   const [job, setJob] = useState("Tất cả tin tuyển dụng");
   const [jobMenuOpen, setJobMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState(
@@ -915,15 +948,13 @@ function AnalyticsV2() {
   const hireRate = totals.applications
     ? Math.round((totals.hired / totals.applications) * 100)
     : 0;
-  const trendBase =
-    [] as number[];
+  const trendBase = [] as number[];
   const trendScale = 0;
   const trendValues = [] as number[];
   const processedTrend = trendValues.map((value, index) =>
     Math.max(0, Math.round(value * (0.72 + index * 0.025))),
   );
-  const trendLabels =
-    [] as string[];
+  const trendLabels = [] as string[];
   const trendData = trendLabels.map((label, index) => ({
     label,
     applications: trendValues[index],
@@ -1670,7 +1701,22 @@ function FunnelRow({
     </div>
   );
 }
-function Billing() {return <div className="space-y-6"><Panel title="Gói dịch vụ đang dùng"><div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">Chưa có thông tin gói dịch vụ.</div></Panel><Panel title="Hóa đơn & thanh toán"><div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">Chưa có hóa đơn.</div></Panel></div>;}
+function Billing() {
+  return (
+    <div className="space-y-6">
+      <Panel title="Gói dịch vụ đang dùng">
+        <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+          Chưa có thông tin gói dịch vụ.
+        </div>
+      </Panel>
+      <Panel title="Hóa đơn & thanh toán">
+        <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-500">
+          Chưa có hóa đơn.
+        </div>
+      </Panel>
+    </div>
+  );
+}
 function Quota({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-white p-3">
@@ -1679,22 +1725,7 @@ function Quota({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-function useImagePreview(file: File | undefined, fallback: string) {
-  const [preview, setPreview] = useState<{
-    file: File;
-    url: string;
-  } | null>(null);
-  useEffect(() => {
-    if (!file) {
-      setPreview(null);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreview({ file, url });
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
-  return file && preview?.file === file ? preview.url : fallback;
-}
+
 function Company() {
   const id = useId();
   const { company, setCompany } = useCompanyStore((state) => state);
@@ -1805,17 +1836,20 @@ function Company() {
         clearErrors("root.server");
         clearErrors(["logo", "banner"]);
       } else {
-        throw new Error(companyData.message || "Không thể lưu thông tin công ty.");
+        throw new Error(
+          companyData.message || "Không thể lưu thông tin công ty.",
+        );
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Không thể lưu thông tin công ty.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Không thể lưu thông tin công ty.",
+      );
     }
   }
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit(submit)}
-    >
+    <form noValidate onSubmit={handleSubmit(submit)}>
       <fieldset
         disabled={isSubmitting}
         className="min-w-0 space-y-6 disabled:opacity-70"
@@ -1906,7 +1940,6 @@ function Company() {
                   aria-invalid={!!errors[field.name]}
                   aria-describedby={`${id}-${field.name}-error`}
                 />
-
                 <FieldError id={`${id}-${field.name}-error`}>
                   {errors[field.name]?.message}
                 </FieldError>

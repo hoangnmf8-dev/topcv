@@ -1,7 +1,12 @@
+import candidateReadRouter from "./candidate-read.route";
 import express from "express";
 import { z } from "zod";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { prisma } from "../utils/prisma";
 import { successResponse } from "../utils/response";
+import candidateController from "../controllers/candidate.controller";
 const candidateRouter = express.Router();
 candidateRouter.use(authMiddleware);
+candidateRouter.use("/me", candidateReadRouter);
+candidateRouter.patch("/:id", candidateController.updateCandidate);
+export default candidateRouter;

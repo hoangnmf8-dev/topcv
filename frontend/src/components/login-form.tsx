@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
@@ -35,7 +35,7 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [isFault, setIsFault] = useState("");
   const router = useRouter();
-  const {setAccount} = useAccountStore(state => state);
+  const { setAccount } = useAccountStore((state) => state);
   const { register, control, handleSubmit, setError, formState } =
     useForm<LoginInput>({
       mode: "onChange",
@@ -48,20 +48,19 @@ export function LoginForm({
   const { errors, isSubmitting } = formState;
   async function onSubmit(values: LoginInput) {
     const response = await loginAction(values);
-    if(!response.success) {
+    if (!response.success) {
       setIsFault(response.errors.message);
-    };
+    }
     try {
       const account = await setAccount();
-      if(account?.company) {
+      if (account?.company) {
         router.push("/employer");
       } else {
         router.push("/");
+        return;
       }
-    } catch(error) {
-      console.log(error);
-    }
-  };
+    } catch (error) {}
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <FieldGroup>

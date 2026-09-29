@@ -2,6 +2,7 @@ import { AppError } from "../exceptions";
 import uploadService from "./upload.service";
 import { JobPostListQuery } from "../types/job-post.type";
 import { prisma } from "../utils/prisma";
+import { Prisma } from "../generated/prisma/client";
 
 class JobPostService {
   async getJobPost(id: string) {
@@ -30,7 +31,8 @@ class JobPostService {
             description: true,
           },
         },
-        location: { select: { name: true } },
+        province: { select: { name: true } },
+        ward: { select: { id: true, fullName: true } },
         category: { select: { name: true } },
       },
     });
@@ -49,29 +51,43 @@ class JobPostService {
           : null,
       },
     };
-  }
-
+  };
   async getManyJobPost(params: JobPostListQuery) {
-    const options = this.buildJobPostWhere(params);
+    const page = Number(params.page ?? 1);
+    const limit = Number(params.limit ?? 8);
+    if (
+      !Number.isInteger(page) ||
+      page < 1 ||
+      !Number.isInteger(limit) ||
+      limit < 1 ||
+      limit > 100
+    ) {
+      throw new AppError(
+        "Trang hoặc số lượng kết quả không hợp lệ",
+        "INVALID_PAGINATION",
+        400,
+      );
+    }
+    const where = await this.buildJobPostWhere(params);
+    const orderBy = this.buildJobPostOrderBy(params);
     const jobs = await prisma.jobPost.findMany({
       include: {
         company: {
-          select: {
-            name: true,
-            logoKey: true,
-          },
+          select: { name: true, logoKey: true },
         },
-        location: {
-          select: {
-            name: true,
-          },
+        province: {
+          select: { name: true },
+        },
+        ward: {
+          select: { id: true, fullName: true },
         },
       },
-      where: options.where,
-      orderBy: options.orderBy,
-      take: +params.limit!,
-      skip: (+params.page! - 1) * +params.limit!,
+      where,
+      orderBy,
+      take: limit,
+      skip: (page - 1) * limit,
     });
+    //Hàm lấy url
     const urls = new Map<string, string>();
     await Promise.all(
       [
@@ -92,45 +108,120 @@ class JobPostService {
       },
     }));
   }
-  buildJobPostOrderBy(jobPostListQuery: JobPostListQuery) {
-    if (jobPostListQuery.sort) {
-      switch (jobPostListQuery.sort) {
-        case "newest":
-          return {
-            orderBy: {
-              createdAt: "desc",
-            },
-          };
-        case "salary":
-          return {
-            orderBy: {
-              salaryMax: "desc",
-            },
-          };
-        case "hot":
-          return {
-            isBoosted: true,
-          };
-      }
+  buildJobPostOrderBy(
+    params: JobPostListQuery,
+  ): Prisma.JobPostOrderByWithRelationInput[] {
+    if (params.sort === "salary") {
+      return [{ salaryMax: { sort: "desc", nulls: "last" } }, { id: "desc" }];
     }
+    return [{ createdAt: "desc" }, { id: "desc" }];
   }
-  buildJobPostWhere(jobPostListQuery: JobPostListQuery) {
-    let where = {},
-      orderBy = {};
-    const sortCondition = this.buildJobPostOrderBy(jobPostListQuery);
-    if (sortCondition?.isBoosted) {
-      where = {
-        ...sortCondition,
-      };
+  async buildJobPostWhere(
+    params: JobPostListQuery,
+  ): Promise<Prisma.JobPostWhereInput> {
+    const conditions: Prisma.JobPostWhereInput[] = [];
+    if (params.query) {
+      conditions.push({
+        OR: [
+          {
+            title: {
+              contains: params.query,
+              mode: "insensitive",
+            },
+          },
+          {
+            company: {
+              name: {
+                contains: params.query,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
+      });
     }
-    if (sortCondition?.orderBy) {
-      orderBy = {
-        ...sortCondition.orderBy,
-      };
+    if (params.jobTitleIds?.length) {
+      conditions.push({
+        jobTitleId: { in: params.jobTitleIds },
+      });
+    }
+    if (params.employmentType) {
+      conditions.push({
+        employmentType: params.employmentType,
+      });
+    }
+    const experience = params.experienceYearsMin;
+    if (experience != null) {
+      conditions.push({
+        experienceYearsMin: experience >= 5 ? { gte: experience } : experience,
+      });
+    }
+    if (params.saturdaySchedule) {
+      conditions.push({
+        saturdaySchedule: params.saturdaySchedule,
+      });
+    }
+    if (params.salary?.min != null) {
+      conditions.push({
+        salaryMax: { gte: params.salary.min },
+      });
+    }
+    if (params.salary?.max != null) {
+      conditions.push({
+        salaryMin: { lte: params.salary.max },
+      });
+    };
+    // if(!params.salary?.min && params.salary?.max === 10000000) {
+    //   conditions.push({
+    //     salaryMax: {lt: 10000000}
+    //   })
+    // };
+    if (params.wardIds?.length) {
+      const wards = await prisma.ward.findMany({
+        where: { id: { in: params.wardIds } },
+        select: { id: true, provinceId: true },
+      });
+      if (wards.length !== new Set(params.wardIds).size) {
+        throw new AppError(
+          "Có phường/xã không tồn tại",
+          "INVALID_LOCATION",
+          400,
+        );
+      }
+      if (
+        params.provinceIds?.length &&
+        wards.some((ward) => !params.provinceIds.includes(ward.provinceId))
+      ) {
+        throw new AppError(
+          "Phường/xã không thuộc tỉnh/thành đã chọn",
+          "INVALID_LOCATION",
+          400,
+        );
+      }
+      const partialProvinceIds = new Set(wards.map((ward) => ward.provinceId));
+      const wholeProvinceIds = params.provinceIds.filter(
+        (id) => !partialProvinceIds.has(id),
+      );
+      const locationConditions: Prisma.JobPostWhereInput[] = [
+        { wardId: { in: params.wardIds } },
+      ];
+      if (wholeProvinceIds.length) {
+        locationConditions.push({
+          provinceId: { in: wholeProvinceIds },
+        });
+      }
+      conditions.push({ OR: locationConditions });
+    } else if (params.provinceIds.length) {
+      conditions.push({
+        provinceId: { in: params.provinceIds },
+      });
     }
     return {
-      where,
-      orderBy,
+      deletedAt: null,
+      status: "PUBLISHED",
+      company: { deletedAt: null },
+      ...(params.sort === "hot" ? { isBoosted: true } : {}),
+      AND: conditions,
     };
   }
 }

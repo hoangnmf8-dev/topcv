@@ -1,421 +1,711 @@
-import type { CVData, TemplateId, ThemeId } from "@/lib/cv-layout"
-import { getTheme } from "@/lib/cv-layout"
-import { Globe, Link2, Mail, MapPin, Phone, User } from "lucide-react"
-import { AtsTemplate, CreativeTemplate, ExecutiveTemplate, GraduateTemplate, SalesTemplate, TechTemplate } from "@/components/cv/cv-template-variants"
+import type { CSSProperties, ReactNode } from "react";
+import type { CVData, TemplateId, ThemeId } from "@/lib/cv-layout";
+import { getTheme } from "@/lib/cv-layout";
+import { Mail, MapPin, Phone, Globe, Linkedin, Github } from "lucide-react";
 
-interface Props {
-  data: CVData
-  template: TemplateId
-  theme: ThemeId
-}
-
-function Avatar({ src, ring }: { src: string; ring: string }) {
-  if (src) {
-    return (
-      <img
-        src={src || "/placeholder.svg"}
-        alt="Ảnh đại diện"
-        className="h-full w-full object-cover"
-      />
-    )
-  }
-  return (
-    <div
-      className="flex h-full w-full items-center justify-center"
-      style={{ background: ring }}
-      aria-hidden="true"
+type Props = { data: CVData; template: TemplateId; theme: ThemeId };
+export function CVDocument({ data, template, theme }: Props) {
+  const palette = getTheme(theme);
+  const accent = template === "creative" ? palette.accent : palette.ink;
+  const single =
+    template === "minimal" || template === "ats" || template === "classic";
+  const dark = template === "modern";
+  const creative = template === "creative";
+  const sidebarRight = template === "sales" || template === "graduate";
+  const style = {
+    color: "#334155",
+    fontSize: 13,
+    lineHeight: 1.7,
+    fontFamily:
+      template === "classic"
+        ? "Georgia, 'Times New Roman', serif"
+        : "Arial, sans-serif",
+    background: "#fff",
+    minHeight: "100%",
+    overflowWrap: "anywhere",
+  } satisfies CSSProperties;
+  const name = data.personal.fullName || "HỌ VÀ TÊN";
+  const initials = name
+    .split(/\s+/)
+    .slice(-2)
+    .map((v) => v[0])
+    .join("");
+  const heading = (title: string) => (
+    <h2
+      style={{
+        fontSize: 14,
+        fontWeight: 700,
+        letterSpacing: single ? 1.8 : 1.2,
+        textTransform: "uppercase",
+        color: accent,
+        marginBottom: 16,
+        paddingBottom: 9,
+        borderBottom: "1px solid " + palette.soft,
+      }}
     >
-      <User className="h-1/2 w-1/2" style={{ color: "#ffffff" }} />
+      {title}
+    </h2>
+  );
+  const section = (title: string, children: ReactNode) => (
+    <section style={{ marginBottom: 30, breakInside: "avoid" }}>
+      {heading(title)}
+      {children}
+    </section>
+  );
+  const avatar = (
+    <div
+      style={{
+        width: 110,
+        height: 130,
+        flexShrink: 0,
+        background: palette.soft,
+        color: accent,
+        display: "grid",
+        placeItems: "center",
+        borderRadius: creative ? "48px 48px 8px 8px" : 6,
+        overflow: "hidden",
+        fontSize: 34,
+        fontWeight: 700,
+      }}
+    >
+      {data.personal.avatar ? (
+        <img
+          src={data.personal.avatar}
+          alt="Ảnh đại diện"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      ) : (
+        initials
+      )}
     </div>
-  )
-}
-
-/* ---------------- Modern (2 columns w/ colored sidebar) ---------------- */
-function ModernTemplate({ data, accent, soft, ink }: RenderProps) {
-  const { personal } = data
-  return (
-    <div className="flex h-full min-h-full font-sans text-[11px] leading-relaxed text-neutral-700">
-      {/* Sidebar */}
-      <aside className="w-[34%] shrink-0 p-6 text-white" style={{ background: accent }}>
-        <div className="mx-auto mb-5 h-28 w-28 overflow-hidden rounded-full ring-4 ring-white/30">
-          <Avatar src={personal.avatar} ring={ink} />
-        </div>
-
-        <SidebarHeading>Liên hệ</SidebarHeading>
-        <ul className="mb-5 flex flex-col gap-2 text-[10.5px]">
-          <ContactRow icon={<Phone className="h-3 w-3" />} value={personal.phone} light />
-          <ContactRow icon={<Mail className="h-3 w-3" />} value={personal.email} light />
-          <ContactRow icon={<MapPin className="h-3 w-3" />} value={personal.address} light />
-          <ContactRow icon={<Link2 className="h-3 w-3" />} value={personal.github} light />
-          <ContactRow icon={<Globe className="h-3 w-3" />} value={personal.linkedin} light />
-        </ul>
-
-        <SidebarHeading>Kỹ năng</SidebarHeading>
-        <ul className="flex flex-col gap-2.5">
-          {data.skills.map((s) => (
-            <li key={s.id}>
-              <div className="mb-1 flex items-center justify-between text-[10.5px]">
-                <span className="font-medium">{s.name}</span>
-              </div>
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/25">
-                <div
-                  className="h-full rounded-full bg-white"
-                  style={{ width: `${(s.level / 5) * 100}%` }}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 p-7">
-        <header className="mb-5">
-          <h1 className="text-[26px] font-bold leading-tight text-neutral-900">
-            {personal.fullName}
-          </h1>
-          <p className="mt-0.5 text-[13px] font-medium" style={{ color: accent }}>
-            {personal.title}
+  );
+  const contacts = [
+    [Phone, data.personal.phone],
+    [Mail, data.personal.email],
+    [MapPin, data.personal.address],
+    [Github, data.personal.github],
+    [Linkedin, data.personal.linkedin],
+  ] as const;
+  const contactBlock = (
+    <div style={{ display: "grid", gap: 11 }}>
+      {contacts
+        .filter(([, value]) => value)
+        .map(([Icon, value], i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: 9,
+              fontSize: 12,
+            }}
+          >
+            <Icon
+              size={14}
+              style={{ flexShrink: 0, marginTop: 3, opacity: 0.7 }}
+            />
+            <span>{value}</span>
+          </div>
+        ))}
+    </div>
+  );
+  const education = (
+    <div style={{ display: "grid", gap: 20 }}>
+      {data.educations.map((edu) => (
+        <div key={edu.id}>
+          <p style={{ fontSize: 11, opacity: 0.7, marginBottom: 5 }}>
+            {edu.timeline}
           </p>
-        </header>
-
-        <MainSection title="Mục tiêu nghề nghiệp" accent={accent}>
-          <p className="text-justify">{data.objective}</p>
-        </MainSection>
-
-        <MainSection title="Kinh nghiệm làm việc" accent={accent}>
-          <div className="flex flex-col gap-4">
-            {data.experiences.map((exp) => (
-              <ExperienceBlock key={exp.id} exp={exp} accent={accent} soft={soft} />
-            ))}
-          </div>
-        </MainSection>
-
-        <MainSection title="Học vấn" accent={accent}>
-          <div className="flex flex-col gap-2.5">
-            {data.educations.map((edu) => (
-              <div key={edu.id}>
-                <div className="flex items-baseline justify-between gap-2">
-                  <h4 className="font-semibold text-neutral-900">{edu.school}</h4>
-                  <span className="shrink-0 text-[10px] text-neutral-500">{edu.timeline}</span>
-                </div>
-                <p className="text-[10.5px]">{edu.degree}</p>
-              </div>
-            ))}
-          </div>
-        </MainSection>
-      </main>
+          <p style={{ fontWeight: 700 }}>{edu.school}</p>
+          <p style={{ marginTop: 5 }}>{edu.degree}</p>
+        </div>
+      ))}
     </div>
-  )
-}
-
-/* ---------------- Classic (serif, single column) ---------------- */
-function ClassicTemplate({ data, accent }: RenderProps) {
-  const { personal } = data
-  return (
-    <div className="h-full min-h-full bg-white p-10 font-serif text-[11px] leading-relaxed text-neutral-800">
-      <header className="mb-5 border-b-2 pb-4 text-center" style={{ borderColor: accent }}>
-        <h1 className="text-[28px] font-bold tracking-wide text-neutral-900">
-          {personal.fullName}
-        </h1>
-        <p className="mt-1 text-[13px] uppercase tracking-[0.2em]" style={{ color: accent }}>
-          {personal.title}
-        </p>
-        <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[10px] text-neutral-600">
-          <span>{personal.phone}</span>
-          <span>·</span>
-          <span>{personal.email}</span>
-          <span>·</span>
-          <span>{personal.address}</span>
-        </div>
-        <div className="mt-1 flex flex-wrap justify-center gap-x-4 text-[10px] text-neutral-600">
-          <span>{personal.github}</span>
-          <span>{personal.linkedin}</span>
-        </div>
-      </header>
-
-      <ClassicSection title="Mục tiêu nghề nghiệp" accent={accent}>
-        <p className="text-justify italic">{data.objective}</p>
-      </ClassicSection>
-
-      <ClassicSection title="Kinh nghiệm làm việc" accent={accent}>
-        <div className="flex flex-col gap-4">
-          {data.experiences.map((exp) => (
-            <div key={exp.id}>
-              <div className="flex items-baseline justify-between gap-2">
-                <h4 className="text-[12px] font-bold text-neutral-900">{exp.role}</h4>
-                <span className="shrink-0 text-[10px] text-neutral-500">{exp.timeline}</span>
-              </div>
-              <p className="mb-1 text-[11px] font-semibold" style={{ color: accent }}>
-                {exp.company}
-              </p>
-              <ul className="ml-4 list-disc space-y-0.5 text-justify">
-                {exp.bullets.map((b, i) => (
-                  <li key={i}>{b}</li>
-                ))}
-              </ul>
+  );
+  const skills = (
+    <div style={{ display: "grid", gap: 14 }}>
+      {data.skills.map((skill) => (
+        <div key={skill.id}>
+          <p style={{ fontWeight: 600, fontSize: 12 }}>{skill.name}</p>
+          {template !== "ats" && (
+            <div
+              style={{
+                marginTop: 7,
+                height: 3,
+                background: dark ? "#ffffff30" : "#dfe5e9",
+              }}
+            >
+              <div
+                style={{
+                  width: Math.max(0, Math.min(100, skill.level * 20)) + "%",
+                  height: "100%",
+                  background: dark ? "#fff" : accent,
+                }}
+              />
             </div>
-          ))}
+          )}
         </div>
-      </ClassicSection>
-
-      <div className="grid grid-cols-2 gap-6">
-        <ClassicSection title="Học vấn" accent={accent}>
-          <div className="flex flex-col gap-2">
-            {data.educations.map((edu) => (
-              <div key={edu.id}>
-                <h4 className="font-bold text-neutral-900">{edu.school}</h4>
-                <p className="text-[10.5px]">{edu.degree}</p>
-                <p className="text-[10px] text-neutral-500">{edu.timeline}</p>
-              </div>
-            ))}
+      ))}
+    </div>
+  );
+  const experiences = (
+    <div>
+      {data.experiences.map((exp, i) => (
+        <article
+          key={exp.id}
+          style={{
+            marginBottom: 26,
+            paddingLeft: single ? 0 : 18,
+            borderLeft: single ? undefined : "2px solid " + palette.soft,
+            position: "relative",
+            breakInside: "avoid",
+          }}
+        >
+          {!single && (
+            <span
+              style={{
+                position: "absolute",
+                left: -5,
+                top: 7,
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: accent,
+              }}
+            />
+          )}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "baseline",
+              gap: 12,
+            }}
+          >
+            <h3 style={{ fontWeight: 700, fontSize: 14, color: "#172c3e" }}>
+              {exp.role}
+            </h3>
+            <span
+              style={{ fontSize: 10, whiteSpace: "nowrap", color: "#64748b" }}
+            >
+              {exp.timeline}
+            </span>
           </div>
-        </ClassicSection>
-
-        <ClassicSection title="Kỹ năng" accent={accent}>
-          <ul className="flex flex-col gap-1.5">
-            {data.skills.map((s) => (
-              <li key={s.id} className="flex items-center justify-between">
-                <span>{s.name}</span>
-                <StarLevel level={s.level} accent={accent} />
-              </li>
+          <p
+            style={{
+              fontWeight: 600,
+              color: accent,
+              marginTop: 3,
+              marginBottom: 10,
+            }}
+          >
+            {exp.company}
+          </p>
+          <ul
+            style={{
+              paddingLeft: 16,
+              listStyleType: "disc",
+              display: "grid",
+              gap: 7,
+            }}
+          >
+            {exp.bullets.filter(Boolean).map((text, j) => (
+              <li key={j}>{text}</li>
             ))}
           </ul>
-        </ClassicSection>
-      </div>
-    </div>
-  )
-}
-
-/* ---------------- Minimal (single column, airy) ---------------- */
-function MinimalTemplate({ data, accent }: RenderProps) {
-  const { personal } = data
-  return (
-    <div className="h-full min-h-full bg-white p-11 font-sans text-[11px] leading-relaxed text-neutral-600">
-      <header className="mb-8">
-        <h1 className="text-[30px] font-semibold tracking-tight text-neutral-900">
-          {personal.fullName}
-        </h1>
-        <p className="mt-1 text-[13px] text-neutral-500">{personal.title}</p>
-        <div className="mt-3 h-0.5 w-12" style={{ background: accent }} />
-        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[10px] text-neutral-500">
-          <span>{personal.phone}</span>
-          <span>{personal.email}</span>
-          <span>{personal.address}</span>
-          <span>{personal.github}</span>
-          <span>{personal.linkedin}</span>
-        </div>
-      </header>
-
-      <MinimalSection title="Mục tiêu">
-        <p className="text-neutral-700">{data.objective}</p>
-      </MinimalSection>
-
-      <MinimalSection title="Kinh nghiệm">
-        <div className="flex flex-col gap-5">
-          {data.experiences.map((exp) => (
-            <div key={exp.id} className="grid grid-cols-[85px_1fr] gap-4">
-              <span className="pt-0.5 text-[10px] text-neutral-400">{exp.timeline}</span>
-              <div>
-                <h4 className="text-[12px] font-semibold text-neutral-900">{exp.role}</h4>
-                <p className="mb-1.5 text-[10.5px] text-neutral-500">{exp.company}</p>
-                <ul className="space-y-1">
-                  {exp.bullets.map((b, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full" style={{ background: accent }} />
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-      </MinimalSection>
-
-      <MinimalSection title="Học vấn">
-        <div className="flex flex-col gap-3">
-          {data.educations.map((edu) => (
-            <div key={edu.id} className="grid grid-cols-[85px_1fr] gap-4">
-              <span className="pt-0.5 text-[10px] text-neutral-400">{edu.timeline}</span>
-              <div>
-                <h4 className="text-[12px] font-semibold text-neutral-900">{edu.school}</h4>
-                <p className="text-[10.5px] text-neutral-500">{edu.degree}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </MinimalSection>
-
-      <MinimalSection title="Kỹ năng">
-        <div className="flex flex-wrap gap-2">
-          {data.skills.map((s) => (
-            <span
-              key={s.id}
-              className="rounded-full px-3 py-1 text-[10px] font-medium"
-              style={{ background: `${accent}14`, color: accent }}
-            >
-              {s.name}
-            </span>
-          ))}
-        </div>
-      </MinimalSection>
-    </div>
-  )
-}
-
-/* ---------------- Shared sub-components ---------------- */
-interface RenderProps {
-  data: CVData
-  accent: string
-  soft: string
-  ink: string
-}
-
-function SidebarHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h3 className="mb-2.5 border-b border-white/30 pb-1 text-[11px] font-semibold uppercase tracking-wider">
-      {children}
-    </h3>
-  )
-}
-
-function ContactRow({
-  icon,
-  value,
-}: {
-  icon: React.ReactNode
-  value: string
-  light?: boolean
-}) {
-  if (!value) return null
-  return (
-    <li className="flex items-center gap-2">
-      <span className="opacity-90">{icon}</span>
-      <span className="break-all">{value}</span>
-    </li>
-  )
-}
-
-function MainSection({
-  title,
-  accent,
-  children,
-}: {
-  title: string
-  accent: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="mb-5">
-      <h3
-        className="mb-2 flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide text-neutral-900"
-      >
-        <span className="inline-block h-3 w-1 rounded-full" style={{ background: accent }} />
-        {title}
-      </h3>
-      {children}
-    </section>
-  )
-}
-
-function ExperienceBlock({
-  exp,
-  accent,
-}: {
-  exp: CVData["experiences"][number]
-  accent: string
-  soft: string
-}) {
-  return (
-    <div className="relative border-l-2 pl-3.5" style={{ borderColor: `${accent}40` }}>
-      <span
-        className="absolute -left-[5px] top-1 h-2 w-2 rounded-full"
-        style={{ background: accent }}
-      />
-      <div className="flex items-baseline justify-between gap-2">
-        <h4 className="text-[12px] font-semibold text-neutral-900">{exp.role}</h4>
-        <span className="shrink-0 text-[10px] text-neutral-500">{exp.timeline}</span>
-      </div>
-      <p className="mb-1 text-[11px] font-medium" style={{ color: accent }}>
-        {exp.company}
-      </p>
-      <ul className="space-y-0.5">
-        {exp.bullets.map((b, i) => (
-          <li key={i} className="flex gap-1.5">
-            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-neutral-400" />
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function ClassicSection({
-  title,
-  accent,
-  children,
-}: {
-  title: string
-  accent: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="mb-5">
-      <h3
-        className="mb-2 text-[13px] font-bold uppercase tracking-[0.15em]"
-        style={{ color: accent }}
-      >
-        {title}
-      </h3>
-      {children}
-    </section>
-  )
-}
-
-function MinimalSection({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="mb-7">
-      <h3 className="mb-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-neutral-400">
-        {title}
-      </h3>
-      {children}
-    </section>
-  )
-}
-
-function StarLevel({ level, accent }: { level: number; accent: string }) {
-  return (
-    <span className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className="h-1.5 w-1.5 rounded-full"
-          style={{ background: i < level ? accent : "#d4d4d4" }}
-        />
+        </article>
       ))}
-    </span>
-  )
-}
+    </div>
+  );
+  const header = (
+    <header
+      style={{
+        padding: single ? "42px 46px 26px" : "38px 38px 28px",
+        display: "flex",
+        alignItems: "center",
+        gap: 24,
+        borderTop:
+          template === "ats" || template === "minimal"
+            ? "0"
+            : "7px solid " + accent,
+        background: creative ? palette.soft : "#fff",
+        borderBottom: "1px solid #e2e8f0",
+      }}
+    >
+      {!single && !dark && avatar}
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+          textAlign: template === "classic" ? "center" : "left",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: single ? 32 : 30,
+            lineHeight: 1.22,
+            fontWeight: 700,
+            letterSpacing: template === "classic" ? 2 : 0.5,
+            color: accent,
+          }}
+        >
+          {name}
+        </h1>
+        <p
+          style={{
+            marginTop: 10,
+            fontSize: 15,
+            letterSpacing: 1,
+            color: "#526579",
+          }}
+        >
+          {data.personal.title || "Vị trí ứng tuyển"}
+        </p>
+        {single && (
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: template === "classic" ? "center" : "flex-start",
+              gap: "5px 18px",
+              marginTop: 16,
+              fontSize: 11,
+              color: "#64748b",
+            }}
+          >
+            {contacts
+              .filter(([, value]) => value)
+              .map(([, value], i) => (
+                <span key={i}>{value}</span>
+              ))}
+          </div>
+        )}
+      </div>
+      {dark && avatar}
+    </header>
+  );
+  const intro = section(
+    "Giới thiệu",
+    <p style={{ whiteSpace: "pre-line" }}>{data.objective}</p>,
+  );
 
-export function CVDocument({ data, template, theme }: Props) {
-  const prescribedTheme:Partial<Record<TemplateId,ThemeId>>={executive:"slate",tech:"navy",creative:"purple",sales:"emerald",graduate:"navy",ats:"slate"}
-  const t = getTheme(prescribedTheme[template]??theme)
-  const render = { data, accent: t.accent, soft: t.soft, ink: t.ink }
-  if (template === "executive") return <ExecutiveTemplate {...render}/>
-  if (template === "tech") return <TechTemplate {...render}/>
-  if (template === "creative") return <CreativeTemplate {...render}/>
-  if (template === "sales") return <SalesTemplate {...render}/>
-  if (template === "graduate") return <GraduateTemplate {...render}/>
-  if (template === "ats") return <AtsTemplate {...render}/>
-  if (template === "classic") return <ClassicTemplate {...render} />
-  if (template === "minimal") return <MinimalTemplate {...render} />
-  return <ModernTemplate {...render} />
+  const chips = (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+      {data.skills.map((skill) => (
+        <span
+          key={skill.id}
+          style={{
+            border: "1px solid " + palette.soft,
+            padding: "7px 12px",
+            borderRadius: 4,
+            color: accent,
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          {skill.name}
+        </span>
+      ))}
+    </div>
+  );
+  const identity = (size = 36) => (
+    <>
+      <h1
+        style={{
+          fontSize: size,
+          fontWeight: 700,
+          lineHeight: 1.2,
+          letterSpacing: -0.5,
+        }}
+      >
+        {name}
+      </h1>
+      <p style={{ fontSize: 16, marginTop: 12 }}>
+        {data.personal.title || "Vị trí ứng tuyển"}
+      </p>
+    </>
+  );
+  if (template === "executive")
+    return (
+      <div style={style}>
+        <header
+          style={{
+            background: accent,
+            color: "#fff",
+            padding: "48px 48px 38px",
+          }}
+        >
+          <p
+            style={{
+              fontSize: 10,
+              letterSpacing: 4,
+              marginBottom: 20,
+              opacity: 0.7,
+            }}
+          >
+            HỒ SƠ CHUYÊN MÔN
+          </p>
+          {identity(38)}
+          <div
+            style={{
+              height: 3,
+              width: 70,
+              background: "#d7b880",
+              marginTop: 28,
+            }}
+          />
+        </header>
+        <div style={{ padding: "28px 48px", borderBottom: "1px solid #ddd" }}>
+          {contactBlock}
+        </div>
+        <main style={{ padding: "32px 48px" }}>
+          {intro}
+          {section("Kinh nghiệm & trách nhiệm", experiences)}
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 35 }}
+          >
+            {section("Năng lực quản lý", chips)}
+            {section("Học vấn", education)}
+          </div>
+        </main>
+      </div>
+    );
+  if (template === "tech")
+    return (
+      <div style={{ ...style, background: "#f5f7fa" }}>
+        <header
+          style={{ padding: "40px", background: "#172536", color: "white" }}
+        >
+          <p
+            style={{
+              fontFamily: "monospace",
+              fontSize: 12,
+              color: "#75d5bd",
+              marginBottom: 16,
+            }}
+          >
+            PROFILE / ENGINEERING
+          </p>
+          {identity(34)}
+          <div style={{ marginTop: 24 }}>{contactBlock}</div>
+        </header>
+        <main style={{ padding: 32 }}>
+          <section
+            style={{
+              padding: 24,
+              background: "white",
+              borderLeft: "4px solid " + accent,
+              marginBottom: 24,
+            }}
+          >
+            {heading("01 / Giới thiệu")}
+            <p>{data.objective}</p>
+          </section>
+          <section
+            style={{ padding: 24, background: "white", marginBottom: 24 }}
+          >
+            {heading("02 / Công nghệ & công cụ")}
+            {chips}
+          </section>
+          <section
+            style={{ padding: 24, background: "white", marginBottom: 24 }}
+          >
+            {heading("03 / Kinh nghiệm phát triển")}
+            {experiences}
+          </section>
+          <section style={{ padding: 24, background: "white" }}>
+            {heading("04 / Học vấn")}
+            {education}
+          </section>
+        </main>
+      </div>
+    );
+  if (template === "creative")
+    return (
+      <div style={{ ...style, background: "#fffdf9", padding: 40 }}>
+        <header
+          style={{
+            position: "relative",
+            padding: "32px 28px",
+            background: palette.soft,
+            borderRadius: "70px 6px 70px 6px",
+            display: "flex",
+            alignItems: "center",
+            gap: 25,
+            marginBottom: 32,
+          }}
+        >
+          {avatar}
+          <div style={{ color: accent }}>
+            <p style={{ fontSize: 11, letterSpacing: 3, marginBottom: 12 }}>
+              CREATIVE PROFILE
+            </p>
+            {identity(36)}
+          </div>
+        </header>
+        <main
+          style={{ display: "grid", gridTemplateColumns: "1fr 205px", gap: 32 }}
+        >
+          <div>
+            {section("Một chút về tôi", <p>{data.objective}</p>)}
+            {section(
+              "Hành trình sáng tạo",
+              <div>
+                {data.experiences.map((exp, i) => (
+                  <article key={exp.id} style={{ marginBottom: 26 }}>
+                    <p
+                      style={{
+                        fontSize: 28,
+                        fontWeight: 700,
+                        color: accent,
+                        opacity: 0.5,
+                      }}
+                    >
+                      0{i + 1}
+                    </p>
+                    <h3 style={{ fontWeight: 700, fontSize: 15 }}>
+                      {exp.role}
+                    </h3>
+                    <p style={{ fontSize: 12, color: accent, margin: "5px 0" }}>
+                      {exp.company} · {exp.timeline}
+                    </p>
+                    <ul style={{ listStyle: "disc", paddingLeft: 18 }}>
+                      {exp.bullets.map((b, j) => (
+                        <li key={j} style={{ marginTop: 8 }}>
+                          {b}
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>,
+            )}
+          </div>
+          <aside style={{ paddingTop: 8 }}>
+            {section("Liên hệ", contactBlock)}
+            {section("Bộ công cụ", chips)}
+            {section("Học vấn", education)}
+          </aside>
+        </main>
+      </div>
+    );
+  if (template === "sales")
+    return (
+      <div style={style}>
+        <header
+          style={{
+            padding: 40,
+            borderLeft: "18px solid " + accent,
+            display: "flex",
+            gap: 28,
+            alignItems: "center",
+          }}
+        >
+          {avatar}
+          <div style={{ color: accent }}>{identity(34)}</div>
+        </header>
+        <div
+          style={{ padding: "20px 40px", background: accent, color: "#fff" }}
+        >
+          {contactBlock}
+        </div>
+        <main style={{ padding: "34px 40px" }}>
+          {intro}
+          <div
+            style={{ padding: 22, background: palette.soft, marginBottom: 30 }}
+          >
+            {heading("Năng lực kinh doanh")}
+            {chips}
+          </div>
+          {section("Kinh nghiệm & kết quả", experiences)}
+          {section("Nền tảng học vấn", education)}
+        </main>
+      </div>
+    );
+  if (template === "graduate")
+    return (
+      <div style={{ ...style, padding: 42 }}>
+        <header
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 110px",
+            gap: 20,
+            borderBottom: "3px solid " + accent,
+            paddingBottom: 25,
+          }}
+        >
+          <div style={{ color: accent }}>
+            <p style={{ fontSize: 11, letterSpacing: 3, marginBottom: 14 }}>
+              KHỞI ĐẦU SỰ NGHIỆP
+            </p>
+            {identity(32)}
+          </div>
+          {avatar}
+        </header>
+        <main style={{ paddingTop: 26 }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 32,
+              marginBottom: 8,
+            }}
+          >
+            {section("Mục tiêu nghề nghiệp", <p>{data.objective}</p>)}
+            {section("Thông tin liên hệ", contactBlock)}
+          </div>
+          <section
+            style={{
+              padding: 24,
+              background: palette.soft,
+              borderRadius: 8,
+              marginBottom: 30,
+            }}
+          >
+            {heading("Học vấn")}
+            {education}
+          </section>
+          {section("Dự án & hoạt động", experiences)}
+          {section("Kỹ năng", chips)}
+        </main>
+      </div>
+    );
+  if (template === "minimal")
+    return (
+      <div style={{ ...style, padding: "55px 48px" }}>
+        <header
+          style={{ paddingBottom: 30, borderBottom: "1px solid #cbd5e1" }}
+        >
+          {identity(40)}
+          <div style={{ marginTop: 20 }}>{contactBlock}</div>
+        </header>
+        <main style={{ paddingTop: 35 }}>
+          {[
+            ["Giới thiệu", <p key="intro">{data.objective}</p>],
+            ["Kinh nghiệm", experiences],
+            ["Học vấn", education],
+            ["Kỹ năng", chips],
+          ].map(([label, content], i) => (
+            <section
+              key={i}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "125px 1fr",
+                gap: 25,
+                marginBottom: 35,
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: 11,
+                  textTransform: "uppercase",
+                  letterSpacing: 2,
+                  color: "#64748b",
+                  paddingTop: 3,
+                }}
+              >
+                {label}
+              </h2>
+              <div>{content}</div>
+            </section>
+          ))}
+        </main>
+      </div>
+    );
+
+  if (single)
+    return (
+      <div style={style}>
+        {header}
+        <div style={{ padding: "30px 46px 40px" }}>
+          {intro}
+          {section("Kinh nghiệm làm việc", experiences)}
+          {section("Học vấn", education)}
+          {section(
+            "Kỹ năng chuyên môn",
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: template === "ats" ? "1fr" : "1fr 1fr",
+                gap: 20,
+              }}
+            >
+              {skills}
+            </div>,
+          )}
+        </div>
+      </div>
+    );
+  const sideHeading = (text: string) => (
+    <h2
+      style={{
+        fontSize: 13,
+        fontWeight: 700,
+        textTransform: "uppercase",
+        letterSpacing: 1.4,
+        marginBottom: 17,
+        paddingBottom: 10,
+        borderBottom: dark ? "1px solid #ffffff40" : "1px solid #ccd8d5",
+      }}
+    >
+      {text}
+    </h2>
+  );
+  const sidebar = (
+    <aside
+      style={{
+        padding: "32px 26px",
+        background: dark
+          ? accent
+          : template === "tech"
+            ? "#edf2f7"
+            : palette.soft,
+        color: dark ? "#fff" : accent,
+        minWidth: 0,
+      }}
+    >
+      <section style={{ marginBottom: 34 }}>
+        {sideHeading("Thông tin liên hệ")}
+        {contactBlock}
+      </section>
+      <section style={{ marginBottom: 34 }}>
+        {sideHeading("Kỹ năng")}
+        {skills}
+      </section>
+      <section>
+        {sideHeading("Học vấn")}
+        {education}
+      </section>
+    </aside>
+  );
+  const main = (
+    <main style={{ padding: "32px 30px", minWidth: 0 }}>
+      {intro}
+      {section("Kinh nghiệm làm việc", experiences)}
+    </main>
+  );
+  return (
+    <div style={{ ...style, display: "flex", flexDirection: "column" }}>
+      {header}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: sidebarRight ? "1fr 245px" : "245px 1fr",
+          flex: 1,
+        }}
+      >
+        {sidebarRight ? (
+          <>
+            {main}
+            {sidebar}
+          </>
+        ) : (
+          <>
+            {sidebar}
+            {main}
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

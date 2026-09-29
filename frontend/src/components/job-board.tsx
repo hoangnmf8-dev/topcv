@@ -62,7 +62,7 @@ export function JobBoard() {
   } = useQuery({
     queryKey: [...jobPostListSortKey(sort, page), 8],
     queryFn: ({ signal }) =>
-      jobPostService.getJobPostList(sort, page, 8, signal),
+      jobPostService.getJobPostList({ sort: sort as "newest" | "salary" | "hot", page, limit: 8, provinceIds: [], wardIds: [], saturdaySchedule: null, employmentType: null, experienceYearsMin: null, salary: { min: null, max: null } }, signal),
     placeholderData: keepPreviousData,
     staleTime: 0,
   });

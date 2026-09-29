@@ -1,31 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronDown, GraduationCap, Sparkles, Target, UserRound } from "lucide-react"
-import { cn } from "@/lib/utils"
-import type { CVData } from "@/lib/cv-layout"
-import { PersonalSection } from "./sections/personal-section"
-import { ObjectiveSection } from "./sections/objective-section"
-import { ExperienceSection } from "./sections/experience-section"
-import { EducationSkillsSection } from "./sections/education-skills-section"
+import { useState } from "react";
+import {
+  ChevronDown,
+  GraduationCap,
+  Sparkles,
+  Target,
+  UserRound,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { CVData } from "@/lib/cv-layout";
+import { PersonalSection } from "./sections/personal-section";
+import { ObjectiveSection } from "./sections/objective-section";
+import { ExperienceSection } from "./sections/experience-section";
+import { EducationSkillsSection } from "./sections/education-skills-section";
 
 export function FormPanel({
   data,
   setData,
 }: {
-  data: CVData
-  setData: React.Dispatch<React.SetStateAction<CVData>>
+  data: CVData;
+  setData: React.Dispatch<React.SetStateAction<CVData>>;
 }) {
   const [open, setOpen] = useState<Record<string, boolean>>({
     personal: true,
     objective: true,
     experience: false,
     education: false,
-  })
-  const toggle = (key: string) => setOpen((o) => ({ ...o, [key]: !o[key] }))
-
-  const context = ""
-
+  });
+  const toggle = (key: string) => setOpen((o) => ({ ...o, [key]: !o[key] }));
+  const context = "";
   return (
     <div className="scrollbar-slim h-full overflow-y-auto bg-background p-4 sm:p-5">
       <div className="mx-auto flex max-w-2xl flex-col gap-3">
@@ -42,7 +46,6 @@ export function FormPanel({
             onChange={(personal) => setData((d) => ({ ...d, personal }))}
           />
         </AccordionItem>
-
         <AccordionItem
           id="objective"
           icon={<Target className="h-4 w-4" />}
@@ -58,7 +61,6 @@ export function FormPanel({
             context={context}
           />
         </AccordionItem>
-
         <AccordionItem
           id="experience"
           icon={<Sparkles className="h-4 w-4" />}
@@ -74,7 +76,6 @@ export function FormPanel({
             context={context}
           />
         </AccordionItem>
-
         <AccordionItem
           id="education"
           icon={<GraduationCap className="h-4 w-4" />}
@@ -86,13 +87,15 @@ export function FormPanel({
           <EducationSkillsSection
             educations={data.educations}
             skills={data.skills}
-            onEducationsChange={(educations) => setData((d) => ({ ...d, educations }))}
+            onEducationsChange={(educations) =>
+              setData((d) => ({ ...d, educations }))
+            }
             onSkillsChange={(skills) => setData((d) => ({ ...d, skills }))}
           />
         </AccordionItem>
       </div>
     </div>
-  )
+  );
 }
 
 function AccordionItem({
@@ -104,14 +107,14 @@ function AccordionItem({
   onToggle,
   children,
 }: {
-  id: string
-  icon: React.ReactNode
-  title: string
-  subtitle?: string
-  badge?: string
-  open: boolean
-  onToggle: () => void
-  children: React.ReactNode
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
 }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-border bg-card">
@@ -126,7 +129,9 @@ function AccordionItem({
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-foreground">{title}</span>
+            <span className="text-sm font-semibold text-foreground">
+              {title}
+            </span>
             {badge && (
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
                 <Sparkles className="h-2.5 w-2.5" />
@@ -135,7 +140,9 @@ function AccordionItem({
             )}
           </span>
           {subtitle && (
-            <span className="block truncate text-xs text-muted-foreground">{subtitle}</span>
+            <span className="block truncate text-xs text-muted-foreground">
+              {subtitle}
+            </span>
           )}
         </span>
         <ChevronDown
@@ -145,7 +152,9 @@ function AccordionItem({
           )}
         />
       </button>
-      {open && <div className="border-t border-border px-4 py-4">{children}</div>}
+      {open && (
+        <div className="border-t border-border px-4 py-4">{children}</div>
+      )}
     </section>
-  )
+  );
 }

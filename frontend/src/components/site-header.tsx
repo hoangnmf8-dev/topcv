@@ -134,7 +134,7 @@ export function SiteHeader({
   const [open, setOpen] = useState<string | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm backdrop-blur">
       <div className="mx-auto flex h-[76px] max-w-[1280px] items-center gap-5 px-4 sm:px-6">
         {onMenuClick && (
           <button
@@ -151,13 +151,7 @@ export function SiteHeader({
           className="flex shrink-0 items-center gap-2.5"
           aria-label="TopCV về trang chủ"
         >
-          <span className="grid size-10 place-items-center rounded-xl bg-[#e7f9ef] text-[#00b14f]">
-            <BriefcaseBusiness className="size-5" />
-          </span>
-          <span className="text-[25px] font-extrabold tracking-[-1.5px] text-slate-800">
-            top<span className="text-[#00b14f]">cv</span>
-            <sup className="ml-0.5 text-[8px] text-[#00b14f]">®</sup>
-          </span>
+          <img src="/topcv-logo-7.png" alt="topcv-logo" className="h-[76px]"/>
         </Link>
         <nav className="hidden h-full items-center gap-1 xl:flex">
           {menus
@@ -245,7 +239,9 @@ export function SiteHeader({
               aria-expanded={notificationsOpen}
             >
               <Bell className="size-5" />
-              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-red-500 text-[10px] font-bold text-white">0</span>
+              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                0
+              </span>
             </button>
             {notificationsOpen && (
               <div className="absolute right-0 top-12 w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">

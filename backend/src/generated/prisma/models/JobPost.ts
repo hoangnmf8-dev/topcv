@@ -43,7 +43,9 @@ export type JobPostMinAggregateOutputType = {
   companyId: string | null
   jobTitleId: string | null
   jobCategoryId: string | null
-  locationId: string | null
+  provinceId: string | null
+  wardId: string | null
+  address: string | null
   title: string | null
   description: string | null
   requirements: string | null
@@ -68,7 +70,9 @@ export type JobPostMaxAggregateOutputType = {
   companyId: string | null
   jobTitleId: string | null
   jobCategoryId: string | null
-  locationId: string | null
+  provinceId: string | null
+  wardId: string | null
+  address: string | null
   title: string | null
   description: string | null
   requirements: string | null
@@ -93,11 +97,14 @@ export type JobPostCountAggregateOutputType = {
   companyId: number
   jobTitleId: number
   jobCategoryId: number
-  locationId: number
+  provinceId: number
+  wardId: number
+  address: number
   title: number
   description: number
   requirements: number
   benefits: number
+  overview: number
   salaryMin: number
   salaryMax: number
   currency: number
@@ -132,7 +139,9 @@ export type JobPostMinAggregateInputType = {
   companyId?: true
   jobTitleId?: true
   jobCategoryId?: true
-  locationId?: true
+  provinceId?: true
+  wardId?: true
+  address?: true
   title?: true
   description?: true
   requirements?: true
@@ -157,7 +166,9 @@ export type JobPostMaxAggregateInputType = {
   companyId?: true
   jobTitleId?: true
   jobCategoryId?: true
-  locationId?: true
+  provinceId?: true
+  wardId?: true
+  address?: true
   title?: true
   description?: true
   requirements?: true
@@ -182,11 +193,14 @@ export type JobPostCountAggregateInputType = {
   companyId?: true
   jobTitleId?: true
   jobCategoryId?: true
-  locationId?: true
+  provinceId?: true
+  wardId?: true
+  address?: true
   title?: true
   description?: true
   requirements?: true
   benefits?: true
+  overview?: true
   salaryMin?: true
   salaryMax?: true
   currency?: true
@@ -294,11 +308,14 @@ export type JobPostGroupByOutputType = {
   companyId: string
   jobTitleId: string | null
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description: string | null
   requirements: string | null
   benefits: string | null
+  overview: runtime.JsonValue
   salaryMin: runtime.Decimal | null
   salaryMax: runtime.Decimal | null
   currency: string | null
@@ -342,11 +359,14 @@ export type JobPostWhereInput = {
   companyId?: Prisma.UuidFilter<"JobPost"> | string
   jobTitleId?: Prisma.UuidNullableFilter<"JobPost"> | string | null
   jobCategoryId?: Prisma.UuidFilter<"JobPost"> | string
-  locationId?: Prisma.UuidFilter<"JobPost"> | string
+  provinceId?: Prisma.UuidFilter<"JobPost"> | string
+  wardId?: Prisma.UuidFilter<"JobPost"> | string
+  address?: Prisma.StringFilter<"JobPost"> | string
   title?: Prisma.StringFilter<"JobPost"> | string
   description?: Prisma.StringNullableFilter<"JobPost"> | string | null
   requirements?: Prisma.StringNullableFilter<"JobPost"> | string | null
   benefits?: Prisma.StringNullableFilter<"JobPost"> | string | null
+  overview?: Prisma.JsonFilter<"JobPost">
   salaryMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"JobPost"> | string | null
@@ -363,7 +383,8 @@ export type JobPostWhereInput = {
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   jobTitle?: Prisma.XOR<Prisma.JobTitleNullableScalarRelationFilter, Prisma.JobTitleWhereInput> | null
   category?: Prisma.XOR<Prisma.JobCategoryScalarRelationFilter, Prisma.JobCategoryWhereInput>
-  location?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
+  province?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
+  ward?: Prisma.XOR<Prisma.WardScalarRelationFilter, Prisma.WardWhereInput>
   applications?: Prisma.ApplicationListRelationFilter
   savedJobs?: Prisma.SavedJobListRelationFilter
 }
@@ -373,11 +394,14 @@ export type JobPostOrderByWithRelationInput = {
   companyId?: Prisma.SortOrder
   jobTitleId?: Prisma.SortOrderInput | Prisma.SortOrder
   jobCategoryId?: Prisma.SortOrder
-  locationId?: Prisma.SortOrder
+  provinceId?: Prisma.SortOrder
+  wardId?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   requirements?: Prisma.SortOrderInput | Prisma.SortOrder
   benefits?: Prisma.SortOrderInput | Prisma.SortOrder
+  overview?: Prisma.SortOrder
   salaryMin?: Prisma.SortOrderInput | Prisma.SortOrder
   salaryMax?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -394,7 +418,8 @@ export type JobPostOrderByWithRelationInput = {
   company?: Prisma.CompanyOrderByWithRelationInput
   jobTitle?: Prisma.JobTitleOrderByWithRelationInput
   category?: Prisma.JobCategoryOrderByWithRelationInput
-  location?: Prisma.ProvinceOrderByWithRelationInput
+  province?: Prisma.ProvinceOrderByWithRelationInput
+  ward?: Prisma.WardOrderByWithRelationInput
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
   savedJobs?: Prisma.SavedJobOrderByRelationAggregateInput
 }
@@ -407,11 +432,14 @@ export type JobPostWhereUniqueInput = Prisma.AtLeast<{
   companyId?: Prisma.UuidFilter<"JobPost"> | string
   jobTitleId?: Prisma.UuidNullableFilter<"JobPost"> | string | null
   jobCategoryId?: Prisma.UuidFilter<"JobPost"> | string
-  locationId?: Prisma.UuidFilter<"JobPost"> | string
+  provinceId?: Prisma.UuidFilter<"JobPost"> | string
+  wardId?: Prisma.UuidFilter<"JobPost"> | string
+  address?: Prisma.StringFilter<"JobPost"> | string
   title?: Prisma.StringFilter<"JobPost"> | string
   description?: Prisma.StringNullableFilter<"JobPost"> | string | null
   requirements?: Prisma.StringNullableFilter<"JobPost"> | string | null
   benefits?: Prisma.StringNullableFilter<"JobPost"> | string | null
+  overview?: Prisma.JsonFilter<"JobPost">
   salaryMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"JobPost"> | string | null
@@ -428,7 +456,8 @@ export type JobPostWhereUniqueInput = Prisma.AtLeast<{
   company?: Prisma.XOR<Prisma.CompanyScalarRelationFilter, Prisma.CompanyWhereInput>
   jobTitle?: Prisma.XOR<Prisma.JobTitleNullableScalarRelationFilter, Prisma.JobTitleWhereInput> | null
   category?: Prisma.XOR<Prisma.JobCategoryScalarRelationFilter, Prisma.JobCategoryWhereInput>
-  location?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
+  province?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
+  ward?: Prisma.XOR<Prisma.WardScalarRelationFilter, Prisma.WardWhereInput>
   applications?: Prisma.ApplicationListRelationFilter
   savedJobs?: Prisma.SavedJobListRelationFilter
 }, "id">
@@ -438,11 +467,14 @@ export type JobPostOrderByWithAggregationInput = {
   companyId?: Prisma.SortOrder
   jobTitleId?: Prisma.SortOrderInput | Prisma.SortOrder
   jobCategoryId?: Prisma.SortOrder
-  locationId?: Prisma.SortOrder
+  provinceId?: Prisma.SortOrder
+  wardId?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   requirements?: Prisma.SortOrderInput | Prisma.SortOrder
   benefits?: Prisma.SortOrderInput | Prisma.SortOrder
+  overview?: Prisma.SortOrder
   salaryMin?: Prisma.SortOrderInput | Prisma.SortOrder
   salaryMax?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -471,11 +503,14 @@ export type JobPostScalarWhereWithAggregatesInput = {
   companyId?: Prisma.UuidWithAggregatesFilter<"JobPost"> | string
   jobTitleId?: Prisma.UuidNullableWithAggregatesFilter<"JobPost"> | string | null
   jobCategoryId?: Prisma.UuidWithAggregatesFilter<"JobPost"> | string
-  locationId?: Prisma.UuidWithAggregatesFilter<"JobPost"> | string
+  provinceId?: Prisma.UuidWithAggregatesFilter<"JobPost"> | string
+  wardId?: Prisma.UuidWithAggregatesFilter<"JobPost"> | string
+  address?: Prisma.StringWithAggregatesFilter<"JobPost"> | string
   title?: Prisma.StringWithAggregatesFilter<"JobPost"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"JobPost"> | string | null
   requirements?: Prisma.StringNullableWithAggregatesFilter<"JobPost"> | string | null
   benefits?: Prisma.StringNullableWithAggregatesFilter<"JobPost"> | string | null
+  overview?: Prisma.JsonWithAggregatesFilter<"JobPost">
   salaryMin?: Prisma.DecimalNullableWithAggregatesFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableWithAggregatesFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"JobPost"> | string | null
@@ -493,10 +528,12 @@ export type JobPostScalarWhereWithAggregatesInput = {
 
 export type JobPostCreateInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -513,7 +550,8 @@ export type JobPostCreateInput = {
   company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
   jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
   category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
-  location: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
   savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
 }
@@ -523,11 +561,14 @@ export type JobPostUncheckedCreateInput = {
   companyId: string
   jobTitleId?: string | null
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -547,10 +588,12 @@ export type JobPostUncheckedCreateInput = {
 
 export type JobPostUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -567,7 +610,8 @@ export type JobPostUpdateInput = {
   company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
   jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
   category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
-  location?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
   savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
 }
@@ -577,11 +621,14 @@ export type JobPostUncheckedUpdateInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -604,11 +651,14 @@ export type JobPostCreateManyInput = {
   companyId: string
   jobTitleId?: string | null
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -626,10 +676,12 @@ export type JobPostCreateManyInput = {
 
 export type JobPostUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -650,11 +702,14 @@ export type JobPostUncheckedUpdateManyInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -690,11 +745,14 @@ export type JobPostCountOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   jobTitleId?: Prisma.SortOrder
   jobCategoryId?: Prisma.SortOrder
-  locationId?: Prisma.SortOrder
+  provinceId?: Prisma.SortOrder
+  wardId?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   requirements?: Prisma.SortOrder
   benefits?: Prisma.SortOrder
+  overview?: Prisma.SortOrder
   salaryMin?: Prisma.SortOrder
   salaryMax?: Prisma.SortOrder
   currency?: Prisma.SortOrder
@@ -721,7 +779,9 @@ export type JobPostMaxOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   jobTitleId?: Prisma.SortOrder
   jobCategoryId?: Prisma.SortOrder
-  locationId?: Prisma.SortOrder
+  provinceId?: Prisma.SortOrder
+  wardId?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   requirements?: Prisma.SortOrder
@@ -746,7 +806,9 @@ export type JobPostMinOrderByAggregateInput = {
   companyId?: Prisma.SortOrder
   jobTitleId?: Prisma.SortOrder
   jobCategoryId?: Prisma.SortOrder
-  locationId?: Prisma.SortOrder
+  provinceId?: Prisma.SortOrder
+  wardId?: Prisma.SortOrder
+  address?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   requirements?: Prisma.SortOrder
@@ -920,45 +982,45 @@ export type JobPostUncheckedUpdateManyWithoutJobTitleNestedInput = {
   deleteMany?: Prisma.JobPostScalarWhereInput | Prisma.JobPostScalarWhereInput[]
 }
 
-export type JobPostCreateNestedManyWithoutLocationInput = {
-  create?: Prisma.XOR<Prisma.JobPostCreateWithoutLocationInput, Prisma.JobPostUncheckedCreateWithoutLocationInput> | Prisma.JobPostCreateWithoutLocationInput[] | Prisma.JobPostUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutLocationInput | Prisma.JobPostCreateOrConnectWithoutLocationInput[]
-  createMany?: Prisma.JobPostCreateManyLocationInputEnvelope
+export type JobPostCreateNestedManyWithoutProvinceInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutProvinceInput, Prisma.JobPostUncheckedCreateWithoutProvinceInput> | Prisma.JobPostCreateWithoutProvinceInput[] | Prisma.JobPostUncheckedCreateWithoutProvinceInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutProvinceInput | Prisma.JobPostCreateOrConnectWithoutProvinceInput[]
+  createMany?: Prisma.JobPostCreateManyProvinceInputEnvelope
   connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
 }
 
-export type JobPostUncheckedCreateNestedManyWithoutLocationInput = {
-  create?: Prisma.XOR<Prisma.JobPostCreateWithoutLocationInput, Prisma.JobPostUncheckedCreateWithoutLocationInput> | Prisma.JobPostCreateWithoutLocationInput[] | Prisma.JobPostUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutLocationInput | Prisma.JobPostCreateOrConnectWithoutLocationInput[]
-  createMany?: Prisma.JobPostCreateManyLocationInputEnvelope
+export type JobPostUncheckedCreateNestedManyWithoutProvinceInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutProvinceInput, Prisma.JobPostUncheckedCreateWithoutProvinceInput> | Prisma.JobPostCreateWithoutProvinceInput[] | Prisma.JobPostUncheckedCreateWithoutProvinceInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutProvinceInput | Prisma.JobPostCreateOrConnectWithoutProvinceInput[]
+  createMany?: Prisma.JobPostCreateManyProvinceInputEnvelope
   connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
 }
 
-export type JobPostUpdateManyWithoutLocationNestedInput = {
-  create?: Prisma.XOR<Prisma.JobPostCreateWithoutLocationInput, Prisma.JobPostUncheckedCreateWithoutLocationInput> | Prisma.JobPostCreateWithoutLocationInput[] | Prisma.JobPostUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutLocationInput | Prisma.JobPostCreateOrConnectWithoutLocationInput[]
-  upsert?: Prisma.JobPostUpsertWithWhereUniqueWithoutLocationInput | Prisma.JobPostUpsertWithWhereUniqueWithoutLocationInput[]
-  createMany?: Prisma.JobPostCreateManyLocationInputEnvelope
+export type JobPostUpdateManyWithoutProvinceNestedInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutProvinceInput, Prisma.JobPostUncheckedCreateWithoutProvinceInput> | Prisma.JobPostCreateWithoutProvinceInput[] | Prisma.JobPostUncheckedCreateWithoutProvinceInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutProvinceInput | Prisma.JobPostCreateOrConnectWithoutProvinceInput[]
+  upsert?: Prisma.JobPostUpsertWithWhereUniqueWithoutProvinceInput | Prisma.JobPostUpsertWithWhereUniqueWithoutProvinceInput[]
+  createMany?: Prisma.JobPostCreateManyProvinceInputEnvelope
   set?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
   disconnect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
   delete?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
   connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
-  update?: Prisma.JobPostUpdateWithWhereUniqueWithoutLocationInput | Prisma.JobPostUpdateWithWhereUniqueWithoutLocationInput[]
-  updateMany?: Prisma.JobPostUpdateManyWithWhereWithoutLocationInput | Prisma.JobPostUpdateManyWithWhereWithoutLocationInput[]
+  update?: Prisma.JobPostUpdateWithWhereUniqueWithoutProvinceInput | Prisma.JobPostUpdateWithWhereUniqueWithoutProvinceInput[]
+  updateMany?: Prisma.JobPostUpdateManyWithWhereWithoutProvinceInput | Prisma.JobPostUpdateManyWithWhereWithoutProvinceInput[]
   deleteMany?: Prisma.JobPostScalarWhereInput | Prisma.JobPostScalarWhereInput[]
 }
 
-export type JobPostUncheckedUpdateManyWithoutLocationNestedInput = {
-  create?: Prisma.XOR<Prisma.JobPostCreateWithoutLocationInput, Prisma.JobPostUncheckedCreateWithoutLocationInput> | Prisma.JobPostCreateWithoutLocationInput[] | Prisma.JobPostUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutLocationInput | Prisma.JobPostCreateOrConnectWithoutLocationInput[]
-  upsert?: Prisma.JobPostUpsertWithWhereUniqueWithoutLocationInput | Prisma.JobPostUpsertWithWhereUniqueWithoutLocationInput[]
-  createMany?: Prisma.JobPostCreateManyLocationInputEnvelope
+export type JobPostUncheckedUpdateManyWithoutProvinceNestedInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutProvinceInput, Prisma.JobPostUncheckedCreateWithoutProvinceInput> | Prisma.JobPostCreateWithoutProvinceInput[] | Prisma.JobPostUncheckedCreateWithoutProvinceInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutProvinceInput | Prisma.JobPostCreateOrConnectWithoutProvinceInput[]
+  upsert?: Prisma.JobPostUpsertWithWhereUniqueWithoutProvinceInput | Prisma.JobPostUpsertWithWhereUniqueWithoutProvinceInput[]
+  createMany?: Prisma.JobPostCreateManyProvinceInputEnvelope
   set?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
   disconnect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
   delete?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
   connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
-  update?: Prisma.JobPostUpdateWithWhereUniqueWithoutLocationInput | Prisma.JobPostUpdateWithWhereUniqueWithoutLocationInput[]
-  updateMany?: Prisma.JobPostUpdateManyWithWhereWithoutLocationInput | Prisma.JobPostUpdateManyWithWhereWithoutLocationInput[]
+  update?: Prisma.JobPostUpdateWithWhereUniqueWithoutProvinceInput | Prisma.JobPostUpdateWithWhereUniqueWithoutProvinceInput[]
+  updateMany?: Prisma.JobPostUpdateManyWithWhereWithoutProvinceInput | Prisma.JobPostUpdateManyWithWhereWithoutProvinceInput[]
   deleteMany?: Prisma.JobPostScalarWhereInput | Prisma.JobPostScalarWhereInput[]
 }
 
@@ -976,12 +1038,56 @@ export type JobPostUpdateOneRequiredWithoutSavedJobsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.JobPostUpdateToOneWithWhereWithoutSavedJobsInput, Prisma.JobPostUpdateWithoutSavedJobsInput>, Prisma.JobPostUncheckedUpdateWithoutSavedJobsInput>
 }
 
+export type JobPostCreateNestedManyWithoutWardInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutWardInput, Prisma.JobPostUncheckedCreateWithoutWardInput> | Prisma.JobPostCreateWithoutWardInput[] | Prisma.JobPostUncheckedCreateWithoutWardInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutWardInput | Prisma.JobPostCreateOrConnectWithoutWardInput[]
+  createMany?: Prisma.JobPostCreateManyWardInputEnvelope
+  connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+}
+
+export type JobPostUncheckedCreateNestedManyWithoutWardInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutWardInput, Prisma.JobPostUncheckedCreateWithoutWardInput> | Prisma.JobPostCreateWithoutWardInput[] | Prisma.JobPostUncheckedCreateWithoutWardInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutWardInput | Prisma.JobPostCreateOrConnectWithoutWardInput[]
+  createMany?: Prisma.JobPostCreateManyWardInputEnvelope
+  connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+}
+
+export type JobPostUpdateManyWithoutWardNestedInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutWardInput, Prisma.JobPostUncheckedCreateWithoutWardInput> | Prisma.JobPostCreateWithoutWardInput[] | Prisma.JobPostUncheckedCreateWithoutWardInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutWardInput | Prisma.JobPostCreateOrConnectWithoutWardInput[]
+  upsert?: Prisma.JobPostUpsertWithWhereUniqueWithoutWardInput | Prisma.JobPostUpsertWithWhereUniqueWithoutWardInput[]
+  createMany?: Prisma.JobPostCreateManyWardInputEnvelope
+  set?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  disconnect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  delete?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  update?: Prisma.JobPostUpdateWithWhereUniqueWithoutWardInput | Prisma.JobPostUpdateWithWhereUniqueWithoutWardInput[]
+  updateMany?: Prisma.JobPostUpdateManyWithWhereWithoutWardInput | Prisma.JobPostUpdateManyWithWhereWithoutWardInput[]
+  deleteMany?: Prisma.JobPostScalarWhereInput | Prisma.JobPostScalarWhereInput[]
+}
+
+export type JobPostUncheckedUpdateManyWithoutWardNestedInput = {
+  create?: Prisma.XOR<Prisma.JobPostCreateWithoutWardInput, Prisma.JobPostUncheckedCreateWithoutWardInput> | Prisma.JobPostCreateWithoutWardInput[] | Prisma.JobPostUncheckedCreateWithoutWardInput[]
+  connectOrCreate?: Prisma.JobPostCreateOrConnectWithoutWardInput | Prisma.JobPostCreateOrConnectWithoutWardInput[]
+  upsert?: Prisma.JobPostUpsertWithWhereUniqueWithoutWardInput | Prisma.JobPostUpsertWithWhereUniqueWithoutWardInput[]
+  createMany?: Prisma.JobPostCreateManyWardInputEnvelope
+  set?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  disconnect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  delete?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  connect?: Prisma.JobPostWhereUniqueInput | Prisma.JobPostWhereUniqueInput[]
+  update?: Prisma.JobPostUpdateWithWhereUniqueWithoutWardInput | Prisma.JobPostUpdateWithWhereUniqueWithoutWardInput[]
+  updateMany?: Prisma.JobPostUpdateManyWithWhereWithoutWardInput | Prisma.JobPostUpdateManyWithWhereWithoutWardInput[]
+  deleteMany?: Prisma.JobPostScalarWhereInput | Prisma.JobPostScalarWhereInput[]
+}
+
 export type JobPostCreateWithoutApplicationsInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -998,7 +1104,8 @@ export type JobPostCreateWithoutApplicationsInput = {
   company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
   jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
   category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
-  location: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
 }
 
@@ -1007,11 +1114,14 @@ export type JobPostUncheckedCreateWithoutApplicationsInput = {
   companyId: string
   jobTitleId?: string | null
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1046,10 +1156,12 @@ export type JobPostUpdateToOneWithWhereWithoutApplicationsInput = {
 
 export type JobPostUpdateWithoutApplicationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1066,7 +1178,8 @@ export type JobPostUpdateWithoutApplicationsInput = {
   company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
   jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
   category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
-  location?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
 }
 
@@ -1075,11 +1188,14 @@ export type JobPostUncheckedUpdateWithoutApplicationsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1098,10 +1214,12 @@ export type JobPostUncheckedUpdateWithoutApplicationsInput = {
 
 export type JobPostCreateWithoutCompanyInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1117,7 +1235,8 @@ export type JobPostCreateWithoutCompanyInput = {
   deletedAt?: Date | string | null
   jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
   category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
-  location: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
   savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
 }
@@ -1126,11 +1245,14 @@ export type JobPostUncheckedCreateWithoutCompanyInput = {
   id?: string
   jobTitleId?: string | null
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1182,11 +1304,14 @@ export type JobPostScalarWhereInput = {
   companyId?: Prisma.UuidFilter<"JobPost"> | string
   jobTitleId?: Prisma.UuidNullableFilter<"JobPost"> | string | null
   jobCategoryId?: Prisma.UuidFilter<"JobPost"> | string
-  locationId?: Prisma.UuidFilter<"JobPost"> | string
+  provinceId?: Prisma.UuidFilter<"JobPost"> | string
+  wardId?: Prisma.UuidFilter<"JobPost"> | string
+  address?: Prisma.StringFilter<"JobPost"> | string
   title?: Prisma.StringFilter<"JobPost"> | string
   description?: Prisma.StringNullableFilter<"JobPost"> | string | null
   requirements?: Prisma.StringNullableFilter<"JobPost"> | string | null
   benefits?: Prisma.StringNullableFilter<"JobPost"> | string | null
+  overview?: Prisma.JsonFilter<"JobPost">
   salaryMin?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.DecimalNullableFilter<"JobPost"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"JobPost"> | string | null
@@ -1204,10 +1329,12 @@ export type JobPostScalarWhereInput = {
 
 export type JobPostCreateWithoutCategoryInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1223,7 +1350,8 @@ export type JobPostCreateWithoutCategoryInput = {
   deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
   jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
-  location: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
   savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
 }
@@ -1232,11 +1360,14 @@ export type JobPostUncheckedCreateWithoutCategoryInput = {
   id?: string
   companyId: string
   jobTitleId?: string | null
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1282,10 +1413,12 @@ export type JobPostUpdateManyWithWhereWithoutCategoryInput = {
 
 export type JobPostCreateWithoutJobTitleInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1301,7 +1434,8 @@ export type JobPostCreateWithoutJobTitleInput = {
   deletedAt?: Date | string | null
   company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
   category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
-  location: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
   savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
 }
@@ -1310,11 +1444,14 @@ export type JobPostUncheckedCreateWithoutJobTitleInput = {
   id?: string
   companyId: string
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1358,12 +1495,14 @@ export type JobPostUpdateManyWithWhereWithoutJobTitleInput = {
   data: Prisma.XOR<Prisma.JobPostUpdateManyMutationInput, Prisma.JobPostUncheckedUpdateManyWithoutJobTitleInput>
 }
 
-export type JobPostCreateWithoutLocationInput = {
+export type JobPostCreateWithoutProvinceInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1380,19 +1519,23 @@ export type JobPostCreateWithoutLocationInput = {
   company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
   jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
   category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
   savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
 }
 
-export type JobPostUncheckedCreateWithoutLocationInput = {
+export type JobPostUncheckedCreateWithoutProvinceInput = {
   id?: string
   companyId: string
   jobTitleId?: string | null
   jobCategoryId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1410,38 +1553,40 @@ export type JobPostUncheckedCreateWithoutLocationInput = {
   savedJobs?: Prisma.SavedJobUncheckedCreateNestedManyWithoutJobPostInput
 }
 
-export type JobPostCreateOrConnectWithoutLocationInput = {
+export type JobPostCreateOrConnectWithoutProvinceInput = {
   where: Prisma.JobPostWhereUniqueInput
-  create: Prisma.XOR<Prisma.JobPostCreateWithoutLocationInput, Prisma.JobPostUncheckedCreateWithoutLocationInput>
+  create: Prisma.XOR<Prisma.JobPostCreateWithoutProvinceInput, Prisma.JobPostUncheckedCreateWithoutProvinceInput>
 }
 
-export type JobPostCreateManyLocationInputEnvelope = {
-  data: Prisma.JobPostCreateManyLocationInput | Prisma.JobPostCreateManyLocationInput[]
+export type JobPostCreateManyProvinceInputEnvelope = {
+  data: Prisma.JobPostCreateManyProvinceInput | Prisma.JobPostCreateManyProvinceInput[]
   skipDuplicates?: boolean
 }
 
-export type JobPostUpsertWithWhereUniqueWithoutLocationInput = {
+export type JobPostUpsertWithWhereUniqueWithoutProvinceInput = {
   where: Prisma.JobPostWhereUniqueInput
-  update: Prisma.XOR<Prisma.JobPostUpdateWithoutLocationInput, Prisma.JobPostUncheckedUpdateWithoutLocationInput>
-  create: Prisma.XOR<Prisma.JobPostCreateWithoutLocationInput, Prisma.JobPostUncheckedCreateWithoutLocationInput>
+  update: Prisma.XOR<Prisma.JobPostUpdateWithoutProvinceInput, Prisma.JobPostUncheckedUpdateWithoutProvinceInput>
+  create: Prisma.XOR<Prisma.JobPostCreateWithoutProvinceInput, Prisma.JobPostUncheckedCreateWithoutProvinceInput>
 }
 
-export type JobPostUpdateWithWhereUniqueWithoutLocationInput = {
+export type JobPostUpdateWithWhereUniqueWithoutProvinceInput = {
   where: Prisma.JobPostWhereUniqueInput
-  data: Prisma.XOR<Prisma.JobPostUpdateWithoutLocationInput, Prisma.JobPostUncheckedUpdateWithoutLocationInput>
+  data: Prisma.XOR<Prisma.JobPostUpdateWithoutProvinceInput, Prisma.JobPostUncheckedUpdateWithoutProvinceInput>
 }
 
-export type JobPostUpdateManyWithWhereWithoutLocationInput = {
+export type JobPostUpdateManyWithWhereWithoutProvinceInput = {
   where: Prisma.JobPostScalarWhereInput
-  data: Prisma.XOR<Prisma.JobPostUpdateManyMutationInput, Prisma.JobPostUncheckedUpdateManyWithoutLocationInput>
+  data: Prisma.XOR<Prisma.JobPostUpdateManyMutationInput, Prisma.JobPostUncheckedUpdateManyWithoutProvinceInput>
 }
 
 export type JobPostCreateWithoutSavedJobsInput = {
   id?: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1458,7 +1603,8 @@ export type JobPostCreateWithoutSavedJobsInput = {
   company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
   jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
   category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
-  location: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  ward: Prisma.WardCreateNestedOneWithoutJobPostsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
 }
 
@@ -1467,11 +1613,14 @@ export type JobPostUncheckedCreateWithoutSavedJobsInput = {
   companyId: string
   jobTitleId?: string | null
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1506,10 +1655,12 @@ export type JobPostUpdateToOneWithWhereWithoutSavedJobsInput = {
 
 export type JobPostUpdateWithoutSavedJobsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1526,7 +1677,8 @@ export type JobPostUpdateWithoutSavedJobsInput = {
   company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
   jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
   category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
-  location?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
 }
 
@@ -1535,11 +1687,14 @@ export type JobPostUncheckedUpdateWithoutSavedJobsInput = {
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1556,15 +1711,101 @@ export type JobPostUncheckedUpdateWithoutSavedJobsInput = {
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobPostNestedInput
 }
 
-export type JobPostCreateManyCompanyInput = {
+export type JobPostCreateWithoutWardInput = {
   id?: string
-  jobTitleId?: string | null
-  jobCategoryId: string
-  locationId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
+  employmentType?: string | null
+  experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  deadlineAt?: Date | string | null
+  status?: $Enums.JobStatus
+  publishedAt?: Date | string | null
+  isBoosted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  company: Prisma.CompanyCreateNestedOneWithoutJobPostsInput
+  jobTitle?: Prisma.JobTitleCreateNestedOneWithoutJobPostInput
+  category: Prisma.JobCategoryCreateNestedOneWithoutJobPostsInput
+  province: Prisma.ProvinceCreateNestedOneWithoutJobPostsInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutJobPostInput
+  savedJobs?: Prisma.SavedJobCreateNestedManyWithoutJobPostInput
+}
+
+export type JobPostUncheckedCreateWithoutWardInput = {
+  id?: string
+  companyId: string
+  jobTitleId?: string | null
+  jobCategoryId: string
+  address: string
+  title: string
+  description?: string | null
+  requirements?: string | null
+  benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
+  employmentType?: string | null
+  experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  deadlineAt?: Date | string | null
+  status?: $Enums.JobStatus
+  publishedAt?: Date | string | null
+  isBoosted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobPostInput
+  savedJobs?: Prisma.SavedJobUncheckedCreateNestedManyWithoutJobPostInput
+}
+
+export type JobPostCreateOrConnectWithoutWardInput = {
+  where: Prisma.JobPostWhereUniqueInput
+  create: Prisma.XOR<Prisma.JobPostCreateWithoutWardInput, Prisma.JobPostUncheckedCreateWithoutWardInput>
+}
+
+export type JobPostCreateManyWardInputEnvelope = {
+  data: Prisma.JobPostCreateManyWardInput | Prisma.JobPostCreateManyWardInput[]
+  skipDuplicates?: boolean
+}
+
+export type JobPostUpsertWithWhereUniqueWithoutWardInput = {
+  where: Prisma.JobPostWhereUniqueInput
+  update: Prisma.XOR<Prisma.JobPostUpdateWithoutWardInput, Prisma.JobPostUncheckedUpdateWithoutWardInput>
+  create: Prisma.XOR<Prisma.JobPostCreateWithoutWardInput, Prisma.JobPostUncheckedCreateWithoutWardInput>
+}
+
+export type JobPostUpdateWithWhereUniqueWithoutWardInput = {
+  where: Prisma.JobPostWhereUniqueInput
+  data: Prisma.XOR<Prisma.JobPostUpdateWithoutWardInput, Prisma.JobPostUncheckedUpdateWithoutWardInput>
+}
+
+export type JobPostUpdateManyWithWhereWithoutWardInput = {
+  where: Prisma.JobPostScalarWhereInput
+  data: Prisma.XOR<Prisma.JobPostUpdateManyMutationInput, Prisma.JobPostUncheckedUpdateManyWithoutWardInput>
+}
+
+export type JobPostCreateManyCompanyInput = {
+  id?: string
+  jobTitleId?: string | null
+  jobCategoryId: string
+  provinceId: string
+  wardId: string
+  address: string
+  title: string
+  description?: string | null
+  requirements?: string | null
+  benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1582,10 +1823,12 @@ export type JobPostCreateManyCompanyInput = {
 
 export type JobPostUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1601,7 +1844,8 @@ export type JobPostUpdateWithoutCompanyInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
   category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
-  location?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
   savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
 }
@@ -1610,11 +1854,14 @@ export type JobPostUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1636,11 +1883,14 @@ export type JobPostUncheckedUpdateManyWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1660,11 +1910,14 @@ export type JobPostCreateManyCategoryInput = {
   id?: string
   companyId: string
   jobTitleId?: string | null
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1682,10 +1935,12 @@ export type JobPostCreateManyCategoryInput = {
 
 export type JobPostUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1701,7 +1956,8 @@ export type JobPostUpdateWithoutCategoryInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
   jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
-  location?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
   savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
 }
@@ -1710,11 +1966,14 @@ export type JobPostUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1736,11 +1995,14 @@ export type JobPostUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1760,11 +2022,14 @@ export type JobPostCreateManyJobTitleInput = {
   id?: string
   companyId: string
   jobCategoryId: string
-  locationId: string
+  provinceId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1782,10 +2047,12 @@ export type JobPostCreateManyJobTitleInput = {
 
 export type JobPostUpdateWithoutJobTitleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1801,7 +2068,8 @@ export type JobPostUpdateWithoutJobTitleInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
   category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
-  location?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
   savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
 }
@@ -1810,11 +2078,14 @@ export type JobPostUncheckedUpdateWithoutJobTitleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1836,11 +2107,14 @@ export type JobPostUncheckedUpdateManyWithoutJobTitleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  locationId?: Prisma.StringFieldUpdateOperationsInput | string
+  provinceId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1856,15 +2130,18 @@ export type JobPostUncheckedUpdateManyWithoutJobTitleInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type JobPostCreateManyLocationInput = {
+export type JobPostCreateManyProvinceInput = {
   id?: string
   companyId: string
   jobTitleId?: string | null
   jobCategoryId: string
+  wardId: string
+  address: string
   title: string
   description?: string | null
   requirements?: string | null
   benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1880,12 +2157,14 @@ export type JobPostCreateManyLocationInput = {
   deletedAt?: Date | string | null
 }
 
-export type JobPostUpdateWithoutLocationInput = {
+export type JobPostUpdateWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1902,19 +2181,23 @@ export type JobPostUpdateWithoutLocationInput = {
   company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
   jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
   category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
+  ward?: Prisma.WardUpdateOneRequiredWithoutJobPostsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
   savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
 }
 
-export type JobPostUncheckedUpdateWithoutLocationInput = {
+export type JobPostUncheckedUpdateWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1932,15 +2215,127 @@ export type JobPostUncheckedUpdateWithoutLocationInput = {
   savedJobs?: Prisma.SavedJobUncheckedUpdateManyWithoutJobPostNestedInput
 }
 
-export type JobPostUncheckedUpdateManyWithoutLocationInput = {
+export type JobPostUncheckedUpdateManyWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   companyId?: Prisma.StringFieldUpdateOperationsInput | string
   jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  wardId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
+  employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type JobPostCreateManyWardInput = {
+  id?: string
+  companyId: string
+  jobTitleId?: string | null
+  jobCategoryId: string
+  address: string
+  title: string
+  description?: string | null
+  requirements?: string | null
+  benefits?: string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  salaryMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  salaryMax?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  saturdaySchedule?: $Enums.SaturdaySchedule | null
+  employmentType?: string | null
+  experienceYearsMin?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  deadlineAt?: Date | string | null
+  status?: $Enums.JobStatus
+  publishedAt?: Date | string | null
+  isBoosted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+}
+
+export type JobPostUpdateWithoutWardInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
+  employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  company?: Prisma.CompanyUpdateOneRequiredWithoutJobPostsNestedInput
+  jobTitle?: Prisma.JobTitleUpdateOneWithoutJobPostNestedInput
+  category?: Prisma.JobCategoryUpdateOneRequiredWithoutJobPostsNestedInput
+  province?: Prisma.ProvinceUpdateOneRequiredWithoutJobPostsNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutJobPostNestedInput
+  savedJobs?: Prisma.SavedJobUpdateManyWithoutJobPostNestedInput
+}
+
+export type JobPostUncheckedUpdateWithoutWardInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  saturdaySchedule?: Prisma.NullableEnumSaturdayScheduleFieldUpdateOperationsInput | $Enums.SaturdaySchedule | null
+  employmentType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYearsMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  deadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobPostNestedInput
+  savedJobs?: Prisma.SavedJobUncheckedUpdateManyWithoutJobPostNestedInput
+}
+
+export type JobPostUncheckedUpdateManyWithoutWardInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  companyId?: Prisma.StringFieldUpdateOperationsInput | string
+  jobTitleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirements?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  benefits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  overview?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   salaryMin?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   salaryMax?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2001,11 +2396,14 @@ export type JobPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   companyId?: boolean
   jobTitleId?: boolean
   jobCategoryId?: boolean
-  locationId?: boolean
+  provinceId?: boolean
+  wardId?: boolean
+  address?: boolean
   title?: boolean
   description?: boolean
   requirements?: boolean
   benefits?: boolean
+  overview?: boolean
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
@@ -2022,7 +2420,8 @@ export type JobPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
-  location?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
   applications?: boolean | Prisma.JobPost$applicationsArgs<ExtArgs>
   savedJobs?: boolean | Prisma.JobPost$savedJobsArgs<ExtArgs>
   _count?: boolean | Prisma.JobPostCountOutputTypeDefaultArgs<ExtArgs>
@@ -2033,11 +2432,14 @@ export type JobPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   companyId?: boolean
   jobTitleId?: boolean
   jobCategoryId?: boolean
-  locationId?: boolean
+  provinceId?: boolean
+  wardId?: boolean
+  address?: boolean
   title?: boolean
   description?: boolean
   requirements?: boolean
   benefits?: boolean
+  overview?: boolean
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
@@ -2054,7 +2456,8 @@ export type JobPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
-  location?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["jobPost"]>
 
 export type JobPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2062,11 +2465,14 @@ export type JobPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   companyId?: boolean
   jobTitleId?: boolean
   jobCategoryId?: boolean
-  locationId?: boolean
+  provinceId?: boolean
+  wardId?: boolean
+  address?: boolean
   title?: boolean
   description?: boolean
   requirements?: boolean
   benefits?: boolean
+  overview?: boolean
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
@@ -2083,7 +2489,8 @@ export type JobPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
-  location?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["jobPost"]>
 
 export type JobPostSelectScalar = {
@@ -2091,11 +2498,14 @@ export type JobPostSelectScalar = {
   companyId?: boolean
   jobTitleId?: boolean
   jobCategoryId?: boolean
-  locationId?: boolean
+  provinceId?: boolean
+  wardId?: boolean
+  address?: boolean
   title?: boolean
   description?: boolean
   requirements?: boolean
   benefits?: boolean
+  overview?: boolean
   salaryMin?: boolean
   salaryMax?: boolean
   currency?: boolean
@@ -2111,12 +2521,13 @@ export type JobPostSelectScalar = {
   deletedAt?: boolean
 }
 
-export type JobPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "jobTitleId" | "jobCategoryId" | "locationId" | "title" | "description" | "requirements" | "benefits" | "salaryMin" | "salaryMax" | "currency" | "saturdaySchedule" | "employmentType" | "experienceYearsMin" | "deadlineAt" | "status" | "publishedAt" | "isBoosted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobPost"]>
+export type JobPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "jobTitleId" | "jobCategoryId" | "provinceId" | "wardId" | "address" | "title" | "description" | "requirements" | "benefits" | "overview" | "salaryMin" | "salaryMax" | "currency" | "saturdaySchedule" | "employmentType" | "experienceYearsMin" | "deadlineAt" | "status" | "publishedAt" | "isBoosted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobPost"]>
 export type JobPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
-  location?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
   applications?: boolean | Prisma.JobPost$applicationsArgs<ExtArgs>
   savedJobs?: boolean | Prisma.JobPost$savedJobsArgs<ExtArgs>
   _count?: boolean | Prisma.JobPostCountOutputTypeDefaultArgs<ExtArgs>
@@ -2125,13 +2536,15 @@ export type JobPostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
-  location?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
 }
 export type JobPostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
-  location?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
+  ward?: boolean | Prisma.WardDefaultArgs<ExtArgs>
 }
 
 export type $JobPostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2140,7 +2553,8 @@ export type $JobPostPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     company: Prisma.$CompanyPayload<ExtArgs>
     jobTitle: Prisma.$JobTitlePayload<ExtArgs> | null
     category: Prisma.$JobCategoryPayload<ExtArgs>
-    location: Prisma.$ProvincePayload<ExtArgs>
+    province: Prisma.$ProvincePayload<ExtArgs>
+    ward: Prisma.$WardPayload<ExtArgs>
     applications: Prisma.$ApplicationPayload<ExtArgs>[]
     savedJobs: Prisma.$SavedJobPayload<ExtArgs>[]
   }
@@ -2149,11 +2563,14 @@ export type $JobPostPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     companyId: string
     jobTitleId: string | null
     jobCategoryId: string
-    locationId: string
+    provinceId: string
+    wardId: string
+    address: string
     title: string
     description: string | null
     requirements: string | null
     benefits: string | null
+    overview: runtime.JsonValue
     salaryMin: runtime.Decimal | null
     salaryMax: runtime.Decimal | null
     currency: string | null
@@ -2564,7 +2981,8 @@ export interface Prisma__JobPostClient<T, Null = never, ExtArgs extends runtime.
   company<T extends Prisma.CompanyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CompanyDefaultArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   jobTitle<T extends Prisma.JobPost$jobTitleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobPost$jobTitleArgs<ExtArgs>>): Prisma.Prisma__JobTitleClient<runtime.Types.Result.GetResult<Prisma.$JobTitlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.JobCategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobCategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__JobCategoryClient<runtime.Types.Result.GetResult<Prisma.$JobCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  location<T extends Prisma.ProvinceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProvinceDefaultArgs<ExtArgs>>): Prisma.Prisma__ProvinceClient<runtime.Types.Result.GetResult<Prisma.$ProvincePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  province<T extends Prisma.ProvinceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProvinceDefaultArgs<ExtArgs>>): Prisma.Prisma__ProvinceClient<runtime.Types.Result.GetResult<Prisma.$ProvincePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  ward<T extends Prisma.WardDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WardDefaultArgs<ExtArgs>>): Prisma.Prisma__WardClient<runtime.Types.Result.GetResult<Prisma.$WardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   applications<T extends Prisma.JobPost$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobPost$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   savedJobs<T extends Prisma.JobPost$savedJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobPost$savedJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2600,11 +3018,14 @@ export interface JobPostFieldRefs {
   readonly companyId: Prisma.FieldRef<"JobPost", 'String'>
   readonly jobTitleId: Prisma.FieldRef<"JobPost", 'String'>
   readonly jobCategoryId: Prisma.FieldRef<"JobPost", 'String'>
-  readonly locationId: Prisma.FieldRef<"JobPost", 'String'>
+  readonly provinceId: Prisma.FieldRef<"JobPost", 'String'>
+  readonly wardId: Prisma.FieldRef<"JobPost", 'String'>
+  readonly address: Prisma.FieldRef<"JobPost", 'String'>
   readonly title: Prisma.FieldRef<"JobPost", 'String'>
   readonly description: Prisma.FieldRef<"JobPost", 'String'>
   readonly requirements: Prisma.FieldRef<"JobPost", 'String'>
   readonly benefits: Prisma.FieldRef<"JobPost", 'String'>
+  readonly overview: Prisma.FieldRef<"JobPost", 'Json'>
   readonly salaryMin: Prisma.FieldRef<"JobPost", 'Decimal'>
   readonly salaryMax: Prisma.FieldRef<"JobPost", 'Decimal'>
   readonly currency: Prisma.FieldRef<"JobPost", 'String'>

@@ -1,34 +1,31 @@
-"use client"
+"use client";
 
-import { useRef } from "react"
-import { Camera, Trash2, User } from "lucide-react"
-import { Field, TextInput } from "@/components/cv/field"
-import type { CVData } from "@/lib/cv-layout"
+import { useRef } from "react";
+import { Camera, Trash2, User } from "lucide-react";
+import { Field, TextInput } from "@/components/cv/field";
+import type { CVData } from "@/lib/cv-layout";
 
-type Personal = CVData["personal"]
+type Personal = CVData["personal"];
 
 export function PersonalSection({
   value,
   onChange,
 }: {
-  value: Personal
-  onChange: (v: Personal) => void
+  value: Personal;
+  onChange: (v: Personal) => void;
 }) {
-  const fileRef = useRef<HTMLInputElement>(null)
-
-  const set = (key: keyof Personal, v: string) => onChange({ ...value, [key]: v })
-
+  const fileRef = useRef<HTMLInputElement>(null);
+  const set = (key: keyof Personal, v: string) =>
+    onChange({ ...value, [key]: v });
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => set("avatar", reader.result as string)
-    reader.readAsDataURL(file)
-  }
-
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => set("avatar", reader.result as string);
+    reader.readAsDataURL(file);
+  };
   return (
     <div className="flex flex-col gap-4">
-      {/* Avatar upload */}
       <div className="flex items-center gap-4">
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-muted ring-1 ring-border">
           {value.avatar ? (
@@ -74,7 +71,10 @@ export function PersonalSection({
 
       <div className="grid grid-cols-2 gap-3">
         <Field label="Họ và tên" className="col-span-2">
-          <TextInput value={value.fullName} onChange={(e) => set("fullName", e.target.value)} />
+          <TextInput
+            value={value.fullName}
+            onChange={(e) => set("fullName", e.target.value)}
+          />
         </Field>
         <Field label="Chức danh" className="col-span-2">
           <TextInput
@@ -84,7 +84,10 @@ export function PersonalSection({
           />
         </Field>
         <Field label="Số điện thoại">
-          <TextInput value={value.phone} onChange={(e) => set("phone", e.target.value)} />
+          <TextInput
+            value={value.phone}
+            onChange={(e) => set("phone", e.target.value)}
+          />
         </Field>
         <Field label="Email">
           <TextInput
@@ -94,15 +97,24 @@ export function PersonalSection({
           />
         </Field>
         <Field label="Địa chỉ" className="col-span-2">
-          <TextInput value={value.address} onChange={(e) => set("address", e.target.value)} />
+          <TextInput
+            value={value.address}
+            onChange={(e) => set("address", e.target.value)}
+          />
         </Field>
         <Field label="GitHub">
-          <TextInput value={value.github} onChange={(e) => set("github", e.target.value)} />
+          <TextInput
+            value={value.github}
+            onChange={(e) => set("github", e.target.value)}
+          />
         </Field>
         <Field label="LinkedIn">
-          <TextInput value={value.linkedin} onChange={(e) => set("linkedin", e.target.value)} />
+          <TextInput
+            value={value.linkedin}
+            onChange={(e) => set("linkedin", e.target.value)}
+          />
         </Field>
       </div>
     </div>
-  )
+  );
 }

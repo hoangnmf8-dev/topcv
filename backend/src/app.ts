@@ -19,6 +19,7 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.set("query parser", "extended");
 app.use(indexRouter);
 app.use((req: Request, res: Response, next: NextFunction) => {
   return errorResponse(

@@ -1,14 +1,12 @@
 "use client";
 
+import { CandidateOverview } from "@/components/candidate-overview";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAccountStore } from "@/stores/auth.store";
 import { CandidateRecords } from "@/components/candidate-records";
 import { CandidateProfileForm } from "@/components/candidate-profile-form";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import uploadService from "@/services/upload.service";
-import { UPLOAD } from "@/constants/upload.constant";
 import {
   BarChart3,
   BriefcaseBusiness,
@@ -125,10 +123,10 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
           </nav>
         </aside>
         <section>
-          {tab === "overview" && <Overview candidate={candidate} />}{" "}
+          {tab === "overview" && (candidate ? <CandidateOverview open={setTab} /> : <Overview candidate={false} />)}{" "}
           {tab === "profile" && <Profile />}{" "}
-          {tab === "applications" && <CandidateRecords kind="applications" />}{" "}
-          {tab === "saved" && <CandidateRecords kind="saved" />}{" "}
+          {tab === "applications" && <CandidateRecords key="applications" kind="applications" />}{" "}
+          {tab === "saved" && <CandidateRecords key="saved" kind="saved" />}{" "}
           {tab === "jobs" && <List title="Tin tuyển dụng của bạn" />}{" "}
           {tab === "candidates" && <MiniAts />}{" "}
           {tab === "analytics" && <Analytics />}{" "}
@@ -244,11 +242,9 @@ function Overview({ candidate }: { candidate: boolean }) {
   );
 }
 function Profile() {
-  const profile = useCandidateStore((state) => state.candidate);
-  console.log("🚀 ~ Profile ~ profile:", profile)
+  const { candidate } = useCandidateStore((state) => state);
   const updateCandidate = useAccountStore((state) => state.updateCandidate);
-  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
-  const fullName = profile?.fullName || "Chưa cập nhật họ tên";
+  const fullName = candidate?.fullName || "Chưa cập nhật họ tên";
   const initials =
     fullName
       .trim()
@@ -258,57 +254,6 @@ function Profile() {
       .map((word) => word[0])
       .join("")
       .toUpperCase() || "UV";
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState("");
-  useEffect(() => {
-    if (!avatarFile) {
-      setAvatarUrl("");
-      return;
-    }
-    const url = URL.createObjectURL(avatarFile);
-    setAvatarUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [avatarFile]);
-  async function saveAvatar() {
-    if (!avatarFile || !profile || isSavingAvatar) return;
-    setIsSavingAvatar(true);
-    try {
-      const presigned = await uploadService.getPresignedUrl(
-        avatarFile,
-        "avatar",
-      );
-      if (!presigned.success)
-        throw new Error(presigned.message || "Không thể tải ảnh.");
-      await uploadService.uploadFile(presigned.data.uploadUrl, avatarFile);
-      const result = await uploadService.completeUploadFile(
-        "avatar",
-        presigned.data.objectKey,
-      );
-      if (!result.success)
-        throw new Error(result.message || "Không thể lưu ảnh đại diện.");
-      if (!result.data?.imageUrl || !result.data?.objectKey) {
-        throw new Error("Máy chủ chưa xác nhận ảnh đã lưu. Vui lòng thử lại.");
-      }
-      updateCandidate({
-        avatarKey: result.data.objectKey,
-        avatarUrl: result.data.imageUrl,
-      });
-      useCandidateStore.getState().updateCandidate({
-        ...profile,
-        avatarKey: result.data.objectKey,
-        avatarUrl: result.data.imageUrl,
-      });
-      setAvatarFile(null);
-      setAvatarUrl("");
-      toast.success(result.message || "Lưu ảnh đại diện thành công");
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Không thể lưu ảnh đại diện.",
-      );
-    } finally {
-      setIsSavingAvatar(false);
-    }
-  }
   const cvs = [] as {
     id: string;
     title: string;
@@ -320,78 +265,8 @@ function Profile() {
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <label
-            className="relative block size-24 shrink-0 cursor-pointer rounded-full transition hover:opacity-80 focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2"
-            title="Đổi ảnh đại diện"
-          >
-            <Avatar className="size-24 border-4 border-emerald-50">
-              <AvatarImage
-                src={avatarUrl || profile?.avatarUrl || undefined}
-                alt={"Ảnh đại diện " + fullName}
-              />
-              <AvatarFallback className="bg-emerald-50 text-3xl font-bold text-emerald-700">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <input
-              disabled={isSavingAvatar || !profile}
-              type="file"
-              aria-label="Đổi ảnh đại diện"
-              accept="image/jpeg,image/png,image/webp"
-              className="sr-only"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                event.target.value = "";
-                if (!file) return;
-                if (
-                  !["image/jpeg", "image/png", "image/webp"].includes(
-                    file.type,
-                  ) ||
-                  file.size > UPLOAD.IMAGE_SIZE
-                ) {
-                  toast.error("Chọn ảnh JPG, PNG hoặc WebP tối đa 5 MB.");
-                  return;
-                }
-                setAvatarFile(file);
-              }}
-            />
-          </label>
-          <div>
-            <h2 className="text-xl font-bold">{fullName}</h2>
-            <p className="mt-1 text-sm text-slate-500">
-              {profile?.headline || "Chưa cập nhật chức danh"}
-            </p>
-            {avatarFile && (
-              <div className="mt-3 flex items-center gap-3">
-                <button
-                  type="button"
-                  disabled={isSavingAvatar}
-                  onClick={saveAvatar}
-                  className="rounded-xl bg-[#00b14f] px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
-                >
-                  {isSavingAvatar ? "Đang lưu..." : "Lưu ảnh đại diện"}
-                </button>
-                <button
-                  type="button"
-                  disabled={isSavingAvatar}
-                  onClick={() => {
-                    setAvatarFile(null);
-                    setAvatarUrl("");
-                  }}
-                  className="text-sm text-slate-500 disabled:opacity-50"
-                >
-                  Hủy
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-        <p className="mt-5 max-w-2xl text-sm leading-6 text-slate-600">
-          {profile?.careerGoal || "Chưa cập nhật mục tiêu nghề nghiệp."}
-        </p>
+        <CandidateProfileForm />
       </section>
-      <CandidateProfileForm />
       <Panel title="Hồ sơ & CV">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
           <div>
@@ -399,11 +274,11 @@ function Profile() {
             <div className="mt-3 h-2 w-64 rounded-full bg-slate-100">
               <div
                 className="h-full rounded-full bg-[#00b14f]"
-                style={{ width: `${profile?.profileCompletion ?? 0}%` }}
+                style={{ width: `${candidate?.profileCompletion ?? 0}%` }}
               />
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              {profile?.profileCompletion ?? 0}% · Cập nhật thông tin để hoàn
+              {candidate?.profileCompletion ?? 0}% · Cập nhật thông tin để hoàn
               thiện hồ sơ.
             </p>
           </div>
