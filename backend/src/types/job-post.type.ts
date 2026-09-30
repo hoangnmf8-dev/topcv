@@ -20,6 +20,7 @@ export const jobPostQuerySchema = z.object({
   page: numberValue.pipe(z.number().int().min(1)).default(1),
   limit: numberValue.pipe(z.number().int().min(1).max(100)).default(8),
   sort: z.enum(["newest", "salary", "hot"]).default("newest"),
+  companyCode: z.string().trim().min(1).max(255).optional(),
   query: z.string().trim().max(200).optional(),
   employmentType: z
     .enum(["full_time", "part_time", "remote", "hybrid"])

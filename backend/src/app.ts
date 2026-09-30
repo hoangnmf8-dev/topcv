@@ -5,8 +5,9 @@ import indexRouter from "./routes/index.route";
 import { errorResponse } from "./utils/response";
 import { HTTPError } from "./types/auth.type";
 import cookieParser from "cookie-parser";
+import { createServer } from "node:http";
+import { initRealtime } from "./realtime";
 dotenv.config();
-
 const app = express();
 app.use(
   cors({
@@ -16,7 +17,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
 app.use(express.json());
 app.use(cookieParser());
 app.set("query parser", "extended");
@@ -36,6 +36,8 @@ app.use(
     return errorResponse(res, errors, errors.status);
   },
 );
-app.listen(process.env.PORT, () => {
+const server = createServer(app);
+initRealtime(server);
+server.listen(Number(process.env.PORT ?? 3100), () => {
   console.log("Server đang chạy");
 });

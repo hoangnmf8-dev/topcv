@@ -50,7 +50,8 @@ export interface AccountResponse {
   candidate?: CandidateProfile | null;
   id: string;
   email: string;
-  company: Company;
+  role: "candidate" | "company" | "admin";
+  company?: Company | null;
 }
 export interface AccountState {
   account: AccountResponse | null;
@@ -188,6 +189,7 @@ export type JobCardData = {
   };
 };
 export interface JobPostListQuery {
+  companyCode?: string;
   sort?: "newest" | "salary" | "hot";
   page?: number;
   limit?: number;

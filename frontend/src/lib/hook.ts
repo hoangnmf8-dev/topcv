@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { useQueryClient } from "@tanstack/react-query";
+import { getAccesToken } from "@/actions/auth.action";
 
 export function useImagePreview(file: File | undefined, fallback: string) {
   const [preview, setPreview] = useState<{

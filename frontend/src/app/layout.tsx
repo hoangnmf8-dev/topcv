@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ChatWidget } from "@/components/chat-widget";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
+import { ChatProvider } from "@/providers/chat-provider";
 import AuthProvider from "@/providers/auth-provider";
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function RootLayout({
     <html lang="vi">
       <body className="font-sans antialiased">
         <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider><ChatProvider>{children}</ChatProvider></AuthProvider>
         </QueryProvider>
         <ChatWidget />
         <Toaster position="top-center" richColors />

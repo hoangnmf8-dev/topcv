@@ -189,6 +189,7 @@ export const ConversationScalarFieldEnum = {
   candidateId: 'candidateId',
   companyId: 'companyId',
   lastMessageAt: 'lastMessageAt',
+  lastMessageContent: 'lastMessageContent',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -278,6 +279,8 @@ export const MessageScalarFieldEnum = {
   replyToMessageId: 'replyToMessageId',
   type: 'type',
   content: 'content',
+  deliveredAt: 'deliveredAt',
+  readAt: 'readAt',
   isPinned: 'isPinned',
   isLiked: 'isLiked',
   createdAt: 'createdAt',

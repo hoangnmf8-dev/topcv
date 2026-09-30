@@ -1,4 +1,5 @@
 "use client";
+import { MessageBadge } from "@/providers/chat-provider";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -228,8 +229,7 @@ export function SiteHeader({
             className="relative grid size-10 place-items-center rounded-full bg-slate-50 text-slate-600 transition hover:bg-[#e7f9ef] hover:text-[#00b14f]"
             aria-label="Tin nhắn"
           >
-            <MessageCircle className="size-5" />
-            <span className="absolute right-0.5 top-0.5 size-2 rounded-full bg-[#00b14f] ring-2 ring-white" />
+            <span className="relative"><MessageCircle className="size-5" /><MessageBadge /></span>
           </Link>
           <div className="relative">
             <button

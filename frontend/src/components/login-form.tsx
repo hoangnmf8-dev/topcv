@@ -1,104 +1,80 @@
 "use client";
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-} from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import { GoogleButton } from "@/components/google-button";
-import { useForm, Controller } from "react-hook-form";
-import { LoginInput, loginSchema } from "@/validators/auth.validate";
-import { convertServerPatchToFullTree } from "next/dist/client/components/segment-cache/navigation";
-import { getAccesToken, loginAction } from "@/actions/auth.action";
-import authService from "@/services/auth.service";
-import { useAccountStore } from "@/stores/auth.store";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-export function LoginForm({
-  onForgotPassword,
-}: {
-  onForgotPassword: () => void;
-}) {
+import { loginAction } from "@/actions/auth.action";
+import { GoogleButton } from "@/components/google-button";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
+import { useAccountStore } from "@/stores/auth.store";
+import { type LoginInput, loginSchema } from "@/validators/auth.validate";
+
+export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-  const [isFault, setIsFault] = useState("");
+  const [serverError, setServerError] = useState("");
   const router = useRouter();
-  const { setAccount } = useAccountStore((state) => state);
-  const { register, control, handleSubmit, setError, formState } =
-    useForm<LoginInput>({
-      mode: "onChange",
-      resolver: zodResolver(loginSchema),
-      defaultValues: {
-        email: "",
-        password: "",
-      },
-    });
-  const { errors, isSubmitting } = formState;
+  const setAccount = useAccountStore((state) => state.setAccount);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
+    mode: "onBlur",
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
   async function onSubmit(values: LoginInput) {
-    const response = await loginAction(values);
-    if (!response.success) {
-      setIsFault(response.errors.message);
+    setServerError("");
+    const result = await loginAction(values);
+    if (!result.success) {
+      setServerError(result.message);
+      return;
     }
     try {
       const account = await setAccount();
-      if (account?.company) {
-        router.push("/employer");
-      } else {
-        router.push("/");
-        return;
-      }
-    } catch (error) {}
+      toast.success("Đăng nhập thành công");
+      router.replace(account.role === "company" ? "/employer" : "/");
+    } catch {
+      setServerError("Đăng nhập thành công nhưng không thể tải hồ sơ. Vui lòng thử lại.");
+    }
   }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="login-email">Email / Số điện thoại</FieldLabel>
+          <FieldLabel htmlFor="login-email">Email</FieldLabel>
           <InputGroup className="h-11" aria-invalid={Boolean(errors.email)}>
-            <InputGroupAddon>
-              <Mail />
-            </InputGroupAddon>
+            <InputGroupAddon><Mail /></InputGroupAddon>
             <InputGroupInput
               id="login-email"
-              type="text"
-              autoComplete="username"
-              placeholder="Nhập email hoặc số điện thoại"
+              type="email"
+              autoComplete="email"
+              placeholder="ban@example.com"
               aria-invalid={Boolean(errors.email)}
-              {...register("email")}
+              {...register("email", { onChange: () => setServerError("") })}
             />
           </InputGroup>
-          {errors.email && (
-            <p className="mt-1 text-sm text-destructive">
-              {errors.email.message}
-            </p>
-          )}
+          {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
         </Field>
 
         <Field>
           <FieldLabel htmlFor="login-password">Mật khẩu</FieldLabel>
           <InputGroup className="h-11" aria-invalid={Boolean(errors.password)}>
-            <InputGroupAddon>
-              <Lock />
-            </InputGroupAddon>
+            <InputGroupAddon><Lock /></InputGroupAddon>
             <InputGroupInput
               id="login-password"
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               placeholder="Nhập mật khẩu"
               aria-invalid={Boolean(errors.password)}
-              {...register("password")}
+              {...register("password", { onChange: () => setServerError("") })}
             />
             <InputGroupAddon align="inline-end">
               <InputGroupButton
@@ -112,35 +88,18 @@ export function LoginForm({
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>
-          {errors.password && (
-            <p className="mt-1 text-sm text-destructive">
-              {errors.password.message}
-            </p>
-          )}
+          {errors.password && <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>}
         </Field>
 
         <div className="flex items-center justify-between gap-4">
-          <button
-            type="button"
-            onClick={onForgotPassword}
-            className="text-sm font-medium text-primary hover:underline"
-          >
+          <button type="button" onClick={onForgotPassword} className="text-sm font-medium text-primary hover:underline">
             Quên mật khẩu?
           </button>
         </div>
 
-        {isFault && (
-          <p role="alert" className="text-sm text-destructive">
-            {isFault}
-          </p>
-        )}
+        {serverError && <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{serverError}</p>}
 
-        <Button
-          type="submit"
-          size="lg"
-          disabled={isSubmitting}
-          className="w-full font-semibold"
-        >
+        <Button type="submit" size="lg" disabled={isSubmitting} className="w-full font-semibold">
           {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
         </Button>
         <FieldSeparator>Hoặc đăng nhập bằng</FieldSeparator>

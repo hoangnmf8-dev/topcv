@@ -1,4 +1,5 @@
 "use client";
+import { MessageBadge } from "@/providers/chat-provider";
 import Link from "next/link";
 import { Bell, Crown, Menu, MessageCircle, UserRound } from "lucide-react";
 import { useAccountStore } from "@/stores/auth.store";
@@ -56,7 +57,7 @@ export function EmployerHeader({
             className="rounded-lg p-1.5 hover:bg-white/10"
             aria-label="Tin nhắn nhà tuyển dụng"
           >
-            <MessageCircle className="size-5" />
+            <span className="relative"><MessageCircle className="size-5" /><MessageBadge /></span>
           </Link>
           <span className="relative">
             <Bell className="size-5" />

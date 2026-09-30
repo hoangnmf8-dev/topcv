@@ -31,6 +31,8 @@ export type MessageMinAggregateOutputType = {
   replyToMessageId: string | null
   type: $Enums.MessageType | null
   content: string | null
+  deliveredAt: Date | null
+  readAt: Date | null
   isPinned: boolean | null
   isLiked: boolean | null
   createdAt: Date | null
@@ -45,6 +47,8 @@ export type MessageMaxAggregateOutputType = {
   replyToMessageId: string | null
   type: $Enums.MessageType | null
   content: string | null
+  deliveredAt: Date | null
+  readAt: Date | null
   isPinned: boolean | null
   isLiked: boolean | null
   createdAt: Date | null
@@ -59,6 +63,8 @@ export type MessageCountAggregateOutputType = {
   replyToMessageId: number
   type: number
   content: number
+  deliveredAt: number
+  readAt: number
   isPinned: number
   isLiked: number
   createdAt: number
@@ -75,6 +81,8 @@ export type MessageMinAggregateInputType = {
   replyToMessageId?: true
   type?: true
   content?: true
+  deliveredAt?: true
+  readAt?: true
   isPinned?: true
   isLiked?: true
   createdAt?: true
@@ -89,6 +97,8 @@ export type MessageMaxAggregateInputType = {
   replyToMessageId?: true
   type?: true
   content?: true
+  deliveredAt?: true
+  readAt?: true
   isPinned?: true
   isLiked?: true
   createdAt?: true
@@ -103,6 +113,8 @@ export type MessageCountAggregateInputType = {
   replyToMessageId?: true
   type?: true
   content?: true
+  deliveredAt?: true
+  readAt?: true
   isPinned?: true
   isLiked?: true
   createdAt?: true
@@ -190,6 +202,8 @@ export type MessageGroupByOutputType = {
   replyToMessageId: string | null
   type: $Enums.MessageType
   content: string | null
+  deliveredAt: Date | null
+  readAt: Date | null
   isPinned: boolean
   isLiked: boolean
   createdAt: Date
@@ -225,6 +239,8 @@ export type MessageWhereInput = {
   replyToMessageId?: Prisma.UuidNullableFilter<"Message"> | string | null
   type?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType
   content?: Prisma.StringNullableFilter<"Message"> | string | null
+  deliveredAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
+  readAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
   isPinned?: Prisma.BoolFilter<"Message"> | boolean
   isLiked?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
@@ -244,6 +260,8 @@ export type MessageOrderByWithRelationInput = {
   replyToMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  readAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isPinned?: Prisma.SortOrder
   isLiked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -266,6 +284,8 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   replyToMessageId?: Prisma.UuidNullableFilter<"Message"> | string | null
   type?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType
   content?: Prisma.StringNullableFilter<"Message"> | string | null
+  deliveredAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
+  readAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
   isPinned?: Prisma.BoolFilter<"Message"> | boolean
   isLiked?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
@@ -285,6 +305,8 @@ export type MessageOrderByWithAggregationInput = {
   replyToMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
   type?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  readAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isPinned?: Prisma.SortOrder
   isLiked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -305,6 +327,8 @@ export type MessageScalarWhereWithAggregatesInput = {
   replyToMessageId?: Prisma.UuidNullableWithAggregatesFilter<"Message"> | string | null
   type?: Prisma.EnumMessageTypeWithAggregatesFilter<"Message"> | $Enums.MessageType
   content?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
+  deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Message"> | Date | string | null
+  readAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Message"> | Date | string | null
   isPinned?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
   isLiked?: Prisma.BoolWithAggregatesFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
@@ -316,6 +340,8 @@ export type MessageCreateInput = {
   id?: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -335,6 +361,8 @@ export type MessageUncheckedCreateInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -348,6 +376,8 @@ export type MessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -367,6 +397,8 @@ export type MessageUncheckedUpdateInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -383,6 +415,8 @@ export type MessageCreateManyInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -394,6 +428,8 @@ export type MessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -408,6 +444,8 @@ export type MessageUncheckedUpdateManyInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -437,6 +475,8 @@ export type MessageCountOrderByAggregateInput = {
   replyToMessageId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrder
+  readAt?: Prisma.SortOrder
   isPinned?: Prisma.SortOrder
   isLiked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -451,6 +491,8 @@ export type MessageMaxOrderByAggregateInput = {
   replyToMessageId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrder
+  readAt?: Prisma.SortOrder
   isPinned?: Prisma.SortOrder
   isLiked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -465,6 +507,8 @@ export type MessageMinOrderByAggregateInput = {
   replyToMessageId?: Prisma.SortOrder
   type?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  deliveredAt?: Prisma.SortOrder
+  readAt?: Prisma.SortOrder
   isPinned?: Prisma.SortOrder
   isLiked?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -641,6 +685,8 @@ export type MessageCreateWithoutSenderInput = {
   id?: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -658,6 +704,8 @@ export type MessageUncheckedCreateWithoutSenderInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -703,6 +751,8 @@ export type MessageScalarWhereInput = {
   replyToMessageId?: Prisma.UuidNullableFilter<"Message"> | string | null
   type?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType
   content?: Prisma.StringNullableFilter<"Message"> | string | null
+  deliveredAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
+  readAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null
   isPinned?: Prisma.BoolFilter<"Message"> | boolean
   isLiked?: Prisma.BoolFilter<"Message"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
@@ -714,6 +764,8 @@ export type MessageCreateWithoutConversationInput = {
   id?: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -731,6 +783,8 @@ export type MessageUncheckedCreateWithoutConversationInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -770,6 +824,8 @@ export type MessageCreateWithoutRepliesInput = {
   id?: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -788,6 +844,8 @@ export type MessageUncheckedCreateWithoutRepliesInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -805,6 +863,8 @@ export type MessageCreateWithoutReplyToInput = {
   id?: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -822,6 +882,8 @@ export type MessageUncheckedCreateWithoutReplyToInput = {
   senderAccountId: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -856,6 +918,8 @@ export type MessageUpdateWithoutRepliesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -874,6 +938,8 @@ export type MessageUncheckedUpdateWithoutRepliesInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -902,6 +968,8 @@ export type MessageCreateWithoutAttachmentsInput = {
   id?: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -920,6 +988,8 @@ export type MessageUncheckedCreateWithoutAttachmentsInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -948,6 +1018,8 @@ export type MessageUpdateWithoutAttachmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -966,6 +1038,8 @@ export type MessageUncheckedUpdateWithoutAttachmentsInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -980,6 +1054,8 @@ export type MessageCreateManySenderInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -991,6 +1067,8 @@ export type MessageUpdateWithoutSenderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1008,6 +1086,8 @@ export type MessageUncheckedUpdateWithoutSenderInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1023,6 +1103,8 @@ export type MessageUncheckedUpdateManyWithoutSenderInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1036,6 +1118,8 @@ export type MessageCreateManyConversationInput = {
   replyToMessageId?: string | null
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -1047,6 +1131,8 @@ export type MessageUpdateWithoutConversationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1064,6 +1150,8 @@ export type MessageUncheckedUpdateWithoutConversationInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1079,6 +1167,8 @@ export type MessageUncheckedUpdateManyWithoutConversationInput = {
   replyToMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1092,6 +1182,8 @@ export type MessageCreateManyReplyToInput = {
   senderAccountId: string
   type?: $Enums.MessageType
   content?: string | null
+  deliveredAt?: Date | string | null
+  readAt?: Date | string | null
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: Date | string
@@ -1103,6 +1195,8 @@ export type MessageUpdateWithoutReplyToInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1120,6 +1214,8 @@ export type MessageUncheckedUpdateWithoutReplyToInput = {
   senderAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1135,6 +1231,8 @@ export type MessageUncheckedUpdateManyWithoutReplyToInput = {
   senderAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  readAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isLiked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1189,6 +1287,8 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   replyToMessageId?: boolean
   type?: boolean
   content?: boolean
+  deliveredAt?: boolean
+  readAt?: boolean
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: boolean
@@ -1209,6 +1309,8 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   replyToMessageId?: boolean
   type?: boolean
   content?: boolean
+  deliveredAt?: boolean
+  readAt?: boolean
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: boolean
@@ -1226,6 +1328,8 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   replyToMessageId?: boolean
   type?: boolean
   content?: boolean
+  deliveredAt?: boolean
+  readAt?: boolean
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: boolean
@@ -1243,6 +1347,8 @@ export type MessageSelectScalar = {
   replyToMessageId?: boolean
   type?: boolean
   content?: boolean
+  deliveredAt?: boolean
+  readAt?: boolean
   isPinned?: boolean
   isLiked?: boolean
   createdAt?: boolean
@@ -1250,7 +1356,7 @@ export type MessageSelectScalar = {
   deletedAt?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "conversationId" | "senderAccountId" | "replyToMessageId" | "type" | "content" | "isPinned" | "isLiked" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "conversationId" | "senderAccountId" | "replyToMessageId" | "type" | "content" | "deliveredAt" | "readAt" | "isPinned" | "isLiked" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
   sender?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
@@ -1286,6 +1392,8 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     replyToMessageId: string | null
     type: $Enums.MessageType
     content: string | null
+    deliveredAt: Date | null
+    readAt: Date | null
     isPinned: boolean
     isLiked: boolean
     createdAt: Date
@@ -1725,6 +1833,8 @@ export interface MessageFieldRefs {
   readonly replyToMessageId: Prisma.FieldRef<"Message", 'String'>
   readonly type: Prisma.FieldRef<"Message", 'MessageType'>
   readonly content: Prisma.FieldRef<"Message", 'String'>
+  readonly deliveredAt: Prisma.FieldRef<"Message", 'DateTime'>
+  readonly readAt: Prisma.FieldRef<"Message", 'DateTime'>
   readonly isPinned: Prisma.FieldRef<"Message", 'Boolean'>
   readonly isLiked: Prisma.FieldRef<"Message", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Message", 'DateTime'>

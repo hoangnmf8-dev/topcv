@@ -4,10 +4,8 @@ import { success } from "zod";
 
 class AuthServie {
   async getProfile() {
-    try {
-      const response = await httpRequest.get("/auth/profile");
-      return response.data;
-    } catch (error) {}
+    const response = await httpRequest.get("/auth/profile");
+    return response.data;
   }
   async refreshToken(refreshToken: string) {
     const response = await fetch(

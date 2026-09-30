@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoutButton } from "@/components/logout-button";
 import { CandidateOverview } from "@/components/candidate-overview";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -121,6 +122,7 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
               </button>
             ))}
           </nav>
+          {candidate && <LogoutButton />}
         </aside>
         <section>
           {tab === "overview" && (candidate ? <CandidateOverview open={setTab} /> : <Overview candidate={false} />)}{" "}

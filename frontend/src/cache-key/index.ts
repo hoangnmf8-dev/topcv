@@ -8,3 +8,4 @@ export const jobPostListFilterKey = (params: JobPostListQuery, page: number) => 
 export const jobPostDetailKey = (id: string) => ["job-post", "detail", id];
 export const getCompaniesKey = (page: number, limit: number) => [page, limit]; 
 export const getDetailCompanyKey = (code: string) => [code]; 
+export const getConversationsKey = (accountId: string) => ["conversations", accountId];

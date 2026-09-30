@@ -120,7 +120,8 @@ class JobPostService {
     params: JobPostListQuery,
   ): Promise<Prisma.JobPostWhereInput> {
     const conditions: Prisma.JobPostWhereInput[] = [];
-    if (params.query) {
+    if (params.companyCode) conditions.push({ company: { code: params.companyCode } });
+    if (params.query && !params.companyCode) {
       conditions.push({
         OR: [
           {
@@ -171,17 +172,12 @@ class JobPostService {
         salaryMin: { lte: params.salary.max },
       });
     };
-    // if(!params.salary?.min && params.salary?.max === 10000000) {
-    //   conditions.push({
-    //     salaryMax: {lt: 10000000}
-    //   })
-    // };
     if (params.wardIds?.length) {
       const wards = await prisma.ward.findMany({
         where: { id: { in: params.wardIds } },
         select: { id: true, provinceId: true },
       });
-      if (wards.length !== new Set(params.wardIds).size) {
+      if (wards.length < new Set(params.wardIds).size) {
         throw new AppError(
           "Có phường/xã không tồn tại",
           "INVALID_LOCATION",

@@ -6,9 +6,9 @@ export default function AuthProvider({children}: {children: ReactNode}) {
   const {account, setAccount} = useAccountStore(state => state);
   useEffect(() => {
     if(!account) {
-      setAccount();
+      void setAccount().catch(() => undefined);
     };
-  }, [account])
+  }, [account, setAccount])
   return (
     <>{children}</>
   )

@@ -1,7 +1,11 @@
 "use client";
-import { useState } from "react";
+import { conversationService } from "@/services/conversation.service";
+import { useAccountStore } from "@/stores/auth.store";
+import { toast } from "sonner";
+
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Building2,
@@ -23,6 +27,22 @@ export default function CompanyDetail() {
     queryKey: getDetailCompanyKey(code),
     queryFn: () => companyService.getDetailCompany(code),
   });
+  const router = useRouter();
+  const account = useAccountStore((state) => state.account);
+  const [starting, setStarting] = useState(false);
+  const lock = useRef(false);
+  async function startChat() {
+    if (!account) { router.push("/login"); return; }
+    if (account.role !== "candidate") { toast.error("Vui lòng dùng tài khoản ứng viên để nhắn tin cho công ty."); return; }
+    if (!data?.id || lock.current) return;
+    lock.current = true;
+    setStarting(true);
+    try {
+      const conversation = await conversationService.create(data.id);
+      router.push("/messages?conversation=" + encodeURIComponent(conversation.id));
+    } catch { toast.error("Không thể mở cuộc trò chuyện. Vui lòng thử lại."); }
+    finally { lock.current = false; setStarting(false); }
+  }
   return (
     <main className="route-home min-h-screen bg-[#f6f8f7]">
       <SiteHeader />
@@ -92,11 +112,12 @@ export default function CompanyDetail() {
             </p>
           </div>
           <Link
-            href={`/discover/jobs-by-field?code=${data?.code}`}
+            href={data ? `/discover/jobs-by-field?q=${encodeURIComponent(data.name)}&code=${encodeURIComponent(data.code)}` : "#"}
             className="mt-7 block w-full rounded-xl bg-[#00b14f] py-3 text-center text-sm font-bold text-white"
           >
             Xem danh sách công việc
           </Link>
+          <button type="button" onClick={() => void startChat()} disabled={starting || !data?.id} className="mt-3 block w-full rounded-xl border border-emerald-600 py-3 text-sm font-bold text-emerald-700 disabled:opacity-50">{starting ? "Đang mở..." : "Nhắn tin"}</button>
         </aside>
       </section>
       <SiteFooter />

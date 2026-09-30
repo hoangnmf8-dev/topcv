@@ -1,0 +1,2 @@
+ALTER TABLE "messages" ADD COLUMN IF NOT EXISTS "delivered_at" TIMESTAMPTZ, ADD COLUMN IF NOT EXISTS "read_at" TIMESTAMPTZ;
+CREATE INDEX IF NOT EXISTS "messages_unread_idx" ON "messages" ("conversation_id", "sender_account_id") WHERE "read_at" IS NULL AND "deleted_at" IS NULL;

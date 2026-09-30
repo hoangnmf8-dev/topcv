@@ -1,6 +1,5 @@
-import uploadService from "@/services/upload.service";
-import authService from "@/services/auth.service";
-import { AccountState } from "@/types";
+import { getProfileAction } from "@/actions/auth.action";
+import { AccountResponse, AccountState, Candidate } from "@/types";
 import { create } from "zustand";
 import { useCompanyStore } from "./company.store";
 import { useCandidateStore } from "./candidate.store";
@@ -9,15 +8,21 @@ export const useAccountStore = create<AccountState>((set) => ({
   account: null,
   setAccount: async () => {
     try {
-      const profileResponse = await authService.getProfile();
-      set({ account: profileResponse.data });
-      if (profileResponse.data.company) {
-        useCompanyStore.getState().setCompany(profileResponse.data.company);
+      const profileResponse = await getProfileAction();
+      if (!profileResponse.success) {
+        throw new Error(profileResponse.message);
       }
-      if(profileResponse.data.candidate) {
-        useCandidateStore.getState().setCandidate(profileResponse.data.candidate);
+      const account = profileResponse.data as AccountResponse;
+      set({ account });
+      if (account.company) {
+        useCompanyStore.getState().setCompany(account.company);
       }
-      return profileResponse.data;
+      if (account.candidate) {
+        // /auth/profile returns the candidate fields needed by the dashboard.
+        // The detailed profile endpoint enriches the remaining optional fields later.
+        useCandidateStore.getState().setCandidate(account.candidate as Candidate);
+      }
+      return account;
     } catch (error) {
       return Promise.reject(error);
     }

@@ -4,24 +4,24 @@ import { redisClient } from "../utils/redis";
 import jwtService from "./jwt.service";
 
 class AccountService {
-  constructor() {
-
-  };
+  constructor() {}
   async getAccount(accessToken: string) {
     try {
-      const {accountId, jti} = jwtService.verifyAccessToken(accessToken) as unknown as JwtPayload;
+      const { accountId, jti } = jwtService.verifyAccessToken(
+        accessToken,
+      ) as unknown as JwtPayload;
       const blacklist = await redisClient.get(`blacklist:${jti}`);
-      if(blacklist) return false;
+      if (blacklist) return false;
       const account = await prisma.account.findUnique({
         where: {
-          id: accountId
-        }
+          id: accountId,
+        },
       });
       return account;
-    } catch(error) {
+    } catch (error) {
       return false;
     }
   }
-};
+}
 const accountService = new AccountService();
 export default accountService;

@@ -1,4 +1,13 @@
 "use client";
+import { useRouter } from "next/navigation";
+import {
+  EmployerSummary,
+  EmployerApplications,
+  EmployerTalent,
+  EmployerJobs,
+} from "@/components/employer-workspace";
+
+import { LogoutButton } from "@/components/logout-button";
 import { useEffect, useId, useState, type ChangeEvent } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -80,13 +89,22 @@ const reportRows = [] as {
   averageFit: number;
 }[];
 export function EmployerDashboard() {
+  const router = useRouter();
   const { company } = useCompanyStore((state) => state);
   const [tab, setTab] = useState("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get("tab");
+    if (requested === "messages") {
+      const params = new URLSearchParams(window.location.search);
+      params.delete("tab");
+      router.replace(
+        "/employer/messages" + (params.size ? "?" + params.toString() : ""),
+      );
+      return;
+    }
     if (requested && tabs.some(([id]) => id === requested)) setTab(requested);
-  }, []);
+  }, [router]);
   return (
     <main className="route-employer min-h-screen bg-slate-50">
       <SiteHeader
@@ -123,29 +141,38 @@ export function EmployerDashboard() {
             <p className="mt-1 text-xs text-slate-500">Hồ sơ doanh nghiệp</p>
           </div>
           <nav>
-            {tabs.map(([id, label, Icon]) => (
-              <button
-                key={id}
-                onClick={() => setTab(id)}
-                className={`mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition-all ${tab === id ? "bg-emerald-50 text-emerald-700 shadow-sm" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
-              >
-                <Icon className="size-4" />
-                {label}
-              </button>
-            ))}
+            {tabs.map(([id, label, Icon]) =>
+              id === "messages" ? (
+                <Link
+                  key={id}
+                  href="/employer/messages"
+                  className="mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-slate-600 transition-all hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <Icon className="size-4" />
+                  {label}
+                </Link>
+              ) : (
+                <button
+                  key={id}
+                  onClick={() => setTab(id)}
+                  className={`mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition-all ${tab === id ? "bg-emerald-50 text-emerald-700 shadow-sm" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+                >
+                  <Icon className="size-4" />
+                  {label}
+                </button>
+              ),
+            )}
           </nav>
-          <p className="mx-3 mt-4 rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">
-            Tài khoản công ty không có quyền duyệt tin, khóa tài khoản hay sửa
-            danh mục hệ thống.
-          </p>
+          <LogoutButton />
         </aside>
         <section className="min-w-0">
-          {tab === "overview" && <Overview open={setTab} />}{" "}
-          {tab === "jobs" && <Jobs />} {tab === "candidates" && <Candidates />}{" "}
-          {tab === "talent" && <TalentSearch />}{" "}
-          {tab === "analytics" && <AnalyticsV2 />}{" "}
-          {tab === "billing" && <Billing />} {tab === "company" && <Company />}{" "}
-          {tab === "messages" && <Messages />}
+          {tab === "overview" && <EmployerSummary open={setTab} />}{" "}
+          {tab === "jobs" && <EmployerJobs />}{" "}
+          {tab === "candidates" && <EmployerApplications />}{" "}
+          {tab === "talent" && <EmployerTalent />}{" "}
+          {tab === "analytics" && <EmployerSummary report />}{" "}
+          {tab === "billing" && <Billing />}{" "}
+          {tab === "company" && <Company />}{" "}
         </section>
       </div>
       {mobileMenuOpen && (

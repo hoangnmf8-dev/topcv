@@ -169,6 +169,7 @@ function FieldJobsFromSearch() {
     <FieldJobsContent
       key={params.toString()}
       jobCategories={jobCategories.data}
+      initialCompanyCode={params.get("code") ?? ""}
       initialSearch={{ query, category, location }}
       initialLocations={initialLocations}
       initialSpecialties={
@@ -184,11 +185,13 @@ function FieldJobsFromSearch() {
 }
 
 function FieldJobsContent({
+  initialCompanyCode,
   initialLocations,
   jobCategories,
   initialSearch,
   initialSpecialties,
 }: {
+  initialCompanyCode: string;
   initialSearch: { query: string; category: string; location: string };
   initialSpecialties: string[];
   initialLocations: LocationSelection[];
@@ -221,10 +224,12 @@ function FieldJobsContent({
     [specialties, setSpecialties] = useState<string[]>(initialSpecialties),
     [page, setPage] = useState(1);
   const [salaryReset, setSalaryReset] = useState(0);
+  const [companyCode, setCompanyCode] = useState(initialCompanyCode);
   const [searchQuery, setSearchQuery] = useState(initialSearch.query.trim());
   const [searchLocations, setSearchLocations] = useState(initialLocations);
   const filters = {
     query: searchQuery,
+    ...(companyCode ? { companyCode } : {}),
     provinceIds: [...new Set(searchLocations.map((item) => item.provinceId))],
     wardIds: [...new Set(searchLocations.flatMap((item) => item.wardIds))],
     saturdaySchedule,
@@ -256,6 +261,7 @@ function FieldJobsContent({
   const clear = () => {
     setDraft({ ...initial, ...emptyFilters });
     setSearchQuery("");
+    setCompanyCode("");
     setSearchLocations([]);
     setSalaryReset((value) => value + 1);
     setExperience("Tất cả");
@@ -267,6 +273,7 @@ function FieldJobsContent({
   };
   const submitSearch = () => {
     const nextQuery = draft.query.trim();
+    if (nextQuery !== initialSearch.query.trim()) setCompanyCode("");
     const sameLocations =
       JSON.stringify(draft.locations) === JSON.stringify(searchLocations);
     if (nextQuery === searchQuery && sameLocations && page === 1)
