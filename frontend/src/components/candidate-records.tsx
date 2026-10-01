@@ -1,4 +1,6 @@
 "use client";
+
+import { LoadingState } from "@/components/loading-state";
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -27,7 +29,7 @@ export function CandidateRecords({kind}:{kind:"applications"|"saved"}) {
  <button className="rounded-xl bg-emerald-600 px-4 py-2 text-white">Tìm kiếm</button>
  {(keyword||status)&&<button type="button" onClick={()=>{setSearch("");setKeyword("");setStatus("");setPage(1);}} className="text-emerald-700">Xóa lọc</button>}
  </form>
- {query.isPending?<p role="status">Đang tải...</p>:query.isError?<p role="alert">Không tải được danh sách. <button onClick={()=>void query.refetch()} className="text-emerald-700">Thử lại</button></p>:<div aria-busy={query.isFetching} className={query.isFetching?"opacity-60":""}>
+ {query.isPending?<LoadingState message="Đang tải..." />:query.isError?<p role="alert">Không tải được danh sách. <button onClick={()=>void query.refetch()} className="text-emerald-700">Thử lại</button></p>:<div aria-busy={query.isFetching} className={query.isFetching?"opacity-60":""}>
  <p className="text-sm text-slate-500">{query.data.total} việc làm</p>
  {!query.data.items.length?<div className="py-10 text-center"><p>{keyword||status?"Không có kết quả phù hợp.":kind==="applications"?"Bạn chưa ứng tuyển công việc nào.":"Bạn chưa lưu việc làm nào."}</p><Link href="/discover/jobs-by-field" className="mt-3 inline-block text-emerald-700">Khám phá việc làm</Link></div>:<ul className="divide-y">{query.data.items.map(row=><li key={row.id??row.jobPostId} className="py-5">
  <div className="flex flex-wrap justify-between gap-3"><ReadJob job={row.jobPost}/>{row.status&&<span className="h-fit rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700">{labels[row.status]??row.status}</span>}</div>

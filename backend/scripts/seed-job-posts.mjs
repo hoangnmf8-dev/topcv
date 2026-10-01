@@ -2,7 +2,6 @@ import "dotenv/config";
 import pg from "pg";
 
 const { Client } = pg;
-const seedPrefix = "[TOPCV-DEMO-20260917]";
 const categories = [
   { code: "sales", name: "Kinh doanh / Bán hàng", target: 2685, titles: ["Chuyên viên Kinh doanh", "Nhân viên Phát triển Khách hàng", "Account Executive"], salary: [10, 28] },
   { code: "marketing", name: "Marketing / Truyền thông", target: 1595, titles: ["Chuyên viên Digital Marketing", "Content Marketing Executive", "Social Media Executive"], salary: [12, 30] },
@@ -14,7 +13,7 @@ const categories = [
   { code: "accounting-audit", name: "Kế toán / Kiểm toán", target: 1263, titles: ["Kế toán Tổng hợp", "Kế toán Thuế", "Chuyên viên Kiểm toán Nội bộ"], salary: [12, 30] },
 ];
 const copy = {
-  description: (title, company) => `${seedPrefix}\n${company} đang tìm kiếm ${title} để đồng hành cùng đội ngũ.\n\n- Thực hiện công việc theo kế hoạch của phòng ban.\n- Phối hợp với các bộ phận liên quan để hoàn thành mục tiêu.\n- Báo cáo tiến độ và đề xuất phương án cải thiện.`,
+  description: (title, company) => `${company} đang tìm kiếm ${title} để đồng hành cùng đội ngũ.\n\n- Thực hiện công việc theo kế hoạch của phòng ban.\n- Phối hợp với các bộ phận liên quan để hoàn thành mục tiêu.\n- Báo cáo tiến độ và đề xuất phương án cải thiện.`,
   requirements: (experience) => `- Có tối thiểu ${experience} năm kinh nghiệm phù hợp.\n- Có kỹ năng giao tiếp, chủ động và tinh thần trách nhiệm.\n- Sử dụng tốt các công cụ phục vụ công việc.`,
   benefits: `- Thu nhập cạnh tranh và thưởng theo hiệu quả công việc.\n- Được tham gia đầy đủ chế độ bảo hiểm theo quy định.\n- Cơ hội đào tạo và phát triển nghề nghiệp rõ ràng.`,
 };

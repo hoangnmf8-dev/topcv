@@ -8,6 +8,7 @@ import { ArrowLeft, Building2, CheckCircle2, Clock3, Eye, EyeOff, Lock, Mail, Ph
 import { toast } from "sonner";
 
 import { registerAction, resendVerificationAction, verifyRegistrationAction } from "@/actions/auth.action";
+import { AuthForm } from "@/components/auth-form";
 import { GoogleButton } from "@/components/google-button";
 import type { Role } from "@/components/role-selector";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,7 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
 
   async function verify(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (otp.length !== 6 || otpSeconds === 0 || isVerifying || isResending) return;
     setServerError("");
     try {
       setIsVerifying(true);
@@ -157,7 +159,7 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
 
   if (step === "otp") {
     return (
-      <form onSubmit={verify} className="py-1">
+      <AuthForm onSubmit={verify} onSubmitError={() => setServerError("Không thể gửi yêu cầu xác minh. Vui lòng thử lại.")} className="py-1">
         <button type="button" onClick={() => { setStep("form"); setServerError(""); setOtp(""); }} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />Thay đổi thông tin</button>
         <div className="mt-5 text-center">
           <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-emerald-50 text-primary"><ShieldCheck className="size-7" /></div>
@@ -173,12 +175,12 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
         {serverError && <p role="alert" className="mt-4 rounded-xl bg-destructive/10 px-4 py-3 text-center text-sm text-destructive">{serverError}</p>}
         <Button type="submit" size="lg" className="mt-5 w-full font-semibold" disabled={otp.length !== 6 || otpSeconds === 0 || isVerifying}><ShieldCheck />{isVerifying ? "Đang xác minh..." : "Xác nhận mã OTP"}</Button>
         <div className="mt-5 text-center text-sm text-muted-foreground">Chưa nhận được mã? <button type="button" onClick={resend} disabled={resendSeconds > 0 || isResending} className="inline-flex items-center gap-1 font-semibold text-primary disabled:cursor-not-allowed disabled:text-muted-foreground"><RefreshCw className="size-3.5" />{isResending ? "Đang gửi..." : resendSeconds ? `Gửi lại sau ${resendSeconds}s` : "Gửi lại mã"}</button></div>
-      </form>
+      </AuthForm>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit(submitRegistration)} noValidate>
+    <AuthForm onSubmit={handleSubmit(submitRegistration)} onSubmitError={() => setServerError("Không thể gửi yêu cầu đăng ký. Vui lòng thử lại.")} noValidate>
       <FieldGroup>
         {!isCompany && <Field>
           <FieldLabel htmlFor="reg-name">Họ và tên</FieldLabel>
@@ -216,7 +218,7 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
         <Button type="submit" size="lg" className="w-full font-semibold" disabled={isSubmitting}><Mail />{isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản & nhận OTP"}</Button>
         <GoogleButton label="Đăng ký với Google" />
       </FieldGroup>
-    </form>
+    </AuthForm>
   );
 }
 

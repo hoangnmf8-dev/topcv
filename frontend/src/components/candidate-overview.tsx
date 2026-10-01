@@ -1,4 +1,6 @@
 "use client";
+
+import { LoadingState } from "@/components/loading-state";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useAccountStore } from "@/stores/auth.store";
@@ -9,7 +11,7 @@ export function CandidateOverview({open}:{open:(tab:string)=>void}){
  const account=useAccountStore(s=>s.account);
  const query=useQuery({queryKey:["candidate-overview",account?.id],enabled:!!account,queryFn:async({signal})=>(await httpRequest.get<Overview>("/candidate/me/overview",{signal})).data});
  if(!account)return <p>Vui lòng đăng nhập tài khoản ứng viên.</p>;
- if(query.isPending)return <p role="status" className="rounded-2xl bg-white p-6">Đang tải tổng quan...</p>;
+ if(query.isPending)return <LoadingState message="Đang tải tổng quan..." />;
  if(query.isError)return <p role="alert" className="rounded-2xl bg-white p-6">Không tải được tổng quan. <button className="text-emerald-700" onClick={()=>void query.refetch()}>Thử lại</button></p>;
  const d=query.data;
  return <div className="space-y-6">

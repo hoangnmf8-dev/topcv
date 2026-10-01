@@ -1,4 +1,6 @@
 "use client";
+
+import { LoadingState } from "@/components/loading-state";
 import { JobCard } from "@/components/job-card";
 import { toJobCard } from "@/lib/utils";
 import {
@@ -62,7 +64,7 @@ export function FieldJobsInteractive() {
   return (
     <Suspense
       fallback={
-        <p className="p-6 text-sm text-slate-500">Đang tải bộ lọc...</p>
+        <LoadingState fullscreen message="Đang tải bộ lọc…" />
       }
     >
       <FieldJobsFromSearch />
@@ -93,9 +95,7 @@ function FieldJobsFromSearch() {
   });
   if (isPending)
     return (
-      <p role="status" className="p-6 text-sm text-slate-500">
-        Đang tải danh sách ngành nghề...
-      </p>
+      <LoadingState fullscreen message="Đang tải danh sách ngành nghề…" />
     );
   if (isError && !jobCategories?.data)
     return (
@@ -126,9 +126,7 @@ function FieldJobsFromSearch() {
   const query = params.get("q") ?? "";
   if (hasLocation && provinces.isPending)
     return (
-      <p role="status" className="p-6 text-sm text-slate-500">
-        Đang tải địa điểm từ tìm kiếm...
-      </p>
+      <LoadingState fullscreen message="Đang tải địa điểm từ tìm kiếm…" />
     );
   if (hasLocation && provinces.isError && !provinces.data)
     return (
@@ -481,7 +479,7 @@ function FieldJobsContent({
             <div className="space-y-3">
               {isLoading ? (
                 <div role="status" className="space-y-3">
-                  <p className="text-sm text-slate-500">Đang tải việc làm...</p>
+                  <LoadingState message="Đang tải việc làm…" />
                   {[0, 1, 2].map((index) => (
                     <div
                       key={index}

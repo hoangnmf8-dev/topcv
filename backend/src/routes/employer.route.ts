@@ -53,7 +53,7 @@ router.get("/applications", async (req, res) => {
   const where: Prisma.ApplicationWhereInput = { deletedAt: null, jobPost: { companyId: res.locals.companyId, deletedAt: null }, candidate: { deletedAt: null, fullName: { contains: q.query, mode: "insensitive" } }, ...(q.status ? { status: q.status } : {}), ...(q.jobPostId ? { jobPostId: q.jobPostId } : {}) };
   const [total, items] = await prisma.$transaction([
     prisma.application.count({ where }),
-    prisma.application.findMany({ where, skip: (q.page - 1) * 10, take: 10, orderBy: [{ appliedAt: "desc" }, { id: "desc" }], select: { id: true, status: true, fitScore: true, internalNote: true, coverLetter: true, appliedAt: true, candidate: { select: profileSelect }, jobPost: { select: { id: true, title: true } }, cv: { select: { id: true, title: true, deletedAt: true } } } }),
+    prisma.application.findMany({ where, skip: (q.page - 1) * 10, take: 10, orderBy: [{ appliedAt: "desc" }, { id: "desc" }], select: { id: true, status: true, fitScore: true, internalNote: true, coverLetter: true, appliedAt: true, candidate: { select: profileSelect }, jobPost: { select: { id: true, title: true } }, cv: { where: { deletedAt: null }, select: { id: true, title: true, deletedAt: true } } } }),
   ]);
   res.json({ data: { total, items, page: q.page, pages: Math.ceil(total / 10) } });
 });
@@ -68,7 +68,7 @@ router.patch("/applications/:id", async (req, res) => {
 router.get("/applications/:id/cv", async (req, res) => {
   const id = z.string().uuid().safeParse(req.params.id);
   if (!id.success) { res.status(400).json({ message: "ID không hợp lệ" }); return; }
-  const application = await prisma.application.findFirst({ where: { id: id.data, deletedAt: null, jobPost: { companyId: res.locals.companyId, deletedAt: null } }, select: { candidateId: true, cv: { select: { candidateId: true, title: true, contentJson: true, fileKey: true, deletedAt: true } } } });
+  const application = await prisma.application.findFirst({ where: { id: id.data, deletedAt: null, jobPost: { companyId: res.locals.companyId, deletedAt: null } }, select: { candidateId: true, cv: { where: { deletedAt: null }, select: { candidateId: true, title: true, contentJson: true, fileKey: true, deletedAt: true } } } });
   const cv = application?.cv;
   if (!cv || cv.deletedAt || cv.candidateId !== application?.candidateId) { res.status(404).json({ message: "Không có CV khả dụng" }); return; }
   const url = cv.fileKey ? await uploadService.createDownloadUrl(cv.fileKey, req.profile.id) : null;

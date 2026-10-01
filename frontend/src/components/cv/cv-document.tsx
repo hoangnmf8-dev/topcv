@@ -1,3 +1,5 @@
+import { ObjectiveText } from "./objective-text";
+import { stripBullet } from "@/lib/content-limits";
 import type { CSSProperties, ReactNode } from "react";
 import type { CVData, TemplateId, ThemeId } from "@/lib/cv-layout";
 import { getTheme } from "@/lib/cv-layout";
@@ -16,10 +18,7 @@ export function CVDocument({ data, template, theme }: Props) {
     color: "#334155",
     fontSize: 13,
     lineHeight: 1.7,
-    fontFamily:
-      template === "classic"
-        ? "Georgia, 'Times New Roman', serif"
-        : "Arial, sans-serif",
+    fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif",
     background: "#fff",
     minHeight: "100%",
     overflowWrap: "anywhere",
@@ -210,7 +209,7 @@ export function CVDocument({ data, template, theme }: Props) {
             }}
           >
             {exp.bullets.filter(Boolean).map((text, j) => (
-              <li key={j}>{text}</li>
+              <li key={j}>{stripBullet(text)}</li>
             ))}
           </ul>
         </article>
@@ -286,7 +285,7 @@ export function CVDocument({ data, template, theme }: Props) {
   );
   const intro = section(
     "Giới thiệu",
-    <p style={{ whiteSpace: "pre-line" }}>{data.objective}</p>,
+    <ObjectiveText text={data.objective} />,
   );
 
   const chips = (
@@ -399,7 +398,7 @@ export function CVDocument({ data, template, theme }: Props) {
             }}
           >
             {heading("01 / Giới thiệu")}
-            <p>{data.objective}</p>
+            <ObjectiveText text={data.objective} />
           </section>
           <section
             style={{ padding: 24, background: "white", marginBottom: 24 }}
@@ -447,7 +446,7 @@ export function CVDocument({ data, template, theme }: Props) {
           style={{ display: "grid", gridTemplateColumns: "1fr 205px", gap: 32 }}
         >
           <div>
-            {section("Một chút về tôi", <p>{data.objective}</p>)}
+            {section("Một chút về tôi", <ObjectiveText text={data.objective} />)}
             {section(
               "Hành trình sáng tạo",
               <div>
@@ -472,7 +471,7 @@ export function CVDocument({ data, template, theme }: Props) {
                     <ul style={{ listStyle: "disc", paddingLeft: 18 }}>
                       {exp.bullets.map((b, j) => (
                         <li key={j} style={{ marginTop: 8 }}>
-                          {b}
+                          {stripBullet(b)}
                         </li>
                       ))}
                     </ul>
@@ -551,7 +550,7 @@ export function CVDocument({ data, template, theme }: Props) {
               marginBottom: 8,
             }}
           >
-            {section("Mục tiêu nghề nghiệp", <p>{data.objective}</p>)}
+            {section("Mục tiêu nghề nghiệp", <ObjectiveText text={data.objective} />)}
             {section("Thông tin liên hệ", contactBlock)}
           </div>
           <section
@@ -581,7 +580,7 @@ export function CVDocument({ data, template, theme }: Props) {
         </header>
         <main style={{ paddingTop: 35 }}>
           {[
-            ["Giới thiệu", <p key="intro">{data.objective}</p>],
+            ["Giới thiệu", <ObjectiveText key="intro" text={data.objective} />],
             ["Kinh nghiệm", experiences],
             ["Học vấn", education],
             ["Kỹ năng", chips],

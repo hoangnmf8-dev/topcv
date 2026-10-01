@@ -1,3 +1,4 @@
+import cvRouter from "./cv.route";
 import employerRouter from "./employer.route";
 import candidateRouter from "./candidate.route";
 import express from "express";
@@ -11,6 +12,7 @@ import aiRouter from "./ai.route";
 import conversationRouter from "./conversation.route";
 
 const indexRouter = express.Router();
+indexRouter.use("/cv", cvRouter);
 indexRouter.use("/auth", authRouter);
 indexRouter.use("/upload", uploadRouter);
 indexRouter.use("/company", companyRouter);

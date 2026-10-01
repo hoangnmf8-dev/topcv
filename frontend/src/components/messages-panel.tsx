@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/loading-state";
+
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -62,7 +64,7 @@ export function MessagesPanel() {
           </label>
         </div>
         <div className="flex-1 overflow-y-auto">
-          {list.isPending && <p className="p-4 text-sm">Đang tải...</p>}
+          {list.isPending && <LoadingState message="Đang tải..." />}
           {list.isError && (
             <button
               onClick={() => void list.refetch()}
@@ -189,7 +191,7 @@ function ConversationThread({
     <>
       <div ref={viewport} className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4">
         {history.hasNextPage && <button type="button" disabled={history.isFetchingNextPage} onClick={()=>void history.fetchNextPage()} className="block mx-auto text-sm text-emerald-700">{history.isFetchingNextPage?"Đang tải…":"Xem tin nhắn cũ hơn"}</button>}
-        {messages.isPending && <p>Đang tải tin nhắn...</p>}
+        {messages.isPending && <LoadingState message="Đang tải tin nhắn..." />}
         {messages.isError && (
           <button
             onClick={() => void messages.refetch()}

@@ -1,4 +1,5 @@
 "use client";
+import { LoadingState } from "@/components/loading-state";
 import { conversationService } from "@/services/conversation.service";
 import { useAccountStore } from "@/stores/auth.store";
 import { toast } from "sonner";
@@ -23,7 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function CompanyDetail() {
   const { slug: code } = useParams<{ slug: string }>();
-  const { data } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: getDetailCompanyKey(code),
     queryFn: () => companyService.getDetailCompany(code),
   });
@@ -43,6 +44,7 @@ export default function CompanyDetail() {
     } catch { toast.error("Không thể mở cuộc trò chuyện. Vui lòng thử lại."); }
     finally { lock.current = false; setStarting(false); }
   }
+  if (isPending) return <LoadingState fullscreen message="Đang tải thông tin công ty…" />;
   return (
     <main className="route-home min-h-screen bg-[#f6f8f7]">
       <SiteHeader />

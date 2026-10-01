@@ -1,4 +1,6 @@
 "use client";
+
+import { LoadingState } from "@/components/loading-state";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Building2, Search, X } from "lucide-react";
@@ -73,7 +75,7 @@ export default function CompaniesPage() {
             </button>
           )}
         </div>
-        {directory.isPending ? <p role="status">Đang tải công ty...</p> : directory.isError ? <p role="alert">Không tải được danh sách công ty. <button onClick={()=>void directory.refetch()} className="text-emerald-700">Thử lại</button></p> : results.length ? (
+        {directory.isPending ? <LoadingState message="Đang tải công ty..." /> : directory.isError ? <p role="alert">Không tải được danh sách công ty. <button onClick={()=>void directory.refetch()} className="text-emerald-700">Thử lại</button></p> : results.length ? (
           <div aria-busy={directory.isFetching} className={"grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-opacity " + (directory.isFetching?"opacity-60":"")}>
             {results.map((company) => (
               <Link

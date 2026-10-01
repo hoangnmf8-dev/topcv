@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -8,28 +8,28 @@
 @theme inline {
   --font-sans: var(
     --route-font-sans,
-    "Be Vietnam Pro",
+    "Inter",
     ui-sans-serif,
     system-ui,
     sans-serif
   );
   --font-body: var(
     --route-font-body,
-    "Be Vietnam Pro",
+    "Inter",
     ui-sans-serif,
     system-ui,
     sans-serif
   );
   --font-display: var(
     --route-font-display,
-    "Be Vietnam Pro",
+    "Inter",
     ui-sans-serif,
     system-ui,
     sans-serif
   );
   --font-serif: var(
     --route-font-serif,
-    "Be Vietnam Pro",
+    "Inter",
     ui-sans-serif,
     system-ui,
     sans-serif
@@ -141,8 +141,8 @@
   --sidebar-border: oklch(0.9276 0.0058 264.5313);
   --sidebar-ring: oklch(0.6231 0.188 259.8145);
 
-  --font-sans: "Be Vietnam Pro", sans-serif;
-  --font-serif: "Be Vietnam Pro", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Inter", sans-serif;
   --font-mono: JetBrains Mono, monospace;
   --shadow-color: oklch(0 0 0);
   --shadow-opacity: 0.1;
@@ -204,8 +204,8 @@
   --chart-3: oklch(0.7 0.15 60);
   --chart-4: oklch(0.65 0.2 25);
   --chart-5: oklch(0.55 0.16 300);
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
-  --route-font-be-vietnam-pro: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
+  --route-font-be-vietnam-pro: "Inter", sans-serif;
   --route-brand: #00b14f;
   --route-brand-dark: #009244;
   --route-brand-light: #e7f9ef;
@@ -239,7 +239,7 @@
   --input: oklch(0.929 0.013 255.508);
   --ring: oklch(0.696 0.17 156.5);
   --chart-1: oklch(0.696 0.17 156.5);
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
   --route-brand: #00b14f;
   --route-brand-dark: #00913f;
   --route-brand-light: #e6f8ee;
@@ -273,8 +273,8 @@
   --input: oklch(0.922 0.004 150);
   --ring: oklch(0.652 0.166 153.5);
   --chart-1: oklch(0.652 0.166 153.5);
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
-  --route-font-serif: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
+  --route-font-serif: "Inter", sans-serif;
   --route-brand: #00b14f;
   --route-brand-dark: #008f40;
   --route-brand-light: #e7f9ef;
@@ -285,9 +285,9 @@
 .route-candidate,
 .route-employer,
 .route-employer-post-job {
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
-  --route-font-body: "Be Vietnam Pro", sans-serif;
-  --route-font-display: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
+  --route-font-body: "Inter", sans-serif;
+  --route-font-display: "Inter", sans-serif;
   --route-brand: #00b14f;
   --route-brand-dark: #008f40;
   --route-brand-light: #e7f9ef;
@@ -297,26 +297,26 @@
 }
 
 .route-candidate {
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
-  --route-font-body: "Be Vietnam Pro", sans-serif;
-  --route-font-display: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
+  --route-font-body: "Inter", sans-serif;
+  --route-font-display: "Inter", sans-serif;
   --route-brand-dark: #00913f;
   --route-brand-light: #e6f8ee;
   --route-brand-tint: #f2fbf6;
 }
 
 .route-employer {
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
-  --route-font-body: "Be Vietnam Pro", sans-serif;
-  --route-font-display: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
+  --route-font-body: "Inter", sans-serif;
+  --route-font-display: "Inter", sans-serif;
   --route-brand-dark: #00893e;
   --route-brand-light: #e6f8ee;
 }
 
 .route-employer-post-job {
-  --route-font-sans: "Be Vietnam Pro", sans-serif;
-  --route-font-body: "Be Vietnam Pro", sans-serif;
-  --route-font-display: "Be Vietnam Pro", sans-serif;
+  --route-font-sans: "Inter", sans-serif;
+  --route-font-body: "Inter", sans-serif;
+  --route-font-display: "Inter", sans-serif;
   --route-brand-dark: #008f40;
   --route-brand-light: #e7f9ef;
 }
@@ -362,6 +362,49 @@
   textarea,
   button {
     min-width: 0;
+  }
+
+  :where(
+    button,
+    a[href],
+    summary,
+    select,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    input[type="checkbox"],
+    input[type="radio"],
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="option"],
+    [role="checkbox"],
+    [role="radio"]
+  ):not(:disabled):not([aria-disabled="true"]):not([data-disabled]):not([inert] *) {
+    cursor: pointer;
+  }
+
+  :where(button, input[type="button"], input[type="submit"], input[type="reset"], [role="button"], a[data-slot="button"]) {
+    transition-property: color, background-color, border-color, box-shadow, opacity, filter, transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  :where(button, input, select, [role="button"], [role="tab"], [role="option"], [role="checkbox"], [role="radio"]):is(:disabled, [aria-disabled="true"], [data-disabled]) {
+    cursor: not-allowed;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    :where(button, input[type="button"], input[type="submit"], input[type="reset"], [role="button"], a[data-slot="button"]):not(:disabled):not([aria-disabled="true"]):not([data-disabled]):not([inert] *):hover {
+      filter: brightness(0.95);
+      opacity: 0.9;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(button, input[type="button"], input[type="submit"], input[type="reset"], [role="button"], a[data-slot="button"]) {
+      transition-duration: 0ms;
+    }
   }
 }
 
@@ -465,9 +508,9 @@ body:has(.route-employer-post-job) .global-chat-widget {
 
   .route-cv-builder {
     display: block !important;
-    width: 210mm !important;
+    width: auto !important;
     height: auto !important;
-    min-height: 297mm !important;
+    min-height: auto !important;
     overflow: visible !important;
     background: #fff !important;
   }

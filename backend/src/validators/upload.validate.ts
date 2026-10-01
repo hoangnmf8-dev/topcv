@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const presignUploadSchema = z.object({
-  purpose: z.enum(["avatar", "companyLogo", "companyBanner", "cv"]),
+  purpose: z.enum(["avatar", "companyLogo", "companyBanner", "cv", "cvImage"]),
   fileName: z.string().trim().min(1),
   contentType: z.string().trim().min(1, "Không có dữ liệu"),
   fileSize: z.number().int().positive(),

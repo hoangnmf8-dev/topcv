@@ -1,7 +1,9 @@
 "use client"
 
+import { CvErrors } from "../validation-errors"
 import { useState, useRef } from "react"
 import { Loader2, Plus, Trash2, Wand2 } from "lucide-react"
+import { CV_TEXT_LIMIT } from "@/lib/content-limits"
 import aiService from "@/services/ai.service"
 import { Field, TextArea, TextInput } from "@/components/cv/field"
 import { uid, type ExperienceItem } from "@/lib/cv-layout"
@@ -80,12 +82,12 @@ function ExperienceCard({
     setError("")
     try {
       const response = await aiService.generateTextAI("experience", {
-        currentText: bulletsText, company: exp.company, role: exp.role, timeline: exp.timeline,
+        currentText: bulletsText, company: exp.company, role: exp.role, timeline: exp.timeline, profile: context,
       })
       if (!response.success || typeof response.data !== "string" || !response.data.trim()) {
         throw new Error(response.message || "AI chưa trả về nội dung. Vui lòng thử lại.")
       }
-      onUpdate({ bullets: response.data.trim().split("\n").map((line: string) => line.replace(/^\s*[-*•]\s+/, "")).filter((line: string) => line.trim()) })
+      onUpdate({ bullets: response.data.trim().split("\n").map((line: string) => line.trim()).filter((line: string) => line.trim()) })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Không thể cải thiện nội dung. Vui lòng thử lại.")
     } finally {
@@ -129,7 +131,7 @@ function ExperienceCard({
       <div className="mt-3 flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <label className="text-xs font-medium text-muted-foreground">
-            Mô tả công việc (mỗi ý một dòng)
+            Mô tả công việc
           </label>
           <button
             type="button"
@@ -147,11 +149,14 @@ function ExperienceCard({
         </div>
         <TextArea
           readOnly={loading}
+          maxLength={CV_TEXT_LIMIT}
           value={bulletsText}
           onChange={(e) => setBullets(e.target.value)}
           rows={4}
           placeholder="- Mô tả thành tựu và trách nhiệm..."
         />
+        <p className="text-xs text-muted-foreground">{bulletsText.length}/{CV_TEXT_LIMIT} ký tự</p>
+        <CvErrors path={`data.experiences.${index}`} />
         {error && <p className="text-xs font-medium text-destructive">{error}</p>}
       </div>
     </div>

@@ -117,7 +117,7 @@ router.get("/:kind", async (req, res) => {
           appliedAt: true,
           updatedAt: true,
           coverLetter: true,
-          cv: { select: { title: true } },
+          cv: { where: { deletedAt: null }, select: { title: true } },
           jobPost: { select: jobSelect },
         },
         orderBy: [{ appliedAt: "desc" }, { id: "desc" }],

@@ -1,0 +1,14 @@
+import {Router} from "express";
+import {authMiddleware} from "../middlewares/auth.middleware";
+import validateMiddleware from "../middlewares/validate.middleware";
+import cvController from "../controllers/cv.controller";
+import {cvCreateSchema,cvSaveSchema} from "../validators/cv.validate";
+const router=Router();
+router.use(authMiddleware);
+router.use((req,res,next)=>{if(req.profile.role!=="candidate" || req.profile.deletedAt || req.profile.status!=="active"){res.status(403).json({success:false,message:"Chỉ ứng viên được quản lý CV"});return;}next();});
+router.get("/",cvController.list);
+router.get("/:id",cvController.detail);
+router.delete("/:id",cvController.remove);
+router.post("/",validateMiddleware(cvCreateSchema),cvController.create);
+router.put("/:id",validateMiddleware(cvSaveSchema),cvController.update);
+export default router;

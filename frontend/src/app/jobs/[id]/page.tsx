@@ -1,5 +1,6 @@
 "use client";
 
+import { LoadingState } from "@/components/loading-state";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -44,7 +45,8 @@ export default function JobDetailPage() {
   console.log("🚀 ~ JobDetailPage ~ data:", data);
   const [applyOpen, setApplyOpen] = useState(false);
   const { saved: savedIds, toggle } = useSavedJobs();
-  if (isPending || isError || !data) {
+  if (isPending) return <LoadingState fullscreen message="Đang tải thông tin việc làm…" />;
+  if (isError || !data) {
     const missing = isAxiosError(error) && error.response?.status === 404;
     return (
       <main className="route-home min-h-screen bg-slate-50 text-slate-800">
@@ -214,17 +216,11 @@ export default function JobDetailPage() {
                   </div>
                 </div>
               )}
-              <div className="mb-5 grid gap-3 sm:grid-cols-2">
+              <div className="mb-5 max-w-37.5">
                 <div className="rounded-xl bg-slate-50 p-4">
                   <p className="text-xs text-slate-500">Hình thức làm việc</p>
                   <p className="mt-1 font-semibold text-slate-900">
                     {job.jobType}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-slate-50 p-4">
-                  <p className="text-xs text-slate-500">Cập nhật gần nhất</p>
-                  <p className="mt-1 font-semibold text-slate-900">
-                    {new Date(job.updatedAt).toLocaleDateString("vi-VN")}
                   </p>
                 </div>
               </div>

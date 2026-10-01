@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   EmployerSummary,
   EmployerApplications,
@@ -57,6 +57,8 @@ import { refreshImage } from "@/lib/utils";
 import companyService from "@/services/company.service";
 import { useImagePreview } from "@/lib/hook";
 
+import { useDashboardTab } from "@/hooks/use-dashboard-tab";
+
 const tabs = [
   ["overview", "Tổng quan", LayoutDashboard],
   ["company", "Hồ sơ doanh nghiệp", Building2],
@@ -91,10 +93,11 @@ const reportRows = [] as {
 export function EmployerDashboard() {
   const router = useRouter();
   const { company } = useCompanyStore((state) => state);
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useDashboardTab(tabs);
+  const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get("tab");
+    const requested = searchParams.get("tab");
     if (requested === "messages") {
       const params = new URLSearchParams(window.location.search);
       params.delete("tab");
@@ -1051,10 +1054,6 @@ function AnalyticsV2() {
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <b className="text-[#087b43]">Báo cáo tuyển dụng</b>
-            <p className="mt-1 text-xs text-slate-600">
-              Chọn một tin để xem báo cáo riêng, hoặc tổng hợp toàn bộ tin tuyển
-              dụng.
-            </p>
           </div>
           <div className="grid gap-2 sm:grid-cols-[minmax(320px,1fr)_190px_auto]">
             <div className="relative text-xs font-bold text-slate-600">
@@ -1170,9 +1169,6 @@ function AnalyticsV2() {
                       </div>
                     </div>
                   ))}
-                  <p className="mt-2 border-t px-3 pt-3 text-[11px] font-normal leading-4 text-slate-400">
-                    Rê chuột hoặc nhấn vào từng mục để mở menu cấp tiếp theo.
-                  </p>
                 </div>
               )}
             </div>

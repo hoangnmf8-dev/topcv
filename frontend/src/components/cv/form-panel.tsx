@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronDown,
   GraduationCap,
@@ -10,26 +10,46 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CVData } from "@/lib/cv-layout";
+import { useController, useFormContext } from "react-hook-form";
+import type { CvFormValues } from "@/validators/cv.validate";
+import { CvErrors } from "./validation-errors";
 import { PersonalSection } from "./sections/personal-section";
 import { ObjectiveSection } from "./sections/objective-section";
 import { ExperienceSection } from "./sections/experience-section";
 import { EducationSkillsSection } from "./sections/education-skills-section";
 
 export function FormPanel({
-  data,
-  setData,
+  onAvatarChange,
+  avatar,
 }: {
-  data: CVData;
-  setData: React.Dispatch<React.SetStateAction<CVData>>;
+  avatar: string;
+  onAvatarChange: (file: File | null) => void;
 }) {
+  const {
+    control,
+    formState: { submitCount, errors },
+  } = useFormContext<CvFormValues>();
+  const { field } = useController({ name: "data", control });
+  const data = field.value;
+  const setData = (update: (current: CVData) => CVData) =>
+    field.onChange(update(data));
   const [open, setOpen] = useState<Record<string, boolean>>({
     personal: true,
     objective: true,
     experience: false,
     education: false,
   });
+  useEffect(() => {
+    if (submitCount && errors.data)
+      setOpen({
+        personal: true,
+        objective: true,
+        experience: true,
+        education: true,
+      });
+  }, [submitCount, errors.data]);
   const toggle = (key: string) => setOpen((o) => ({ ...o, [key]: !o[key] }));
-  const context = "";
+  const context = JSON.stringify({title:data.personal.title,skills:data.skills.map(skill=>skill.name),experiences:data.experiences.map(({role,company,bullets})=>({role,company,bullets}))});
   return (
     <div className="scrollbar-slim h-full overflow-y-auto bg-background p-4 sm:p-5">
       <div className="mx-auto flex max-w-2xl flex-col gap-3">
@@ -42,6 +62,8 @@ export function FormPanel({
           onToggle={() => toggle("personal")}
         >
           <PersonalSection
+            avatar={avatar}
+            onAvatarChange={onAvatarChange}
             value={data.personal}
             onChange={(personal) => setData((d) => ({ ...d, personal }))}
           />
@@ -92,6 +114,8 @@ export function FormPanel({
             }
             onSkillsChange={(skills) => setData((d) => ({ ...d, skills }))}
           />
+          <CvErrors path="data.educations" />
+          <CvErrors path="data.skills" />
         </AccordionItem>
       </div>
     </div>

@@ -11,12 +11,13 @@ export const jobPostCreateSchema = z.object({
   salaryMin: salary,
   salaryMax: salary,
   currency: z.enum(["VND", "USD"]),
+  saturdaySchedule: z.enum(["WORK", "OFF", "UNSPECIFIED"]).default("UNSPECIFIED"),
   experienceYearsMin: z.number().int().min(0).max(99).nullable(),
   deadlineAt: z.string().datetime({ offset: true }).refine(value => Date.parse(value) > Date.now(), "Hạn nhận hồ sơ phải ở tương lai"),
   overview: z.object({ requirements: tags, specialties: tags }),
-  description: z.string().trim().min(1).max(50000),
-  requirements: z.string().trim().min(1).max(50000),
-  benefits: z.string().trim().min(1).max(50000),
+  description: z.string().trim().min(1).max(5000, "Mô tả công việc tối đa 5.000 ký tự"),
+  requirements: z.string().trim().min(1).max(5000, "Yêu cầu ứng viên tối đa 5.000 ký tự"),
+  benefits: z.string().trim().min(1).max(3000, "Quyền lợi tối đa 3.000 ký tự"),
 }).refine(data => data.salaryMin === null || data.salaryMax === null || data.salaryMin <= data.salaryMax, {
   message: "Lương tối thiểu không được vượt mức tối đa", path: ["salaryMax"],
 });

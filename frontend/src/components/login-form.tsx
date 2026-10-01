@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { loginAction } from "@/actions/auth.action";
+import { AuthForm } from "@/components/auth-form";
 import { GoogleButton } from "@/components/google-button";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
@@ -46,7 +47,7 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <AuthForm onSubmit={handleSubmit(onSubmit)} onSubmitError={() => setServerError("Không thể gửi yêu cầu đăng nhập. Vui lòng thử lại.")} noValidate>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="login-email">Email</FieldLabel>
@@ -105,6 +106,6 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }
         <FieldSeparator>Hoặc đăng nhập bằng</FieldSeparator>
         <GoogleButton label="Đăng nhập với Google" />
       </FieldGroup>
-    </form>
+    </AuthForm>
   );
 }

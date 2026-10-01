@@ -6,6 +6,7 @@ import { vi } from "react-day-picker/locale";
 import { formatJobSalary } from "@/lib/job-salary";
 import { httpRequest } from "@/lib/utils";
 import axios from "axios";
+import { JOB_TEXT_LIMITS } from "@/lib/content-limits";
 import aiService from "@/services/ai.service";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -38,6 +39,7 @@ const initial = {
   currency: "triệu VNĐ/tháng",
   negotiable: true,
   experience: "",
+  saturdaySchedule: "UNSPECIFIED" as "WORK" | "OFF" | "UNSPECIFIED",
   overviewRequirements: "",
   deadline: "",
   description:
@@ -86,7 +88,7 @@ export default function Page() {
   const basicInvalid = invalid || addressInvalid || !data.title.trim() || !data.category || !jobTitles.some(item => item.id === data.jobTitleId) ||
     !data.deadline || new Date(data.deadline + "T23:59:59").getTime() <= Date.now() ||
     (data.experience !== "" && (!Number.isInteger(Number(data.experience)) || Number(data.experience) < 0 || Number(data.experience) > 99));
-  const descriptionInvalid = !data.description.trim() || !data.requirements.trim();
+  const descriptionInvalid = !data.description.trim() || !data.requirements.trim() || data.description.length > JOB_TEXT_LIMITS.description || data.requirements.length > JOB_TEXT_LIMITS.requirements;
   const goToStep = (next: number) => {
     if (next > 0 && basicInvalid) { toast.error("Vui lòng hoàn thành thông tin cơ bản, mức lương và hạn nhận hồ sơ hợp lệ."); return; }
     if (next > 1 && descriptionInvalid) { toast.error("Vui lòng nhập mô tả và yêu cầu ứng viên."); return; }
@@ -94,7 +96,7 @@ export default function Page() {
   };
   const publish = async () => {
     if (publishLock.current) return;
-    if (basicInvalid || descriptionInvalid || !data.benefits.trim()) {
+    if (basicInvalid || descriptionInvalid || (!data.benefits.trim() || data.benefits.length > JOB_TEXT_LIMITS.benefits)) {
       toast.error("Vui lòng hoàn thành thông tin tin tuyển dụng."); return;
     }
     publishLock.current = true;
@@ -106,6 +108,7 @@ export default function Page() {
         salaryMin: data.negotiable ? null : salaryValue(data.salaryMin, data.currency),
         salaryMax: data.negotiable ? null : salaryValue(data.salaryMax, data.currency),
         currency: data.currency === "USD/tháng" ? "USD" : "VND",
+        saturdaySchedule: data.saturdaySchedule,
         experienceYearsMin: data.experience === "" ? null : Number(data.experience),
         deadlineAt: new Date(data.deadline + "T23:59:59").toISOString(),
         overview: { requirements: splitTags(data.overviewRequirements), specialties: splitTags(data.skills) },
@@ -183,6 +186,17 @@ export default function Page() {
                       <option>USD/tháng</option>
                     </select>
                   </label>
+                  <div className="font-bold">
+                    <p className="mb-2">Lịch làm thứ Bảy</p>
+                    <Select value={data.saturdaySchedule} onValueChange={value=>{if(value === "WORK" || value === "OFF" || value === "UNSPECIFIED")set("saturdaySchedule",value);}}>
+                      <SelectTrigger aria-label="Lịch làm thứ Bảy" className="w-full data-[size=default]:h-12 rounded-xl bg-white px-3 font-normal"><SelectValue /></SelectTrigger>
+                      <SelectContent alignItemWithTrigger={false}>
+                        <SelectItem value="WORK">Làm thứ 7</SelectItem>
+                        <SelectItem value="OFF">Nghỉ thứ 7</SelectItem>
+                        <SelectItem value="UNSPECIFIED">Không đề cập</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <Field
                     label="Kinh nghiệm tối thiểu"
                     value={data.experience}
@@ -211,8 +225,6 @@ export default function Page() {
                   />
                   Mức lương thỏa thuận
                 </label>
-                <p className="text-sm text-slate-500">Để trống cả hai mức lương sẽ tự chọn lương thỏa thuận. Nhập ít nhất một mức để ghi lương cụ thể.</p>
-                {addressInvalid && <p className="text-sm text-slate-500">Chọn tỉnh/thành, phường/xã và nhập địa chỉ cụ thể để tiếp tục.</p>}
                 {invalid && (
                   <p className="text-sm text-red-600">
                     Lương tối đa phải lớn hơn hoặc bằng lương tối thiểu.
@@ -226,10 +238,6 @@ export default function Page() {
                   <h2 className="border-l-4 border-[#00b14f] pl-3 text-lg font-bold">
                     Tổng quan
                   </h2>
-                  <p className="mt-2 text-sm text-slate-500">
-                    Các giá trị cách nhau bằng dấu phẩy sẽ hiển thị thành từng
-                    thẻ trên tin tuyển dụng.
-                  </p>
                   <div className="mt-4 grid gap-4">
                     <Field
                       label="Yêu cầu tổng quan"
@@ -339,6 +347,7 @@ function ContentEditor({
   change: (v: string) => void;
   job: Data;
 }) {
+  const maxLength = label === "Mô tả công việc" ? JOB_TEXT_LIMITS.description : label === "Yêu cầu ứng viên" ? JOB_TEXT_LIMITS.requirements : JOB_TEXT_LIMITS.benefits;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const pending = useRef(false);
@@ -374,9 +383,10 @@ function ContentEditor({
           {loading ? "Đang cải thiện..." : "Cải thiện văn phong với AI"}
         </button>
       </div>
-      <textarea aria-label={label} rows={10} value={value} readOnly={loading}
+      <textarea aria-label={label} maxLength={maxLength} rows={10} value={value} readOnly={loading}
         onChange={(e) => change(e.target.value)}
         className="mt-4 w-full rounded-xl border p-4 font-normal leading-7" />
+      <p className="mt-2 text-xs text-slate-500">{value.length.toLocaleString("vi-VN")}/{maxLength.toLocaleString("vi-VN")} ký tự</p>
       {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
     </section>
   );

@@ -14,6 +14,7 @@ import {
   Star,
   Sparkles,
 } from "lucide-react";
+import { CvErrors } from "./validation-errors";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -79,11 +80,13 @@ export function ControlBar({
       </Link>
       <span className="h-6 w-px bg-border" />
       <input
+        disabled={saveState === "saving"}
         value={title}
         onChange={(e) => onTitleChange(e.target.value)}
         aria-label="Tên CV"
         className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1.5 text-sm font-semibold text-foreground outline-none transition-colors hover:border-border focus:border-primary focus:ring-3 focus:ring-primary/20 sm:max-w-xs"
       />
+      <CvErrors path="title" />
       <div className="relative" ref={tplRef}>
         <button
           type="button"
@@ -91,6 +94,7 @@ export function ControlBar({
             setTplOpen((o) => !o);
             setThemeOpen(false);
           }}
+          disabled={saveState === "saving"}
           aria-expanded={tplOpen}
           className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
@@ -138,6 +142,7 @@ export function ControlBar({
             setThemeOpen((o) => !o);
             setTplOpen(false);
           }}
+          disabled={saveState === "saving"}
           aria-expanded={themeOpen}
           className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
         >
@@ -198,8 +203,7 @@ export function ControlBar({
         variant="outline"
         size="sm"
         onClick={onSave}
-        disabled
-        title="Lưu CV hiện chưa khả dụng"
+        disabled={saveState === "saving"}
         className="gap-1.5"
       >
         {saveState === "saving" ? (
@@ -218,8 +222,7 @@ export function ControlBar({
         variant="outline"
         size="sm"
         onClick={onSaveAsDefault}
-        disabled
-        title="Lưu CV hiện chưa khả dụng"
+        disabled={saveState === "saving"}
         className="gap-1.5 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
       >
         {saveState === "default-saved" ? (

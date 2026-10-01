@@ -1,5 +1,7 @@
+
+import { LoadingState } from "@/components/loading-state";
+import { Suspense } from "react";
 import { PortalDashboard } from "@/components/portal-dashboard";
-import { useAccountStore } from "@/stores/auth.store";
-export default function CandidatePage() {
-  return <PortalDashboard mode="candidate" />;
+export default function Page() {
+  return <Suspense fallback={<LoadingState fullscreen />}><PortalDashboard mode="candidate" /></Suspense>;
 }

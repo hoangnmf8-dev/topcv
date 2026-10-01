@@ -1,8 +1,9 @@
 "use client";
+import { CvList } from "./cv/cv-list";
 
 import { LogoutButton } from "@/components/logout-button";
 import { CandidateOverview } from "@/components/candidate-overview";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useAccountStore } from "@/stores/auth.store";
 import { CandidateRecords } from "@/components/candidate-records";
@@ -32,6 +33,8 @@ import { RoleFooter } from "@/components/role-footer";
 import { CandidateMobileSidebar } from "@/components/candidate-mobile-sidebar";
 import { useCandidateStore } from "@/stores/candidate.store";
 
+import { useDashboardTab } from "@/hooks/use-dashboard-tab";
+
 type Mode = "candidate" | "employer";
 const candidateTabs = [
   ["overview", "Tổng quan", LayoutDashboard],
@@ -52,15 +55,11 @@ const employerTabs = [
 ] as const;
 
 export function PortalDashboard({ mode }: { mode: Mode }) {
-  const [tab, setTab] = useState("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const candidate = mode === "candidate";
   const tabs = candidate ? candidateTabs : employerTabs;
   const { candidate: candidateStore } = useCandidateStore((state) => state);
-  useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get("tab");
-    if (requested && tabs.some(([id]) => id === requested)) setTab(requested);
-  }, [tabs]);
+  const [tab, setTab] = useDashboardTab(tabs);
   return (
     <main className="route-home min-h-screen bg-slate-50">
       <SiteHeader
@@ -294,20 +293,7 @@ function Profile() {
             </span>
           </Link>
         </div>
-        <div className="mt-6">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-            <div>
-              <h3 className="font-bold text-slate-800">Danh sách CV</h3>
-              <p className="mt-1 text-sm text-slate-500">Chưa có dữ liệu CV</p>
-            </div>
-            <span className="text-xs font-semibold text-slate-500">
-              Sắp xếp: Cập nhật gần nhất
-            </span>
-          </div>
-          <div className="grid gap-4 xl:grid-cols-2">
-            <p className="text-sm text-slate-500">Chưa có CV.</p>
-          </div>
-        </div>
+        <CvList />
       </Panel>
     </div>
   );

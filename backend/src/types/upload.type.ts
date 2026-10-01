@@ -3,6 +3,7 @@ export const uploadPurposes = [
   "companyLogo",
   "companyBanner",
   "cv",
+  "cvImage",
 ] as const;
 
 export type UploadPurpose =

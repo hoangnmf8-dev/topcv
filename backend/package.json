@@ -7,6 +7,8 @@
     "dev": "tsx --watch src/app.ts",
     "worker": "tsx --watch src/workers/index.ts",
     "seed:job-posts": "node scripts/seed-job-posts.mjs",
+    "normalize:content": "tsx scripts/normalize-content.ts",
+    "verify:cv-content": "tsx scripts/verify-cv-content.ts",
     "migrate:demo-media-keys": "node scripts/migrate-demo-media-keys.cjs"
   },
   "keywords": [],
