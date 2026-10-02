@@ -56,8 +56,16 @@ export const VerificationStatus = {
 export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
 
 
+export const EntitlementValueType = {
+  number: 'number',
+  boolean: 'boolean',
+  string: 'string'
+} as const
+
+export type EntitlementValueType = (typeof EntitlementValueType)[keyof typeof EntitlementValueType]
+
+
 export const JobStatus = {
-  DRAFT: 'DRAFT',
   PENDING: 'PENDING',
   PUBLISHED: 'PUBLISHED',
   PAUSED: 'PAUSED',
@@ -131,3 +139,22 @@ export const PlanAudience = {
 } as const
 
 export type PlanAudience = (typeof PlanAudience)[keyof typeof PlanAudience]
+
+
+export const PlanAvailability = {
+  available: 'available',
+  coming_soon: 'coming_soon',
+  disabled: 'disabled'
+} as const
+
+export type PlanAvailability = (typeof PlanAvailability)[keyof typeof PlanAvailability]
+
+
+export const SubscriptionStatus = {
+  scheduled: 'scheduled',
+  active: 'active',
+  expired: 'expired',
+  revoked: 'revoked'
+} as const
+
+export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]

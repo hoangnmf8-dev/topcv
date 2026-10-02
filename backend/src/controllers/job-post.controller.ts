@@ -3,6 +3,8 @@ import { prisma } from "../utils/prisma";
 import { Request, Response, NextFunction } from "express";
 import jobPostService from "../services/job-post.service";
 import { jobPostQuerySchema } from "../types/job-post.type";
+import { currentPlan } from "../services/subscription.service";
+import { AppError } from "../exceptions";
 
 class JobPostController {
   async createJobPost(req: Request, res: Response, next: NextFunction) {
@@ -51,13 +53,19 @@ class JobPostController {
         return res
           .status(400)
           .json({ message: "Ngành nghề hoặc địa điểm không hợp lệ" });
-      const job = await prisma.jobPost.create({
+      const job = await prisma.$transaction(async tx => {
+        await tx.$queryRaw`SELECT id FROM company WHERE id = ${company.id}::uuid FOR UPDATE`;
+        const plan = await currentPlan(req.profile.id, tx);
+        const count = await tx.jobPost.count({ where: { companyId: company.id, deletedAt: null, status: { in: ["PENDING", "PUBLISHED"] }, OR: [{ deadlineAt: null }, { deadlineAt: { gt: new Date() } }] } });
+        if (count >= plan.benefits.activeJobLimit) throw new AppError(`Gói hiện tại cho phép ${plan.benefits.activeJobLimit} tin hoạt động hoặc chờ duyệt.`, "JOB_LIMIT_REACHED", 403);
+        return tx.jobPost.create({
         data: {
           ...data,
           deadlineAt: new Date(data.deadlineAt),
           companyId: company.id,
           status: "PENDING",
         },
+        });
       });
       return res.status(201).json(job);
     } catch (error) {

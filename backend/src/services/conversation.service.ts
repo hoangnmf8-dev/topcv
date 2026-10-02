@@ -5,9 +5,9 @@ import { prisma } from "../utils/prisma";
 import { membership } from "../utils/realtime";
 
 class ConversationService {
-  async getConversation(profileId: string) {
+  async getConversation(profileId: string, page = 1, search = "") {
     const conversations = await prisma.conversation.findMany({
-      where: membership(profileId),
+      where: { AND: [membership(profileId), ...(search ? [{ OR: [{ candidate: { fullName: { contains: search, mode: "insensitive" as const } } }, { company: { name: { contains: search, mode: "insensitive" as const } } }] }] : [])] },
       orderBy: [
         {
           lastMessageAt: {
@@ -17,7 +17,8 @@ class ConversationService {
         },
         { id: "desc" },
       ],
-      take: 50,
+      take: 20,
+      skip: (page - 1) * 20,
       select: {
         id: true,
         lastMessageAt: true,

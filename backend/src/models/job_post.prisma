@@ -1,5 +1,4 @@
 enum JobStatus {
-  DRAFT     @map("draft")
   PENDING   @map("pending")
   PUBLISHED @map("published")
   PAUSED    @map("paused")
@@ -37,7 +36,7 @@ model JobPost {
   employmentType     String?   @default("full_time") @map("employment_type") @db.VarChar(30)
   experienceYearsMin Decimal?  @map("experience_years_min") @db.Decimal(4, 0)
   deadlineAt         DateTime? @map("deadline_at") @db.Timestamptz
-  status             JobStatus @default(DRAFT)
+  status             JobStatus @default(PENDING)
   publishedAt        DateTime? @map("published_at") @db.Timestamptz
   isBoosted          Boolean   @map("is_boosted") @default(false) @db.Boolean
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz

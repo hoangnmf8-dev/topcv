@@ -29,6 +29,7 @@ export type ProvinceMinAggregateOutputType = {
   code: string | null
   name: string | null
   fullName: string | null
+  isActive: boolean | null
 }
 
 export type ProvinceMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type ProvinceMaxAggregateOutputType = {
   code: string | null
   name: string | null
   fullName: string | null
+  isActive: boolean | null
 }
 
 export type ProvinceCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type ProvinceCountAggregateOutputType = {
   code: number
   name: number
   fullName: number
+  isActive: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type ProvinceMinAggregateInputType = {
   code?: true
   name?: true
   fullName?: true
+  isActive?: true
 }
 
 export type ProvinceMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type ProvinceMaxAggregateInputType = {
   code?: true
   name?: true
   fullName?: true
+  isActive?: true
 }
 
 export type ProvinceCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type ProvinceCountAggregateInputType = {
   code?: true
   name?: true
   fullName?: true
+  isActive?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type ProvinceGroupByOutputType = {
   code: string
   name: string
   fullName: string
+  isActive: boolean
   _count: ProvinceCountAggregateOutputType | null
   _min: ProvinceMinAggregateOutputType | null
   _max: ProvinceMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type ProvinceWhereInput = {
   code?: Prisma.StringFilter<"Province"> | string
   name?: Prisma.StringFilter<"Province"> | string
   fullName?: Prisma.StringFilter<"Province"> | string
+  isActive?: Prisma.BoolFilter<"Province"> | boolean
   wards?: Prisma.WardListRelationFilter
   candidates?: Prisma.CandidateListRelationFilter
   companies?: Prisma.CompanyListRelationFilter
@@ -185,6 +193,7 @@ export type ProvinceOrderByWithRelationInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   wards?: Prisma.WardOrderByRelationAggregateInput
   candidates?: Prisma.CandidateOrderByRelationAggregateInput
   companies?: Prisma.CompanyOrderByRelationAggregateInput
@@ -199,6 +208,7 @@ export type ProvinceWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ProvinceWhereInput | Prisma.ProvinceWhereInput[]
   name?: Prisma.StringFilter<"Province"> | string
   fullName?: Prisma.StringFilter<"Province"> | string
+  isActive?: Prisma.BoolFilter<"Province"> | boolean
   wards?: Prisma.WardListRelationFilter
   candidates?: Prisma.CandidateListRelationFilter
   companies?: Prisma.CompanyListRelationFilter
@@ -210,6 +220,7 @@ export type ProvinceOrderByWithAggregationInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   _count?: Prisma.ProvinceCountOrderByAggregateInput
   _max?: Prisma.ProvinceMaxOrderByAggregateInput
   _min?: Prisma.ProvinceMinOrderByAggregateInput
@@ -223,6 +234,7 @@ export type ProvinceScalarWhereWithAggregatesInput = {
   code?: Prisma.StringWithAggregatesFilter<"Province"> | string
   name?: Prisma.StringWithAggregatesFilter<"Province"> | string
   fullName?: Prisma.StringWithAggregatesFilter<"Province"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Province"> | boolean
 }
 
 export type ProvinceCreateInput = {
@@ -230,6 +242,7 @@ export type ProvinceCreateInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
@@ -241,6 +254,7 @@ export type ProvinceUncheckedCreateInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
@@ -252,6 +266,7 @@ export type ProvinceUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
@@ -263,6 +278,7 @@ export type ProvinceUncheckedUpdateInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
@@ -274,6 +290,7 @@ export type ProvinceCreateManyInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
 }
 
 export type ProvinceUpdateManyMutationInput = {
@@ -281,6 +298,7 @@ export type ProvinceUpdateManyMutationInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ProvinceUncheckedUpdateManyInput = {
@@ -288,6 +306,7 @@ export type ProvinceUncheckedUpdateManyInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type ProvinceNullableScalarRelationFilter = {
@@ -305,6 +324,7 @@ export type ProvinceCountOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
 }
 
 export type ProvinceMaxOrderByAggregateInput = {
@@ -312,6 +332,7 @@ export type ProvinceMaxOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
 }
 
 export type ProvinceMinOrderByAggregateInput = {
@@ -319,6 +340,7 @@ export type ProvinceMinOrderByAggregateInput = {
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
 }
 
 export type ProvinceCreateNestedOneWithoutCandidatesInput = {
@@ -386,6 +408,7 @@ export type ProvinceCreateWithoutCandidatesInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
@@ -396,6 +419,7 @@ export type ProvinceUncheckedCreateWithoutCandidatesInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
@@ -422,6 +446,7 @@ export type ProvinceUpdateWithoutCandidatesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
@@ -432,6 +457,7 @@ export type ProvinceUncheckedUpdateWithoutCandidatesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
@@ -442,6 +468,7 @@ export type ProvinceCreateWithoutCompaniesInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
@@ -452,6 +479,7 @@ export type ProvinceUncheckedCreateWithoutCompaniesInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
@@ -478,6 +506,7 @@ export type ProvinceUpdateWithoutCompaniesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
@@ -488,6 +517,7 @@ export type ProvinceUncheckedUpdateWithoutCompaniesInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
@@ -498,6 +528,7 @@ export type ProvinceCreateWithoutJobPostsInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
@@ -508,6 +539,7 @@ export type ProvinceUncheckedCreateWithoutJobPostsInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   wards?: Prisma.WardUncheckedCreateNestedManyWithoutProvinceInput
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
@@ -534,6 +566,7 @@ export type ProvinceUpdateWithoutJobPostsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
@@ -544,6 +577,7 @@ export type ProvinceUncheckedUpdateWithoutJobPostsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   wards?: Prisma.WardUncheckedUpdateManyWithoutProvinceNestedInput
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
@@ -554,6 +588,7 @@ export type ProvinceCreateWithoutWardsInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   candidates?: Prisma.CandidateCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyCreateNestedManyWithoutLocationInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutProvinceInput
@@ -564,6 +599,7 @@ export type ProvinceUncheckedCreateWithoutWardsInput = {
   code: string
   name: string
   fullName: string
+  isActive?: boolean
   candidates?: Prisma.CandidateUncheckedCreateNestedManyWithoutCurrentLocationInput
   companies?: Prisma.CompanyUncheckedCreateNestedManyWithoutLocationInput
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutProvinceInput
@@ -590,6 +626,7 @@ export type ProvinceUpdateWithoutWardsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   candidates?: Prisma.CandidateUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUpdateManyWithoutLocationNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutProvinceNestedInput
@@ -600,6 +637,7 @@ export type ProvinceUncheckedUpdateWithoutWardsInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   candidates?: Prisma.CandidateUncheckedUpdateManyWithoutCurrentLocationNestedInput
   companies?: Prisma.CompanyUncheckedUpdateManyWithoutLocationNestedInput
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutProvinceNestedInput
@@ -668,6 +706,7 @@ export type ProvinceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   code?: boolean
   name?: boolean
   fullName?: boolean
+  isActive?: boolean
   wards?: boolean | Prisma.Province$wardsArgs<ExtArgs>
   candidates?: boolean | Prisma.Province$candidatesArgs<ExtArgs>
   companies?: boolean | Prisma.Province$companiesArgs<ExtArgs>
@@ -680,6 +719,7 @@ export type ProvinceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   code?: boolean
   name?: boolean
   fullName?: boolean
+  isActive?: boolean
 }, ExtArgs["result"]["province"]>
 
 export type ProvinceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -687,6 +727,7 @@ export type ProvinceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   code?: boolean
   name?: boolean
   fullName?: boolean
+  isActive?: boolean
 }, ExtArgs["result"]["province"]>
 
 export type ProvinceSelectScalar = {
@@ -694,9 +735,10 @@ export type ProvinceSelectScalar = {
   code?: boolean
   name?: boolean
   fullName?: boolean
+  isActive?: boolean
 }
 
-export type ProvinceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "fullName", ExtArgs["result"]["province"]>
+export type ProvinceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "fullName" | "isActive", ExtArgs["result"]["province"]>
 export type ProvinceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   wards?: boolean | Prisma.Province$wardsArgs<ExtArgs>
   candidates?: boolean | Prisma.Province$candidatesArgs<ExtArgs>
@@ -720,6 +762,7 @@ export type $ProvincePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     code: string
     name: string
     fullName: string
+    isActive: boolean
   }, ExtArgs["result"]["province"]>
   composites: {}
 }
@@ -1151,6 +1194,7 @@ export interface ProvinceFieldRefs {
   readonly code: Prisma.FieldRef<"Province", 'String'>
   readonly name: Prisma.FieldRef<"Province", 'String'>
   readonly fullName: Prisma.FieldRef<"Province", 'String'>
+  readonly isActive: Prisma.FieldRef<"Province", 'Boolean'>
 }
     
 

@@ -32,6 +32,7 @@ export type AccountMinAggregateOutputType = {
   role: $Enums.UserRole | null
   status: $Enums.AccountStatus | null
   lastLoginAt: Date | null
+  lastActiveAt: Date | null
   verifyEmail: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -46,6 +47,7 @@ export type AccountMaxAggregateOutputType = {
   role: $Enums.UserRole | null
   status: $Enums.AccountStatus | null
   lastLoginAt: Date | null
+  lastActiveAt: Date | null
   verifyEmail: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -60,6 +62,7 @@ export type AccountCountAggregateOutputType = {
   role: number
   status: number
   lastLoginAt: number
+  lastActiveAt: number
   verifyEmail: number
   createdAt: number
   updatedAt: number
@@ -76,6 +79,7 @@ export type AccountMinAggregateInputType = {
   role?: true
   status?: true
   lastLoginAt?: true
+  lastActiveAt?: true
   verifyEmail?: true
   createdAt?: true
   updatedAt?: true
@@ -90,6 +94,7 @@ export type AccountMaxAggregateInputType = {
   role?: true
   status?: true
   lastLoginAt?: true
+  lastActiveAt?: true
   verifyEmail?: true
   createdAt?: true
   updatedAt?: true
@@ -104,6 +109,7 @@ export type AccountCountAggregateInputType = {
   role?: true
   status?: true
   lastLoginAt?: true
+  lastActiveAt?: true
   verifyEmail?: true
   createdAt?: true
   updatedAt?: true
@@ -191,6 +197,7 @@ export type AccountGroupByOutputType = {
   role: $Enums.UserRole
   status: $Enums.AccountStatus
   lastLoginAt: Date | null
+  lastActiveAt: Date | null
   verifyEmail: boolean
   createdAt: Date
   updatedAt: Date
@@ -226,6 +233,7 @@ export type AccountWhereInput = {
   role?: Prisma.EnumUserRoleFilter<"Account"> | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
   lastLoginAt?: Prisma.DateTimeNullableFilter<"Account"> | Date | string | null
+  lastActiveAt?: Prisma.DateTimeNullableFilter<"Account"> | Date | string | null
   verifyEmail?: Prisma.BoolFilter<"Account"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
@@ -233,6 +241,7 @@ export type AccountWhereInput = {
   candidate?: Prisma.XOR<Prisma.CandidateNullableScalarRelationFilter, Prisma.CandidateWhereInput> | null
   company?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
   purchasedOrders?: Prisma.OrderListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
@@ -246,6 +255,7 @@ export type AccountOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastActiveAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifyEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -253,6 +263,7 @@ export type AccountOrderByWithRelationInput = {
   candidate?: Prisma.CandidateOrderByWithRelationInput
   company?: Prisma.CompanyOrderByWithRelationInput
   purchasedOrders?: Prisma.OrderOrderByRelationAggregateInput
+  subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
   sentMessages?: Prisma.MessageOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
@@ -269,6 +280,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.EnumUserRoleFilter<"Account"> | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
   lastLoginAt?: Prisma.DateTimeNullableFilter<"Account"> | Date | string | null
+  lastActiveAt?: Prisma.DateTimeNullableFilter<"Account"> | Date | string | null
   verifyEmail?: Prisma.BoolFilter<"Account"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Account"> | Date | string
@@ -276,6 +288,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   candidate?: Prisma.XOR<Prisma.CandidateNullableScalarRelationFilter, Prisma.CandidateWhereInput> | null
   company?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
   purchasedOrders?: Prisma.OrderListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
   sentMessages?: Prisma.MessageListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
@@ -289,6 +302,7 @@ export type AccountOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastActiveAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifyEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -309,6 +323,7 @@ export type AccountScalarWhereWithAggregatesInput = {
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"Account"> | $Enums.UserRole
   status?: Prisma.EnumAccountStatusWithAggregatesFilter<"Account"> | $Enums.AccountStatus
   lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Account"> | Date | string | null
+  lastActiveAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Account"> | Date | string | null
   verifyEmail?: Prisma.BoolWithAggregatesFilter<"Account"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Account"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Account"> | Date | string
@@ -323,6 +338,7 @@ export type AccountCreateInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -330,6 +346,7 @@ export type AccountCreateInput = {
   candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
@@ -343,6 +360,7 @@ export type AccountUncheckedCreateInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -350,6 +368,7 @@ export type AccountUncheckedCreateInput = {
   candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -363,6 +382,7 @@ export type AccountUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +390,7 @@ export type AccountUpdateInput = {
   candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
@@ -383,6 +404,7 @@ export type AccountUncheckedUpdateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -390,6 +412,7 @@ export type AccountUncheckedUpdateInput = {
   candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -403,6 +426,7 @@ export type AccountCreateManyInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -417,6 +441,7 @@ export type AccountUpdateManyMutationInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -431,6 +456,7 @@ export type AccountUncheckedUpdateManyInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -445,6 +471,7 @@ export type AccountCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  lastActiveAt?: Prisma.SortOrder
   verifyEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -459,6 +486,7 @@ export type AccountMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  lastActiveAt?: Prisma.SortOrder
   verifyEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -473,6 +501,7 @@ export type AccountMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastLoginAt?: Prisma.SortOrder
+  lastActiveAt?: Prisma.SortOrder
   verifyEmail?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -603,6 +632,22 @@ export type AccountUpdateOneRequiredWithoutPurchasedOrdersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutPurchasedOrdersInput, Prisma.AccountUpdateWithoutPurchasedOrdersInput>, Prisma.AccountUncheckedUpdateWithoutPurchasedOrdersInput>
 }
 
+export type AccountCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutSubscriptionsInput, Prisma.AccountUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutSubscriptionsInput
+  connect?: Prisma.AccountWhereUniqueInput
+}
+
+export type AccountUpdateOneWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutSubscriptionsInput, Prisma.AccountUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.AccountUpsertWithoutSubscriptionsInput
+  disconnect?: Prisma.AccountWhereInput | boolean
+  delete?: Prisma.AccountWhereInput | boolean
+  connect?: Prisma.AccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.AccountUpdateWithoutSubscriptionsInput>, Prisma.AccountUncheckedUpdateWithoutSubscriptionsInput>
+}
+
 export type AccountCreateWithoutAuditLogsInput = {
   id?: string
   email: string
@@ -611,6 +656,7 @@ export type AccountCreateWithoutAuditLogsInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -618,6 +664,7 @@ export type AccountCreateWithoutAuditLogsInput = {
   candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
 }
@@ -630,6 +677,7 @@ export type AccountUncheckedCreateWithoutAuditLogsInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -637,6 +685,7 @@ export type AccountUncheckedCreateWithoutAuditLogsInput = {
   candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
 }
@@ -665,6 +714,7 @@ export type AccountUpdateWithoutAuditLogsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -672,6 +722,7 @@ export type AccountUpdateWithoutAuditLogsInput = {
   candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
 }
@@ -684,6 +735,7 @@ export type AccountUncheckedUpdateWithoutAuditLogsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -691,6 +743,7 @@ export type AccountUncheckedUpdateWithoutAuditLogsInput = {
   candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
 }
@@ -703,12 +756,14 @@ export type AccountCreateWithoutCandidateInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
@@ -722,12 +777,14 @@ export type AccountUncheckedCreateWithoutCandidateInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -757,12 +814,14 @@ export type AccountUpdateWithoutCandidateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
@@ -776,12 +835,14 @@ export type AccountUncheckedUpdateWithoutCandidateInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -795,12 +856,14 @@ export type AccountCreateWithoutCompanyInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
@@ -814,12 +877,14 @@ export type AccountUncheckedCreateWithoutCompanyInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -849,12 +914,14 @@ export type AccountUpdateWithoutCompanyInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
@@ -868,12 +935,14 @@ export type AccountUncheckedUpdateWithoutCompanyInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -887,6 +956,7 @@ export type AccountCreateWithoutSentMessagesInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -894,6 +964,7 @@ export type AccountCreateWithoutSentMessagesInput = {
   candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
 }
@@ -906,6 +977,7 @@ export type AccountUncheckedCreateWithoutSentMessagesInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -913,6 +985,7 @@ export type AccountUncheckedCreateWithoutSentMessagesInput = {
   candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
 }
@@ -941,6 +1014,7 @@ export type AccountUpdateWithoutSentMessagesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -948,6 +1022,7 @@ export type AccountUpdateWithoutSentMessagesInput = {
   candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
 }
@@ -960,6 +1035,7 @@ export type AccountUncheckedUpdateWithoutSentMessagesInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -967,6 +1043,7 @@ export type AccountUncheckedUpdateWithoutSentMessagesInput = {
   candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
@@ -979,6 +1056,7 @@ export type AccountCreateWithoutNotificationsInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -986,6 +1064,7 @@ export type AccountCreateWithoutNotificationsInput = {
   candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
 }
@@ -998,6 +1077,7 @@ export type AccountUncheckedCreateWithoutNotificationsInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1005,6 +1085,7 @@ export type AccountUncheckedCreateWithoutNotificationsInput = {
   candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
   purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
 }
@@ -1033,6 +1114,7 @@ export type AccountUpdateWithoutNotificationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1040,6 +1122,7 @@ export type AccountUpdateWithoutNotificationsInput = {
   candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
 }
@@ -1052,6 +1135,7 @@ export type AccountUncheckedUpdateWithoutNotificationsInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1059,6 +1143,7 @@ export type AccountUncheckedUpdateWithoutNotificationsInput = {
   candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
   purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
 }
@@ -1071,12 +1156,14 @@ export type AccountCreateWithoutPurchasedOrdersInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
@@ -1090,12 +1177,14 @@ export type AccountUncheckedCreateWithoutPurchasedOrdersInput = {
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
   lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
   verifyEmail?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
   company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutAccountInput
   sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
@@ -1125,12 +1214,14 @@ export type AccountUpdateWithoutPurchasedOrdersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutAccountNestedInput
   sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
@@ -1144,12 +1235,114 @@ export type AccountUncheckedUpdateWithoutPurchasedOrdersInput = {
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
   lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
   company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutAccountNestedInput
+  sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
+}
+
+export type AccountCreateWithoutSubscriptionsInput = {
+  id?: string
+  email: string
+  googleSubject?: string | null
+  passwordHash: string
+  role: $Enums.UserRole
+  status?: $Enums.AccountStatus
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  verifyEmail?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  candidate?: Prisma.CandidateCreateNestedOneWithoutAccountInput
+  company?: Prisma.CompanyCreateNestedOneWithoutAccountInput
+  purchasedOrders?: Prisma.OrderCreateNestedManyWithoutPurchaserInput
+  sentMessages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput
+}
+
+export type AccountUncheckedCreateWithoutSubscriptionsInput = {
+  id?: string
+  email: string
+  googleSubject?: string | null
+  passwordHash: string
+  role: $Enums.UserRole
+  status?: $Enums.AccountStatus
+  lastLoginAt?: Date | string | null
+  lastActiveAt?: Date | string | null
+  verifyEmail?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  candidate?: Prisma.CandidateUncheckedCreateNestedOneWithoutAccountInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutAccountInput
+  purchasedOrders?: Prisma.OrderUncheckedCreateNestedManyWithoutPurchaserInput
+  sentMessages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput
+}
+
+export type AccountCreateOrConnectWithoutSubscriptionsInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutSubscriptionsInput, Prisma.AccountUncheckedCreateWithoutSubscriptionsInput>
+}
+
+export type AccountUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutSubscriptionsInput, Prisma.AccountUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutSubscriptionsInput, Prisma.AccountUncheckedCreateWithoutSubscriptionsInput>
+  where?: Prisma.AccountWhereInput
+}
+
+export type AccountUpdateToOneWithWhereWithoutSubscriptionsInput = {
+  where?: Prisma.AccountWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutSubscriptionsInput, Prisma.AccountUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type AccountUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  candidate?: Prisma.CandidateUpdateOneWithoutAccountNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutAccountNestedInput
+  purchasedOrders?: Prisma.OrderUpdateManyWithoutPurchaserNestedInput
+  sentMessages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastActiveAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  verifyEmail?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  candidate?: Prisma.CandidateUncheckedUpdateOneWithoutAccountNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutAccountNestedInput
+  purchasedOrders?: Prisma.OrderUncheckedUpdateManyWithoutPurchaserNestedInput
   sentMessages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1162,6 +1355,7 @@ export type AccountUncheckedUpdateWithoutPurchasedOrdersInput = {
 
 export type AccountCountOutputType = {
   purchasedOrders: number
+  subscriptions: number
   sentMessages: number
   notifications: number
   auditLogs: number
@@ -1169,6 +1363,7 @@ export type AccountCountOutputType = {
 
 export type AccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   purchasedOrders?: boolean | AccountCountOutputTypeCountPurchasedOrdersArgs
+  subscriptions?: boolean | AccountCountOutputTypeCountSubscriptionsArgs
   sentMessages?: boolean | AccountCountOutputTypeCountSentMessagesArgs
   notifications?: boolean | AccountCountOutputTypeCountNotificationsArgs
   auditLogs?: boolean | AccountCountOutputTypeCountAuditLogsArgs
@@ -1189,6 +1384,13 @@ export type AccountCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  */
 export type AccountCountOutputTypeCountPurchasedOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OrderWhereInput
+}
+
+/**
+ * AccountCountOutputType without action
+ */
+export type AccountCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubscriptionWhereInput
 }
 
 /**
@@ -1221,6 +1423,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   role?: boolean
   status?: boolean
   lastLoginAt?: boolean
+  lastActiveAt?: boolean
   verifyEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1228,6 +1431,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   candidate?: boolean | Prisma.Account$candidateArgs<ExtArgs>
   company?: boolean | Prisma.Account$companyArgs<ExtArgs>
   purchasedOrders?: boolean | Prisma.Account$purchasedOrdersArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.Account$subscriptionsArgs<ExtArgs>
   sentMessages?: boolean | Prisma.Account$sentMessagesArgs<ExtArgs>
   notifications?: boolean | Prisma.Account$notificationsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Account$auditLogsArgs<ExtArgs>
@@ -1242,6 +1446,7 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   role?: boolean
   status?: boolean
   lastLoginAt?: boolean
+  lastActiveAt?: boolean
   verifyEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1256,6 +1461,7 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   role?: boolean
   status?: boolean
   lastLoginAt?: boolean
+  lastActiveAt?: boolean
   verifyEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1270,17 +1476,19 @@ export type AccountSelectScalar = {
   role?: boolean
   status?: boolean
   lastLoginAt?: boolean
+  lastActiveAt?: boolean
   verifyEmail?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "googleSubject" | "passwordHash" | "role" | "status" | "lastLoginAt" | "verifyEmail" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "googleSubject" | "passwordHash" | "role" | "status" | "lastLoginAt" | "lastActiveAt" | "verifyEmail" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   candidate?: boolean | Prisma.Account$candidateArgs<ExtArgs>
   company?: boolean | Prisma.Account$companyArgs<ExtArgs>
   purchasedOrders?: boolean | Prisma.Account$purchasedOrdersArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.Account$subscriptionsArgs<ExtArgs>
   sentMessages?: boolean | Prisma.Account$sentMessagesArgs<ExtArgs>
   notifications?: boolean | Prisma.Account$notificationsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Account$auditLogsArgs<ExtArgs>
@@ -1295,6 +1503,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     candidate: Prisma.$CandidatePayload<ExtArgs> | null
     company: Prisma.$CompanyPayload<ExtArgs> | null
     purchasedOrders: Prisma.$OrderPayload<ExtArgs>[]
+    subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
     sentMessages: Prisma.$MessagePayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
@@ -1307,6 +1516,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     role: $Enums.UserRole
     status: $Enums.AccountStatus
     lastLoginAt: Date | null
+    lastActiveAt: Date | null
     verifyEmail: boolean
     createdAt: Date
     updatedAt: Date
@@ -1708,6 +1918,7 @@ export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.
   candidate<T extends Prisma.Account$candidateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$candidateArgs<ExtArgs>>): Prisma.Prisma__CandidateClient<runtime.Types.Result.GetResult<Prisma.$CandidatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   company<T extends Prisma.Account$companyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$companyArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   purchasedOrders<T extends Prisma.Account$purchasedOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$purchasedOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.Account$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentMessages<T extends Prisma.Account$sentMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$sentMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Account$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Account$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1747,6 +1958,7 @@ export interface AccountFieldRefs {
   readonly role: Prisma.FieldRef<"Account", 'UserRole'>
   readonly status: Prisma.FieldRef<"Account", 'AccountStatus'>
   readonly lastLoginAt: Prisma.FieldRef<"Account", 'DateTime'>
+  readonly lastActiveAt: Prisma.FieldRef<"Account", 'DateTime'>
   readonly verifyEmail: Prisma.FieldRef<"Account", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Account", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Account", 'DateTime'>
@@ -2203,6 +2415,30 @@ export type Account$purchasedOrdersArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * Account.subscriptions
+ */
+export type Account$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+  orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
 }
 
 /**

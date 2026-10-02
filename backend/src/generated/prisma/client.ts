@@ -75,6 +75,16 @@ export type Conversation = Prisma.ConversationModel
  */
 export type Cv = Prisma.CvModel
 /**
+ * Model Entitlement
+ * 
+ */
+export type Entitlement = Prisma.EntitlementModel
+/**
+ * Model PlanEntitlement
+ * 
+ */
+export type PlanEntitlement = Prisma.PlanEntitlementModel
+/**
  * Model JobCategory
  * 
  */
@@ -129,6 +139,16 @@ export type SavedJob = Prisma.SavedJobModel
  * 
  */
 export type ServicePlan = Prisma.ServicePlanModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model PaymentEvent
+ * 
+ */
+export type PaymentEvent = Prisma.PaymentEventModel
 /**
  * Model Ward
  * 

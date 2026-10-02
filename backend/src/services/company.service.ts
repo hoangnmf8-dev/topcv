@@ -19,7 +19,7 @@ class CompanyService {
       const newCompanyProfile = await tx.company.create({
         data: {
           code: createCode(name),
-          phone,
+          ...(phone !== undefined ? { phone } : {}),
           name,
           accountId: newCompanyAccount.id
         }

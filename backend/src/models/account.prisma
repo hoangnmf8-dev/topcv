@@ -1,19 +1,21 @@
 model Account {
-  id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email        String        @unique @db.VarChar(255)
-  googleSubject String?      @unique @map("google_subject") @db.VarChar(255)
-  passwordHash String        @map("password_hash") @db.VarChar(255)
-  role         UserRole
-  status       AccountStatus @default(active)
-  lastLoginAt  DateTime?     @map("last_login_at") @db.Timestamptz
-  verifyEmail  Boolean       @map("verify_email") @default(false)
-  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt    DateTime      @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt    DateTime?     @map("deleted_at") @db.Timestamptz
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String        @unique @db.VarChar(255)
+  googleSubject String?       @unique @map("google_subject") @db.VarChar(255)
+  passwordHash  String        @map("password_hash") @db.VarChar(255)
+  role          UserRole
+  status        AccountStatus @default(active)
+  lastLoginAt   DateTime?     @map("last_login_at") @db.Timestamptz
+  lastActiveAt  DateTime?     @map("last_active_at") @db.Timestamptz
+  verifyEmail   Boolean       @default(false) @map("verify_email")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt     DateTime?     @map("deleted_at") @db.Timestamptz
 
-  candidate Candidate?
-  company   Company?
+  candidate       Candidate?
+  company         Company?
   purchasedOrders Order[]        @relation("OrderPurchaser")
+  subscriptions   Subscription[]
   sentMessages    Message[]      @relation("MessageSender")
   notifications   Notification[] @relation("NotificationRecipient")
   auditLogs       AuditLog[]     @relation("AuditActor")

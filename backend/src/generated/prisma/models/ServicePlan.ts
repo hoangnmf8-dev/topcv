@@ -49,6 +49,7 @@ export type ServicePlanMinAggregateOutputType = {
   durationDays: number | null
   isFree: boolean | null
   isActive: boolean | null
+  availability: $Enums.PlanAvailability | null
   displayOrder: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -66,6 +67,7 @@ export type ServicePlanMaxAggregateOutputType = {
   durationDays: number | null
   isFree: boolean | null
   isActive: boolean | null
+  availability: $Enums.PlanAvailability | null
   displayOrder: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -84,6 +86,7 @@ export type ServicePlanCountAggregateOutputType = {
   metadata: number
   isFree: number
   isActive: number
+  availability: number
   displayOrder: number
   createdAt: number
   updatedAt: number
@@ -115,6 +118,7 @@ export type ServicePlanMinAggregateInputType = {
   durationDays?: true
   isFree?: true
   isActive?: true
+  availability?: true
   displayOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -132,6 +136,7 @@ export type ServicePlanMaxAggregateInputType = {
   durationDays?: true
   isFree?: true
   isActive?: true
+  availability?: true
   displayOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -150,6 +155,7 @@ export type ServicePlanCountAggregateInputType = {
   metadata?: true
   isFree?: true
   isActive?: true
+  availability?: true
   displayOrder?: true
   createdAt?: true
   updatedAt?: true
@@ -255,6 +261,7 @@ export type ServicePlanGroupByOutputType = {
   metadata: runtime.JsonValue
   isFree: boolean
   isActive: boolean
+  availability: $Enums.PlanAvailability
   displayOrder: number
   createdAt: Date
   updatedAt: Date | null
@@ -296,11 +303,14 @@ export type ServicePlanWhereInput = {
   metadata?: Prisma.JsonFilter<"ServicePlan">
   isFree?: Prisma.BoolFilter<"ServicePlan"> | boolean
   isActive?: Prisma.BoolFilter<"ServicePlan"> | boolean
+  availability?: Prisma.EnumPlanAvailabilityFilter<"ServicePlan"> | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFilter<"ServicePlan"> | number
   createdAt?: Prisma.DateTimeFilter<"ServicePlan"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"ServicePlan"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"ServicePlan"> | Date | string | null
   orders?: Prisma.OrderListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
+  entitlements?: Prisma.PlanEntitlementListRelationFilter
 }
 
 export type ServicePlanOrderByWithRelationInput = {
@@ -315,11 +325,14 @@ export type ServicePlanOrderByWithRelationInput = {
   metadata?: Prisma.SortOrder
   isFree?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  availability?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   orders?: Prisma.OrderOrderByRelationAggregateInput
+  subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  entitlements?: Prisma.PlanEntitlementOrderByRelationAggregateInput
 }
 
 export type ServicePlanWhereUniqueInput = Prisma.AtLeast<{
@@ -337,11 +350,14 @@ export type ServicePlanWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.JsonFilter<"ServicePlan">
   isFree?: Prisma.BoolFilter<"ServicePlan"> | boolean
   isActive?: Prisma.BoolFilter<"ServicePlan"> | boolean
+  availability?: Prisma.EnumPlanAvailabilityFilter<"ServicePlan"> | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFilter<"ServicePlan"> | number
   createdAt?: Prisma.DateTimeFilter<"ServicePlan"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"ServicePlan"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"ServicePlan"> | Date | string | null
   orders?: Prisma.OrderListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
+  entitlements?: Prisma.PlanEntitlementListRelationFilter
 }, "id" | "code">
 
 export type ServicePlanOrderByWithAggregationInput = {
@@ -356,6 +372,7 @@ export type ServicePlanOrderByWithAggregationInput = {
   metadata?: Prisma.SortOrder
   isFree?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  availability?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -382,6 +399,7 @@ export type ServicePlanScalarWhereWithAggregatesInput = {
   metadata?: Prisma.JsonWithAggregatesFilter<"ServicePlan">
   isFree?: Prisma.BoolWithAggregatesFilter<"ServicePlan"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"ServicePlan"> | boolean
+  availability?: Prisma.EnumPlanAvailabilityWithAggregatesFilter<"ServicePlan"> | $Enums.PlanAvailability
   displayOrder?: Prisma.IntWithAggregatesFilter<"ServicePlan"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ServicePlan"> | Date | string
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ServicePlan"> | Date | string | null
@@ -400,11 +418,14 @@ export type ServicePlanCreateInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: boolean
   isActive?: boolean
+  availability?: $Enums.PlanAvailability
   displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   orders?: Prisma.OrderCreateNestedManyWithoutPlanInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutPlanInput
+  entitlements?: Prisma.PlanEntitlementCreateNestedManyWithoutPlanInput
 }
 
 export type ServicePlanUncheckedCreateInput = {
@@ -419,11 +440,14 @@ export type ServicePlanUncheckedCreateInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: boolean
   isActive?: boolean
+  availability?: $Enums.PlanAvailability
   displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutPlanInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutPlanInput
+  entitlements?: Prisma.PlanEntitlementUncheckedCreateNestedManyWithoutPlanInput
 }
 
 export type ServicePlanUpdateInput = {
@@ -438,11 +462,14 @@ export type ServicePlanUpdateInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrderUpdateManyWithoutPlanNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutPlanNestedInput
+  entitlements?: Prisma.PlanEntitlementUpdateManyWithoutPlanNestedInput
 }
 
 export type ServicePlanUncheckedUpdateInput = {
@@ -457,11 +484,14 @@ export type ServicePlanUncheckedUpdateInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orders?: Prisma.OrderUncheckedUpdateManyWithoutPlanNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutPlanNestedInput
+  entitlements?: Prisma.PlanEntitlementUncheckedUpdateManyWithoutPlanNestedInput
 }
 
 export type ServicePlanCreateManyInput = {
@@ -476,6 +506,7 @@ export type ServicePlanCreateManyInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: boolean
   isActive?: boolean
+  availability?: $Enums.PlanAvailability
   displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string | null
@@ -494,6 +525,7 @@ export type ServicePlanUpdateManyMutationInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -512,6 +544,7 @@ export type ServicePlanUncheckedUpdateManyInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -535,6 +568,7 @@ export type ServicePlanCountOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   isFree?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  availability?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -558,6 +592,7 @@ export type ServicePlanMaxOrderByAggregateInput = {
   durationDays?: Prisma.SortOrder
   isFree?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  availability?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -575,6 +610,7 @@ export type ServicePlanMinOrderByAggregateInput = {
   durationDays?: Prisma.SortOrder
   isFree?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  availability?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -585,6 +621,20 @@ export type ServicePlanSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   durationDays?: Prisma.SortOrder
   displayOrder?: Prisma.SortOrder
+}
+
+export type ServicePlanCreateNestedOneWithoutEntitlementsInput = {
+  create?: Prisma.XOR<Prisma.ServicePlanCreateWithoutEntitlementsInput, Prisma.ServicePlanUncheckedCreateWithoutEntitlementsInput>
+  connectOrCreate?: Prisma.ServicePlanCreateOrConnectWithoutEntitlementsInput
+  connect?: Prisma.ServicePlanWhereUniqueInput
+}
+
+export type ServicePlanUpdateOneRequiredWithoutEntitlementsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicePlanCreateWithoutEntitlementsInput, Prisma.ServicePlanUncheckedCreateWithoutEntitlementsInput>
+  connectOrCreate?: Prisma.ServicePlanCreateOrConnectWithoutEntitlementsInput
+  upsert?: Prisma.ServicePlanUpsertWithoutEntitlementsInput
+  connect?: Prisma.ServicePlanWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServicePlanUpdateToOneWithWhereWithoutEntitlementsInput, Prisma.ServicePlanUpdateWithoutEntitlementsInput>, Prisma.ServicePlanUncheckedUpdateWithoutEntitlementsInput>
 }
 
 export type ServicePlanCreateNestedOneWithoutOrdersInput = {
@@ -605,12 +655,130 @@ export type EnumPlanAudienceFieldUpdateOperationsInput = {
   set?: $Enums.PlanAudience
 }
 
+export type EnumPlanAvailabilityFieldUpdateOperationsInput = {
+  set?: $Enums.PlanAvailability
+}
+
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type ServicePlanCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.ServicePlanCreateWithoutSubscriptionsInput, Prisma.ServicePlanUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.ServicePlanCreateOrConnectWithoutSubscriptionsInput
+  connect?: Prisma.ServicePlanWhereUniqueInput
+}
+
+export type ServicePlanUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServicePlanCreateWithoutSubscriptionsInput, Prisma.ServicePlanUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.ServicePlanCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.ServicePlanUpsertWithoutSubscriptionsInput
+  connect?: Prisma.ServicePlanWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServicePlanUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.ServicePlanUpdateWithoutSubscriptionsInput>, Prisma.ServicePlanUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type ServicePlanCreateWithoutEntitlementsInput = {
+  id?: string
+  code: string
+  name: string
+  audience: $Enums.PlanAudience
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  durationDays?: number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: boolean
+  isActive?: boolean
+  availability?: $Enums.PlanAvailability
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  orders?: Prisma.OrderCreateNestedManyWithoutPlanInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutPlanInput
+}
+
+export type ServicePlanUncheckedCreateWithoutEntitlementsInput = {
+  id?: string
+  code: string
+  name: string
+  audience: $Enums.PlanAudience
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  durationDays?: number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: boolean
+  isActive?: boolean
+  availability?: $Enums.PlanAvailability
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutPlanInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutPlanInput
+}
+
+export type ServicePlanCreateOrConnectWithoutEntitlementsInput = {
+  where: Prisma.ServicePlanWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServicePlanCreateWithoutEntitlementsInput, Prisma.ServicePlanUncheckedCreateWithoutEntitlementsInput>
+}
+
+export type ServicePlanUpsertWithoutEntitlementsInput = {
+  update: Prisma.XOR<Prisma.ServicePlanUpdateWithoutEntitlementsInput, Prisma.ServicePlanUncheckedUpdateWithoutEntitlementsInput>
+  create: Prisma.XOR<Prisma.ServicePlanCreateWithoutEntitlementsInput, Prisma.ServicePlanUncheckedCreateWithoutEntitlementsInput>
+  where?: Prisma.ServicePlanWhereInput
+}
+
+export type ServicePlanUpdateToOneWithWhereWithoutEntitlementsInput = {
+  where?: Prisma.ServicePlanWhereInput
+  data: Prisma.XOR<Prisma.ServicePlanUpdateWithoutEntitlementsInput, Prisma.ServicePlanUncheckedUpdateWithoutEntitlementsInput>
+}
+
+export type ServicePlanUpdateWithoutEntitlementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  audience?: Prisma.EnumPlanAudienceFieldUpdateOperationsInput | $Enums.PlanAudience
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  durationDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orders?: Prisma.OrderUpdateManyWithoutPlanNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutPlanNestedInput
+}
+
+export type ServicePlanUncheckedUpdateWithoutEntitlementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  audience?: Prisma.EnumPlanAudienceFieldUpdateOperationsInput | $Enums.PlanAudience
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  durationDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutPlanNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutPlanNestedInput
 }
 
 export type ServicePlanCreateWithoutOrdersInput = {
@@ -625,10 +793,13 @@ export type ServicePlanCreateWithoutOrdersInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: boolean
   isActive?: boolean
+  availability?: $Enums.PlanAvailability
   displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutPlanInput
+  entitlements?: Prisma.PlanEntitlementCreateNestedManyWithoutPlanInput
 }
 
 export type ServicePlanUncheckedCreateWithoutOrdersInput = {
@@ -643,10 +814,13 @@ export type ServicePlanUncheckedCreateWithoutOrdersInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: boolean
   isActive?: boolean
+  availability?: $Enums.PlanAvailability
   displayOrder?: number
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutPlanInput
+  entitlements?: Prisma.PlanEntitlementUncheckedCreateNestedManyWithoutPlanInput
 }
 
 export type ServicePlanCreateOrConnectWithoutOrdersInput = {
@@ -677,10 +851,13 @@ export type ServicePlanUpdateWithoutOrdersInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutPlanNestedInput
+  entitlements?: Prisma.PlanEntitlementUpdateManyWithoutPlanNestedInput
 }
 
 export type ServicePlanUncheckedUpdateWithoutOrdersInput = {
@@ -695,10 +872,113 @@ export type ServicePlanUncheckedUpdateWithoutOrdersInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
   displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutPlanNestedInput
+  entitlements?: Prisma.PlanEntitlementUncheckedUpdateManyWithoutPlanNestedInput
+}
+
+export type ServicePlanCreateWithoutSubscriptionsInput = {
+  id?: string
+  code: string
+  name: string
+  audience: $Enums.PlanAudience
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  durationDays?: number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: boolean
+  isActive?: boolean
+  availability?: $Enums.PlanAvailability
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  orders?: Prisma.OrderCreateNestedManyWithoutPlanInput
+  entitlements?: Prisma.PlanEntitlementCreateNestedManyWithoutPlanInput
+}
+
+export type ServicePlanUncheckedCreateWithoutSubscriptionsInput = {
+  id?: string
+  code: string
+  name: string
+  audience: $Enums.PlanAudience
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  durationDays?: number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: boolean
+  isActive?: boolean
+  availability?: $Enums.PlanAvailability
+  displayOrder?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutPlanInput
+  entitlements?: Prisma.PlanEntitlementUncheckedCreateNestedManyWithoutPlanInput
+}
+
+export type ServicePlanCreateOrConnectWithoutSubscriptionsInput = {
+  where: Prisma.ServicePlanWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServicePlanCreateWithoutSubscriptionsInput, Prisma.ServicePlanUncheckedCreateWithoutSubscriptionsInput>
+}
+
+export type ServicePlanUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.ServicePlanUpdateWithoutSubscriptionsInput, Prisma.ServicePlanUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.ServicePlanCreateWithoutSubscriptionsInput, Prisma.ServicePlanUncheckedCreateWithoutSubscriptionsInput>
+  where?: Prisma.ServicePlanWhereInput
+}
+
+export type ServicePlanUpdateToOneWithWhereWithoutSubscriptionsInput = {
+  where?: Prisma.ServicePlanWhereInput
+  data: Prisma.XOR<Prisma.ServicePlanUpdateWithoutSubscriptionsInput, Prisma.ServicePlanUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type ServicePlanUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  audience?: Prisma.EnumPlanAudienceFieldUpdateOperationsInput | $Enums.PlanAudience
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  durationDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orders?: Prisma.OrderUpdateManyWithoutPlanNestedInput
+  entitlements?: Prisma.PlanEntitlementUpdateManyWithoutPlanNestedInput
+}
+
+export type ServicePlanUncheckedUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  audience?: Prisma.EnumPlanAudienceFieldUpdateOperationsInput | $Enums.PlanAudience
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  durationDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  isFree?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availability?: Prisma.EnumPlanAvailabilityFieldUpdateOperationsInput | $Enums.PlanAvailability
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutPlanNestedInput
+  entitlements?: Prisma.PlanEntitlementUncheckedUpdateManyWithoutPlanNestedInput
 }
 
 
@@ -708,10 +988,14 @@ export type ServicePlanUncheckedUpdateWithoutOrdersInput = {
 
 export type ServicePlanCountOutputType = {
   orders: number
+  subscriptions: number
+  entitlements: number
 }
 
 export type ServicePlanCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | ServicePlanCountOutputTypeCountOrdersArgs
+  subscriptions?: boolean | ServicePlanCountOutputTypeCountSubscriptionsArgs
+  entitlements?: boolean | ServicePlanCountOutputTypeCountEntitlementsArgs
 }
 
 /**
@@ -731,6 +1015,20 @@ export type ServicePlanCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Ty
   where?: Prisma.OrderWhereInput
 }
 
+/**
+ * ServicePlanCountOutputType without action
+ */
+export type ServicePlanCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubscriptionWhereInput
+}
+
+/**
+ * ServicePlanCountOutputType without action
+ */
+export type ServicePlanCountOutputTypeCountEntitlementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlanEntitlementWhereInput
+}
+
 
 export type ServicePlanSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -744,11 +1042,14 @@ export type ServicePlanSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   metadata?: boolean
   isFree?: boolean
   isActive?: boolean
+  availability?: boolean
   displayOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   orders?: boolean | Prisma.ServicePlan$ordersArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.ServicePlan$subscriptionsArgs<ExtArgs>
+  entitlements?: boolean | Prisma.ServicePlan$entitlementsArgs<ExtArgs>
   _count?: boolean | Prisma.ServicePlanCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["servicePlan"]>
 
@@ -764,6 +1065,7 @@ export type ServicePlanSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   metadata?: boolean
   isFree?: boolean
   isActive?: boolean
+  availability?: boolean
   displayOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -782,6 +1084,7 @@ export type ServicePlanSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   metadata?: boolean
   isFree?: boolean
   isActive?: boolean
+  availability?: boolean
   displayOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -800,15 +1103,18 @@ export type ServicePlanSelectScalar = {
   metadata?: boolean
   isFree?: boolean
   isActive?: boolean
+  availability?: boolean
   displayOrder?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ServicePlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "audience" | "description" | "price" | "currency" | "durationDays" | "metadata" | "isFree" | "isActive" | "displayOrder" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["servicePlan"]>
+export type ServicePlanOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "name" | "audience" | "description" | "price" | "currency" | "durationDays" | "metadata" | "isFree" | "isActive" | "availability" | "displayOrder" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["servicePlan"]>
 export type ServicePlanInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | Prisma.ServicePlan$ordersArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.ServicePlan$subscriptionsArgs<ExtArgs>
+  entitlements?: boolean | Prisma.ServicePlan$entitlementsArgs<ExtArgs>
   _count?: boolean | Prisma.ServicePlanCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServicePlanIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -818,6 +1124,8 @@ export type $ServicePlanPayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "ServicePlan"
   objects: {
     orders: Prisma.$OrderPayload<ExtArgs>[]
+    subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    entitlements: Prisma.$PlanEntitlementPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -831,6 +1139,7 @@ export type $ServicePlanPayload<ExtArgs extends runtime.Types.Extensions.Interna
     metadata: runtime.JsonValue
     isFree: boolean
     isActive: boolean
+    availability: $Enums.PlanAvailability
     displayOrder: number
     createdAt: Date
     updatedAt: Date | null
@@ -1230,6 +1539,8 @@ readonly fields: ServicePlanFieldRefs;
 export interface Prisma__ServicePlanClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   orders<T extends Prisma.ServicePlan$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePlan$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.ServicePlan$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePlan$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  entitlements<T extends Prisma.ServicePlan$entitlementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePlan$entitlementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlanEntitlementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1270,6 +1581,7 @@ export interface ServicePlanFieldRefs {
   readonly metadata: Prisma.FieldRef<"ServicePlan", 'Json'>
   readonly isFree: Prisma.FieldRef<"ServicePlan", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"ServicePlan", 'Boolean'>
+  readonly availability: Prisma.FieldRef<"ServicePlan", 'PlanAvailability'>
   readonly displayOrder: Prisma.FieldRef<"ServicePlan", 'Int'>
   readonly createdAt: Prisma.FieldRef<"ServicePlan", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ServicePlan", 'DateTime'>
@@ -1688,6 +2000,54 @@ export type ServicePlan$ordersArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * ServicePlan.subscriptions
+ */
+export type ServicePlan$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+  orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * ServicePlan.entitlements
+ */
+export type ServicePlan$entitlementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlanEntitlement
+   */
+  select?: Prisma.PlanEntitlementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlanEntitlement
+   */
+  omit?: Prisma.PlanEntitlementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlanEntitlementInclude<ExtArgs> | null
+  where?: Prisma.PlanEntitlementWhereInput
+  orderBy?: Prisma.PlanEntitlementOrderByWithRelationInput | Prisma.PlanEntitlementOrderByWithRelationInput[]
+  cursor?: Prisma.PlanEntitlementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlanEntitlementScalarFieldEnum | Prisma.PlanEntitlementScalarFieldEnum[]
 }
 
 /**

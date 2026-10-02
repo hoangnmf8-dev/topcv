@@ -290,6 +290,7 @@ export type CompanyWhereInput = {
   location?: Prisma.XOR<Prisma.ProvinceNullableScalarRelationFilter, Prisma.ProvinceWhereInput> | null
   jobPosts?: Prisma.JobPostListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
 }
 
 export type CompanyOrderByWithRelationInput = {
@@ -315,6 +316,7 @@ export type CompanyOrderByWithRelationInput = {
   location?: Prisma.ProvinceOrderByWithRelationInput
   jobPosts?: Prisma.JobPostOrderByRelationAggregateInput
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
+  subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
 }
 
 export type CompanyWhereUniqueInput = Prisma.AtLeast<{
@@ -343,6 +345,7 @@ export type CompanyWhereUniqueInput = Prisma.AtLeast<{
   location?: Prisma.XOR<Prisma.ProvinceNullableScalarRelationFilter, Prisma.ProvinceWhereInput> | null
   jobPosts?: Prisma.JobPostListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
 }, "id" | "accountId" | "code" | "taxCode">
 
 export type CompanyOrderByWithAggregationInput = {
@@ -414,6 +417,7 @@ export type CompanyCreateInput = {
   location?: Prisma.ProvinceCreateNestedOneWithoutCompaniesInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutCompanyInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateInput = {
@@ -437,6 +441,7 @@ export type CompanyUncheckedCreateInput = {
   deletedAt?: Date | string | null
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutCompanyInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUpdateInput = {
@@ -460,6 +465,7 @@ export type CompanyUpdateInput = {
   location?: Prisma.ProvinceUpdateOneWithoutCompaniesNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutCompanyNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateInput = {
@@ -483,6 +489,7 @@ export type CompanyUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutCompanyNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateManyInput = {
@@ -735,6 +742,22 @@ export type CompanyUncheckedUpdateManyWithoutLocationNestedInput = {
   deleteMany?: Prisma.CompanyScalarWhereInput | Prisma.CompanyScalarWhereInput[]
 }
 
+export type CompanyCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutSubscriptionsInput, Prisma.CompanyUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutSubscriptionsInput
+  connect?: Prisma.CompanyWhereUniqueInput
+}
+
+export type CompanyUpdateOneWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.CompanyCreateWithoutSubscriptionsInput, Prisma.CompanyUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.CompanyCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.CompanyUpsertWithoutSubscriptionsInput
+  disconnect?: Prisma.CompanyWhereInput | boolean
+  delete?: Prisma.CompanyWhereInput | boolean
+  connect?: Prisma.CompanyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CompanyUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.CompanyUpdateWithoutSubscriptionsInput>, Prisma.CompanyUncheckedUpdateWithoutSubscriptionsInput>
+}
+
 export type CompanyCreateWithoutAccountInput = {
   id?: string
   phone?: string | null
@@ -755,6 +778,7 @@ export type CompanyCreateWithoutAccountInput = {
   location?: Prisma.ProvinceCreateNestedOneWithoutCompaniesInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutCompanyInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutAccountInput = {
@@ -777,6 +801,7 @@ export type CompanyUncheckedCreateWithoutAccountInput = {
   deletedAt?: Date | string | null
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutCompanyInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutAccountInput = {
@@ -815,6 +840,7 @@ export type CompanyUpdateWithoutAccountInput = {
   location?: Prisma.ProvinceUpdateOneWithoutCompaniesNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutCompanyNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutAccountInput = {
@@ -837,6 +863,7 @@ export type CompanyUncheckedUpdateWithoutAccountInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutCompanyNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutConversationsInput = {
@@ -859,6 +886,7 @@ export type CompanyCreateWithoutConversationsInput = {
   account: Prisma.AccountCreateNestedOneWithoutCompanyInput
   location?: Prisma.ProvinceCreateNestedOneWithoutCompaniesInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutConversationsInput = {
@@ -881,6 +909,7 @@ export type CompanyUncheckedCreateWithoutConversationsInput = {
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutConversationsInput = {
@@ -919,6 +948,7 @@ export type CompanyUpdateWithoutConversationsInput = {
   account?: Prisma.AccountUpdateOneRequiredWithoutCompanyNestedInput
   location?: Prisma.ProvinceUpdateOneWithoutCompaniesNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutConversationsInput = {
@@ -941,6 +971,7 @@ export type CompanyUncheckedUpdateWithoutConversationsInput = {
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutJobPostsInput = {
@@ -963,6 +994,7 @@ export type CompanyCreateWithoutJobPostsInput = {
   account: Prisma.AccountCreateNestedOneWithoutCompanyInput
   location?: Prisma.ProvinceCreateNestedOneWithoutCompaniesInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutJobPostsInput = {
@@ -985,6 +1017,7 @@ export type CompanyUncheckedCreateWithoutJobPostsInput = {
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutJobPostsInput = {
@@ -1023,6 +1056,7 @@ export type CompanyUpdateWithoutJobPostsInput = {
   account?: Prisma.AccountUpdateOneRequiredWithoutCompanyNestedInput
   location?: Prisma.ProvinceUpdateOneWithoutCompaniesNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutJobPostsInput = {
@@ -1045,6 +1079,7 @@ export type CompanyUncheckedUpdateWithoutJobPostsInput = {
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyCreateWithoutLocationInput = {
@@ -1067,6 +1102,7 @@ export type CompanyCreateWithoutLocationInput = {
   account: Prisma.AccountCreateNestedOneWithoutCompanyInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutCompanyInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyUncheckedCreateWithoutLocationInput = {
@@ -1089,6 +1125,7 @@ export type CompanyUncheckedCreateWithoutLocationInput = {
   deletedAt?: Date | string | null
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutCompanyInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCompanyInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutCompanyInput
 }
 
 export type CompanyCreateOrConnectWithoutLocationInput = {
@@ -1141,6 +1178,114 @@ export type CompanyScalarWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"Company"> | Date | string | null
 }
 
+export type CompanyCreateWithoutSubscriptionsInput = {
+  id?: string
+  phone?: string | null
+  name: string
+  code: string
+  logoKey?: string | null
+  bannerKey?: string | null
+  description?: string | null
+  website?: string | null
+  taxCode?: string | null
+  sizeRange?: string | null
+  address?: string | null
+  verificationStatus?: $Enums.VerificationStatus
+  verifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  account: Prisma.AccountCreateNestedOneWithoutCompanyInput
+  location?: Prisma.ProvinceCreateNestedOneWithoutCompaniesInput
+  jobPosts?: Prisma.JobPostCreateNestedManyWithoutCompanyInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyUncheckedCreateWithoutSubscriptionsInput = {
+  id?: string
+  accountId: string
+  phone?: string | null
+  name: string
+  code: string
+  logoKey?: string | null
+  bannerKey?: string | null
+  description?: string | null
+  website?: string | null
+  taxCode?: string | null
+  sizeRange?: string | null
+  locationId?: string | null
+  address?: string | null
+  verificationStatus?: $Enums.VerificationStatus
+  verifiedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string | null
+  deletedAt?: Date | string | null
+  jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutCompanyInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutCompanyInput
+}
+
+export type CompanyCreateOrConnectWithoutSubscriptionsInput = {
+  where: Prisma.CompanyWhereUniqueInput
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutSubscriptionsInput, Prisma.CompanyUncheckedCreateWithoutSubscriptionsInput>
+}
+
+export type CompanyUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.CompanyUpdateWithoutSubscriptionsInput, Prisma.CompanyUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.CompanyCreateWithoutSubscriptionsInput, Prisma.CompanyUncheckedCreateWithoutSubscriptionsInput>
+  where?: Prisma.CompanyWhereInput
+}
+
+export type CompanyUpdateToOneWithWhereWithoutSubscriptionsInput = {
+  where?: Prisma.CompanyWhereInput
+  data: Prisma.XOR<Prisma.CompanyUpdateWithoutSubscriptionsInput, Prisma.CompanyUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type CompanyUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  logoKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+  verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  account?: Prisma.AccountUpdateOneRequiredWithoutCompanyNestedInput
+  location?: Prisma.ProvinceUpdateOneWithoutCompaniesNestedInput
+  jobPosts?: Prisma.JobPostUpdateManyWithoutCompanyNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutCompanyNestedInput
+}
+
+export type CompanyUncheckedUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  accountId?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  logoKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bannerKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeRange?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+  verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutCompanyNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCompanyNestedInput
+}
+
 export type CompanyCreateManyLocationInput = {
   id?: string
   accountId: string
@@ -1181,6 +1326,7 @@ export type CompanyUpdateWithoutLocationInput = {
   account?: Prisma.AccountUpdateOneRequiredWithoutCompanyNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutCompanyNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateWithoutLocationInput = {
@@ -1203,6 +1349,7 @@ export type CompanyUncheckedUpdateWithoutLocationInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutCompanyNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutCompanyNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutCompanyNestedInput
 }
 
 export type CompanyUncheckedUpdateManyWithoutLocationInput = {
@@ -1233,11 +1380,13 @@ export type CompanyUncheckedUpdateManyWithoutLocationInput = {
 export type CompanyCountOutputType = {
   jobPosts: number
   conversations: number
+  subscriptions: number
 }
 
 export type CompanyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   jobPosts?: boolean | CompanyCountOutputTypeCountJobPostsArgs
   conversations?: boolean | CompanyCountOutputTypeCountConversationsArgs
+  subscriptions?: boolean | CompanyCountOutputTypeCountSubscriptionsArgs
 }
 
 /**
@@ -1264,6 +1413,13 @@ export type CompanyCountOutputTypeCountConversationsArgs<ExtArgs extends runtime
   where?: Prisma.ConversationWhereInput
 }
 
+/**
+ * CompanyCountOutputType without action
+ */
+export type CompanyCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubscriptionWhereInput
+}
+
 
 export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1288,6 +1444,7 @@ export type CompanySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   location?: boolean | Prisma.Company$locationArgs<ExtArgs>
   jobPosts?: boolean | Prisma.Company$jobPostsArgs<ExtArgs>
   conversations?: boolean | Prisma.Company$conversationsArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.Company$subscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["company"]>
 
@@ -1364,6 +1521,7 @@ export type CompanyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   location?: boolean | Prisma.Company$locationArgs<ExtArgs>
   jobPosts?: boolean | Prisma.Company$jobPostsArgs<ExtArgs>
   conversations?: boolean | Prisma.Company$conversationsArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.Company$subscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.CompanyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CompanyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1382,6 +1540,7 @@ export type $CompanyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     location: Prisma.$ProvincePayload<ExtArgs> | null
     jobPosts: Prisma.$JobPostPayload<ExtArgs>[]
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
+    subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1800,6 +1959,7 @@ export interface Prisma__CompanyClient<T, Null = never, ExtArgs extends runtime.
   location<T extends Prisma.Company$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$locationArgs<ExtArgs>>): Prisma.Prisma__ProvinceClient<runtime.Types.Result.GetResult<Prisma.$ProvincePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   jobPosts<T extends Prisma.Company$jobPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$jobPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations<T extends Prisma.Company$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.Company$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Company$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2312,6 +2472,30 @@ export type Company$conversationsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * Company.subscriptions
+ */
+export type Company$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+  orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
 }
 
 /**

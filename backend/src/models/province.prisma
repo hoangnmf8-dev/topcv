@@ -3,6 +3,7 @@ model Province {
   code     String @unique @db.VarChar(20)
   name     String @db.VarChar(150)
   fullName String @map("full_name") @db.VarChar(200)
+  isActive Boolean @default(true) @map("is_active")
 
   wards              Ward[]
   candidates         Candidate[] @relation("CandidateLocation")

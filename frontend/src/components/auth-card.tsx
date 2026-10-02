@@ -6,8 +6,15 @@ import { RoleSelector, type Role } from "@/components/role-selector"
 import { LoginForm } from "@/components/login-form"
 import { RegisterForm } from "@/components/register-form"
 import { ForgotPasswordDialog } from "@/components/forgot-password-dialog"
+import { useRouter } from "next/navigation"
+import { useAccountStore } from "@/stores/auth.store"
 
 export function AuthCard() {
+  const router = useRouter()
+  const account = useAccountStore((state) => state.account)
+  React.useEffect(() => {
+    if (account) router.replace(account.role === "company" ? "/employer" : account.role === "admin" ? "/admin" : "/")
+  }, [account, router])
   const [role, setRole] = React.useState<Role>("candidate")
   const [tab, setTab] = React.useState("login")
   const [forgotOpen, setForgotOpen] = React.useState(false)
@@ -15,12 +22,15 @@ export function AuthCard() {
   const [googleError, setGoogleError] = React.useState("")
   React.useEffect(() => {
     const url = new URL(window.location.href)
+    if (url.searchParams.get("tab") === "register") setTab("register")
     const error = url.searchParams.get("authError")
     if (!error) return
     setGoogleError(error === "google_cancelled" ? "Bạn đã hủy đăng nhập Google." : error === "google_unavailable" ? "Đăng nhập Google chưa khả dụng. Vui lòng thử lại sau." : "Không thể đăng nhập Google. Vui lòng thử lại hoặc đăng nhập bằng mật khẩu.")
     url.searchParams.delete("authError")
     window.history.replaceState(window.history.state, "", url)
   }, [])
+
+  if (account) return null
 
   return (
     <div className="w-full max-w-md">

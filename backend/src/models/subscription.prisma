@@ -1,0 +1,45 @@
+enum SubscriptionStatus {
+  scheduled
+  active
+  expired
+  revoked
+}
+
+model Subscription {
+  id               String             @id @default(uuid()) @db.Uuid
+  orderId          String?            @unique @map("order_id") @db.Uuid
+  planId           String             @map("plan_id") @db.Uuid
+  accountId        String?            @map("account_id") @db.Uuid
+  companyId        String?            @map("company_id") @db.Uuid
+  status           SubscriptionStatus @default(active)
+  startedAt        DateTime           @map("started_at") @db.Timestamptz
+  expiresAt        DateTime           @map("expires_at") @db.Timestamptz
+  usageState       Json               @default("{}") @map("usage_state") @db.JsonB
+  revokedAt        DateTime?          @map("revoked_at") @db.Timestamptz
+  revokedReason    String?            @map("revoked_reason") @db.Text
+  createdAt        DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  order            Order?             @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  plan             ServicePlan        @relation(fields: [planId], references: [id], onDelete: Restrict)
+  account          Account?           @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  company          Company?           @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  @@index([accountId, startedAt, expiresAt])
+  @@index([companyId, startedAt, expiresAt])
+  @@unique([accountId, planId, startedAt])
+  @@map("subscriptions")
+}
+
+model PaymentEvent {
+  id        String   @id @default(uuid()) @db.Uuid
+  provider  String   @db.VarChar(50)
+  reference String   @db.VarChar(150)
+  paymentId String   @map("payment_id") @db.Uuid
+  payload   Json     @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  @@unique([provider, reference])
+  @@map("payment_events")
+}
+

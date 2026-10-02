@@ -1,4 +1,7 @@
 import cvRouter from "./cv.route";
+import adminRouter from "./admin.route";
+import notificationRouter from "./notification.route";
+import billingRouter from "./billing.route";
 import applicationRouter from "./application.route";
 import savedJobRouter from "./saved-job.route";
 import employerRouter from "./employer.route";
@@ -14,6 +17,9 @@ import aiRouter from "./ai.route";
 import conversationRouter from "./conversation.route";
 
 const indexRouter = express.Router();
+indexRouter.use("/admin", adminRouter);
+indexRouter.use("/notifications", notificationRouter);
+indexRouter.use("/billing", billingRouter);
 indexRouter.use("/application", applicationRouter);
 indexRouter.use("/saved-job", savedJobRouter);
 indexRouter.use("/cv", cvRouter);

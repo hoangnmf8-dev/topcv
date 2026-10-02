@@ -29,6 +29,7 @@ export type JobTitleMinAggregateOutputType = {
   jobCategoryId: string | null
   code: string | null
   name: string | null
+  isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -39,6 +40,7 @@ export type JobTitleMaxAggregateOutputType = {
   jobCategoryId: string | null
   code: string | null
   name: string | null
+  isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -49,6 +51,7 @@ export type JobTitleCountAggregateOutputType = {
   jobCategoryId: number
   code: number
   name: number
+  isActive: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -61,6 +64,7 @@ export type JobTitleMinAggregateInputType = {
   jobCategoryId?: true
   code?: true
   name?: true
+  isActive?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -71,6 +75,7 @@ export type JobTitleMaxAggregateInputType = {
   jobCategoryId?: true
   code?: true
   name?: true
+  isActive?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -81,6 +86,7 @@ export type JobTitleCountAggregateInputType = {
   jobCategoryId?: true
   code?: true
   name?: true
+  isActive?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -164,6 +170,7 @@ export type JobTitleGroupByOutputType = {
   jobCategoryId: string
   code: string | null
   name: string
+  isActive: boolean
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -195,6 +202,7 @@ export type JobTitleWhereInput = {
   jobCategoryId?: Prisma.UuidFilter<"JobTitle"> | string
   code?: Prisma.StringNullableFilter<"JobTitle"> | string | null
   name?: Prisma.StringFilter<"JobTitle"> | string
+  isActive?: Prisma.BoolFilter<"JobTitle"> | boolean
   createdAt?: Prisma.DateTimeFilter<"JobTitle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobTitle"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"JobTitle"> | Date | string | null
@@ -207,6 +215,7 @@ export type JobTitleOrderByWithRelationInput = {
   jobCategoryId?: Prisma.SortOrder
   code?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -222,6 +231,7 @@ export type JobTitleWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.JobTitleWhereInput | Prisma.JobTitleWhereInput[]
   jobCategoryId?: Prisma.UuidFilter<"JobTitle"> | string
   name?: Prisma.StringFilter<"JobTitle"> | string
+  isActive?: Prisma.BoolFilter<"JobTitle"> | boolean
   createdAt?: Prisma.DateTimeFilter<"JobTitle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobTitle"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"JobTitle"> | Date | string | null
@@ -234,6 +244,7 @@ export type JobTitleOrderByWithAggregationInput = {
   jobCategoryId?: Prisma.SortOrder
   code?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -250,6 +261,7 @@ export type JobTitleScalarWhereWithAggregatesInput = {
   jobCategoryId?: Prisma.UuidWithAggregatesFilter<"JobTitle"> | string
   code?: Prisma.StringNullableWithAggregatesFilter<"JobTitle"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"JobTitle"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"JobTitle"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"JobTitle"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"JobTitle"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"JobTitle"> | Date | string | null
@@ -259,6 +271,7 @@ export type JobTitleCreateInput = {
   id?: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -271,6 +284,7 @@ export type JobTitleUncheckedCreateInput = {
   jobCategoryId: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -281,6 +295,7 @@ export type JobTitleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -293,6 +308,7 @@ export type JobTitleUncheckedUpdateInput = {
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -304,6 +320,7 @@ export type JobTitleCreateManyInput = {
   jobCategoryId: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -313,6 +330,7 @@ export type JobTitleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -323,6 +341,7 @@ export type JobTitleUncheckedUpdateManyInput = {
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -348,6 +367,7 @@ export type JobTitleCountOrderByAggregateInput = {
   jobCategoryId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -358,6 +378,7 @@ export type JobTitleMaxOrderByAggregateInput = {
   jobCategoryId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -368,6 +389,7 @@ export type JobTitleMinOrderByAggregateInput = {
   jobCategoryId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -435,6 +457,7 @@ export type JobTitleCreateWithoutCategoryInput = {
   id?: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -445,6 +468,7 @@ export type JobTitleUncheckedCreateWithoutCategoryInput = {
   id?: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -485,6 +509,7 @@ export type JobTitleScalarWhereInput = {
   jobCategoryId?: Prisma.UuidFilter<"JobTitle"> | string
   code?: Prisma.StringNullableFilter<"JobTitle"> | string | null
   name?: Prisma.StringFilter<"JobTitle"> | string
+  isActive?: Prisma.BoolFilter<"JobTitle"> | boolean
   createdAt?: Prisma.DateTimeFilter<"JobTitle"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"JobTitle"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"JobTitle"> | Date | string | null
@@ -494,6 +519,7 @@ export type JobTitleCreateWithoutJobPostInput = {
   id?: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -505,6 +531,7 @@ export type JobTitleUncheckedCreateWithoutJobPostInput = {
   jobCategoryId: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -530,6 +557,7 @@ export type JobTitleUpdateWithoutJobPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -541,6 +569,7 @@ export type JobTitleUncheckedUpdateWithoutJobPostInput = {
   jobCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -550,6 +579,7 @@ export type JobTitleCreateManyCategoryInput = {
   id?: string
   code?: string | null
   name: string
+  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -559,6 +589,7 @@ export type JobTitleUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -569,6 +600,7 @@ export type JobTitleUncheckedUpdateWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -579,6 +611,7 @@ export type JobTitleUncheckedUpdateManyWithoutCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -620,6 +653,7 @@ export type JobTitleSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   jobCategoryId?: boolean
   code?: boolean
   name?: boolean
+  isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -633,6 +667,7 @@ export type JobTitleSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   jobCategoryId?: boolean
   code?: boolean
   name?: boolean
+  isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -644,6 +679,7 @@ export type JobTitleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   jobCategoryId?: boolean
   code?: boolean
   name?: boolean
+  isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -655,12 +691,13 @@ export type JobTitleSelectScalar = {
   jobCategoryId?: boolean
   code?: boolean
   name?: boolean
+  isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type JobTitleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "jobCategoryId" | "code" | "name" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobTitle"]>
+export type JobTitleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "jobCategoryId" | "code" | "name" | "isActive" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobTitle"]>
 export type JobTitleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   jobPost?: boolean | Prisma.JobTitle$jobPostArgs<ExtArgs>
   category?: boolean | Prisma.JobCategoryDefaultArgs<ExtArgs>
@@ -684,6 +721,7 @@ export type $JobTitlePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     jobCategoryId: string
     code: string | null
     name: string
+    isActive: boolean
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -1116,6 +1154,7 @@ export interface JobTitleFieldRefs {
   readonly jobCategoryId: Prisma.FieldRef<"JobTitle", 'String'>
   readonly code: Prisma.FieldRef<"JobTitle", 'String'>
   readonly name: Prisma.FieldRef<"JobTitle", 'String'>
+  readonly isActive: Prisma.FieldRef<"JobTitle", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"JobTitle", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"JobTitle", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"JobTitle", 'DateTime'>

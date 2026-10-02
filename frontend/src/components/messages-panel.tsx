@@ -1,6 +1,8 @@
 "use client";
 
 import { LoadingState } from "@/components/loading-state";
+import { InfiniteScrollEnd } from "./infinite-scroll-end";
+import { ChatPresence } from "./chat-presence";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -25,10 +27,12 @@ export function MessagesPanel() {
   useEffect(() => {
     setSelected(params.get("conversation") ?? "");
   }, [params]);
-  const list = useQuery({
-    queryKey: ["conversations", accountId],
+  const list = useInfiniteQuery({
+    queryKey: ["conversations", accountId, search],
     enabled: !!accountId,
-    queryFn: ({ signal }) => conversationService.list(signal),
+    initialPageParam: 1,
+    queryFn: ({ signal, pageParam }) => conversationService.list(signal, pageParam, search),
+    getNextPageParam: (last, pages) => last.length === 20 ? pages.length + 1 : undefined,
   });
   if (!account)
     return (
@@ -39,10 +43,11 @@ export function MessagesPanel() {
         </Link>
       </div>
     );
-  const current = list.data?.find((item) => item.id === selected);
+  const conversations = [...new Map((list.data?.pages.flat() ?? []).map(item => [item.id, item])).values()];
+  const current = conversations.find((item) => item.id === selected);
   const name = (item: NonNullable<typeof current>) =>
     account.role === "company" ? item.candidate.fullName : item.company.name;
-  const filtered = (list.data ?? []).filter((item) =>
+  const filtered = conversations.filter((item) =>
     name(item).toLocaleLowerCase("vi").includes(search.toLocaleLowerCase("vi")),
   );
   return (
@@ -95,6 +100,7 @@ export function MessagesPanel() {
               )}
             </button>
           ))}
+          <InfiniteScrollEnd hasNext={!!list.hasNextPage} loading={list.isFetching} error={list.isFetchNextPageError} load={() => { if (!list.isFetching) void list.fetchNextPage(); }} />
         </div>
       </aside>
       <section
@@ -113,7 +119,7 @@ export function MessagesPanel() {
               {current ? name(current) : "Tin nhắn"}
             </h2>
             <p className="text-xs text-slate-500">
-              {!connected ? "Đang kết nối lại…" : current ? (state?.online[account.role === "company" ? current.candidate.accountId : current.company.accountId] ? "● Đang hoạt động" : "Ngoại tuyến") : "Đã kết nối"}
+              {!connected ? "Đang kết nối lại…" : current ? <ChatPresence online={!!state?.online[account.role === "company" ? current.candidate.accountId : current.company.accountId]} lastActive={state?.lastActive?.[account.role === "company" ? current.candidate.accountId : current.company.accountId]} /> : "Đã kết nối"}
             </p>
           </div>
         </header>

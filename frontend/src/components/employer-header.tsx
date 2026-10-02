@@ -1,4 +1,5 @@
 "use client";
+import { NotificationBell } from "./notification-bell";
 import { MessageBadge } from "@/providers/chat-provider";
 import Link from "next/link";
 import { Bell, Crown, Menu, MessageCircle, UserRound } from "lucide-react";
@@ -59,12 +60,7 @@ export function EmployerHeader({
           >
             <span className="relative"><MessageCircle className="size-5" /><MessageBadge /></span>
           </Link>
-          <span className="relative">
-            <Bell className="size-5" />
-            <i className="absolute -right-2 -top-2 grid size-4 place-items-center rounded-full bg-red-500 text-[9px] not-italic">
-              3
-            </i>
-          </span>
+          <NotificationBell />
           <span className="grid size-8 place-items-center rounded-full bg-slate-100 text-slate-600">
             <Avatar>
               <AvatarImage

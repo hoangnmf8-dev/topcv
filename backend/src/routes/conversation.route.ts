@@ -33,7 +33,8 @@ conversationRouter.get("/state", async(req,res)=>{
  prisma.conversation.findMany({where:membership(id),select:{candidate:{select:{accountId:true}},company:{select:{accountId:true}}}}),
  prisma.message.findMany({where:{conversation:membership(id),senderAccountId:{not:id},deletedAt:null,deliveredAt:null},select:{id:true},take:100})]);
  const peers=[...new Set(conversations.flatMap(c=>[c.candidate.accountId,c.company.accountId]).filter(p=>p!==id))];
- res.json({success:true,data:{...state,online:Object.fromEntries(peers.map(p=>[p,isOnline(p)])),pending:pending.map(m=>m.id)}});
+ const activity = await prisma.account.findMany({where:{id:{in:peers}},select:{id:true,lastActiveAt:true}});
+ res.json({success:true,data:{...state,online:Object.fromEntries(peers.map(p=>[p,isOnline(p)])),lastActive:Object.fromEntries(activity.map(p=>[p.id,p.lastActiveAt])),pending:pending.map(m=>m.id)}});
 });
 conversationRouter.get("/", conversationController.getConversation);
 conversationRouter.post("/", conversationController.createConversation);

@@ -11,7 +11,9 @@ class ConversationController {
   async getConversation(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.profile.id;
-      const conversation = await conversationService.getConversation(id);
+      const paging = z.object({ page: z.coerce.number().int().min(1).max(10000).default(1), search: z.string().trim().max(150).default("") }).safeParse(req.query);
+      if (!paging.success) throw new AppError("Bộ lọc không hợp lệ", "INVALID_INPUT", 400);
+      const conversation = await conversationService.getConversation(id, paging.data.page, paging.data.search);
       return successResponse(
         res,
         conversation,

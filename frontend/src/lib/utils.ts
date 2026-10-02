@@ -14,13 +14,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 let refreshPromise: null | Promise<boolean> = null;
-const getNewToken = async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_API}/auth/refresh-token`,
-  );
-  const data = await response.json();
-  return response;
-};
 export const httpRequest = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_API ?? "http://localhost:3100",
   timeout: 10000,
@@ -38,13 +31,13 @@ httpRequest.interceptors.request.use(async (config) => {
 httpRequest.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (+error.status === 401) {
+    if (error.response?.status === 401 && error.config && !error.config._authRetried) {
+      error.config._authRetried = true;
       if (!refreshPromise) {
-        refreshPromise = makeRefreshToken();
+        refreshPromise = makeRefreshToken().finally(() => { refreshPromise = null; });
       }
       const newToken = await refreshPromise;
       if (newToken) {
-        refreshPromise = null;
         return httpRequest(error.config);
       }
       throw new Unauthorized("Không có quyền truy cập", "UNAUTHORIZED");

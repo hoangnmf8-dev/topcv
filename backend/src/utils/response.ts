@@ -30,6 +30,6 @@ export const errorResponse = <T>(res: Response, errors: T, status = 500) => {
   return res.status(status).json({
     success: false,
     errors,
-    message: errors.message
+    message: errors instanceof Error ? errors.message : "Đã xảy ra lỗi"
   });
 };

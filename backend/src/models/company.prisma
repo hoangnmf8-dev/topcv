@@ -10,7 +10,7 @@ model Company {
   phone              String?            @db.VarChar(30)
   name               String             @db.VarChar(255)
   code               String             @unique @db.VarChar(255)
-  logoKey           String?            @map("logo_key") @db.VarChar(500)
+  logoKey            String?            @map("logo_key") @db.VarChar(500)
   bannerKey          String?            @map("banner_key") @db.VarChar(500)
   description        String?            @db.Text
   website            String?            @db.VarChar(255)
@@ -28,6 +28,7 @@ model Company {
   location      Province?      @relation("CompanyLocation", fields: [locationId], references: [id], onDelete: SetNull)
   jobPosts      JobPost[]
   conversations Conversation[]
+  subscriptions Subscription[]
 
   @@index([locationId])
   @@index([verificationStatus, createdAt])

@@ -7,22 +7,6 @@ class AuthServie {
     const response = await httpRequest.get("/auth/profile");
     return response.data;
   }
-  async refreshToken(refreshToken: string) {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API}/auth/refresh-token`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `refreshToken=${encodeURIComponent(refreshToken)}`,
-        },
-        method: "POST",
-      },
-    );
-    if (!response.ok) {
-      throw new Error("Không có quyền truy cập");
-    }
-    return response.json();
-  }
   async changePassword(accountId: string, password: string) {
     const response = await httpRequest.post("auth/change-password", {
       accountId,

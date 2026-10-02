@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
-import { ChatWidget } from "@/components/chat-widget";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { ChatProvider } from "@/providers/chat-provider";
@@ -29,7 +28,6 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider><ChatProvider>{children}</ChatProvider></AuthProvider>
         </QueryProvider>
-        <ChatWidget />
         <Toaster position="top-center" richColors />
       </body>
     </html>

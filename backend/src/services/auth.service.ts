@@ -28,6 +28,7 @@ import { ROLE } from "../constants/role.constants";
 import { ERROR_MESSAGE } from "../constants/message.constant";
 import { ERROR_CODE } from "../constants/code.constant";
 import { TTL } from "../constants/ttl.constant";
+import { ROTATE_SESSION, refreshRetryKey } from "./refresh-session";
 
 class AuthService {
   constructor() {}
@@ -312,13 +313,22 @@ class AuthService {
     );
   }
   async getNewToken(refreshToken: string) {
-    const decodedRefreshToken = jwtService.decodeToken(
-      refreshToken,
-    ) as JwtPayload;
-    const isExistInRedis = await redisClient.get(
-      `refreshToken:${decodedRefreshToken.accountId}:${decodedRefreshToken.jti}`,
+    const invalid = () => new Unauthorized(
+      ERROR_MESSAGE.AUTH_SERVICE.INVALID_TOKEN,
+      ERROR_CODE.AUTH_SERVICE.INVALID_TOKEN,
     );
-    if (!decodedRefreshToken || !isExistInRedis) {
+    let decodedRefreshToken: JwtPayload;
+    try {
+      decodedRefreshToken = jwtService.verifyRefreshToken(refreshToken) as JwtPayload;
+      if (!decodedRefreshToken.accountId || !decodedRefreshToken.jti) throw invalid();
+    } catch {
+      throw invalid();
+    }
+    const account = await prisma.account.findFirst({
+      where: { id: decodedRefreshToken.accountId, status: "active", deletedAt: null },
+      select: { id: true, role: true },
+    });
+    if (!account) {
       throw new Unauthorized(
         ERROR_MESSAGE.AUTH_SERVICE.INVALID_TOKEN,
         ERROR_CODE.AUTH_SERVICE.INVALID_TOKEN,
@@ -326,17 +336,28 @@ class AuthService {
     }
     const newAccessToken = jwtService.createAccessToken(
       decodedRefreshToken.accountId,
-      decodedRefreshToken.role,
+      account.role,
     );
     const newRefreshToken = jwtService.createRefreshToken(
       decodedRefreshToken.accountId,
-      decodedRefreshToken.role,
+      account.role,
     );
-    await redisClient.del(
-      `refreshToken:${decodedRefreshToken.accountId}:${decodedRefreshToken.jti}`,
-    );
-    await this.saveRefreshToken(newAccessToken, newRefreshToken);
-    return { newAccessToken, newRefreshToken };
+    const nextRefresh = jwtService.decodeToken(newRefreshToken) as JwtPayload;
+    const nextAccess = jwtService.decodeToken(newAccessToken) as JwtPayload;
+    const result = await redisClient.eval(ROTATE_SESSION, {
+      keys: [
+        `refreshToken:${account.id}:${decodedRefreshToken.jti}`,
+        `refreshToken:${account.id}:${nextRefresh.jti}`,
+        refreshRetryKey(refreshToken),
+      ],
+      arguments: [
+        JSON.stringify({ access: nextAccess.jti, refresh: nextRefresh.jti, accountId: account.id, role: account.role }),
+        String(Math.max(1, nextRefresh.exp - Math.floor(Date.now() / 1000))),
+        JSON.stringify({ newAccessToken, newRefreshToken }),
+      ],
+    });
+    if (typeof result !== "string") throw invalid();
+    return JSON.parse(result) as { newAccessToken: string; newRefreshToken: string };
   }
   async forgotPassword(email: string) {
     const account = await prisma.account.findUnique({

@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cvKeys } from "@/cache-key/cv.key";
 import cvService from "@/services/cv.service";
+import { useCvAccess } from "@/hooks/use-cv-access";
 import {
   cvFormSchema,
   cvImageSchema,
@@ -32,6 +33,7 @@ import {
 } from "@/lib/cv-layout";
 
 function CVBuilderPage() {
+  const access = useCvAccess();
   const searchParams = useSearchParams();
   const initialTemplate =
     TEMPLATES.find((item) => item.id === searchParams.get("template"))?.id ??
@@ -128,6 +130,10 @@ function CVBuilderPage() {
     void form.handleSubmit(
       async (values) => {
         if (pending.current) return;
+        if (access.data?.editingLocked || (!id && !access.data?.canCreate)) {
+          toast.error("Gói hiện tại không cho phép lưu CV. Hãy xóa bớt CV hoặc nâng cấp Pro.");
+          return;
+        }
         if (account?.role !== "candidate") {
           toast.error("Vui lòng đăng nhập tài khoản ứng viên để lưu CV.");
           return;
@@ -163,6 +169,7 @@ function CVBuilderPage() {
           file.current = null;
           uploaded.current = null;
           await client.invalidateQueries({ queryKey: cvKeys.all(accountId) });
+          await client.invalidateQueries({ queryKey: ["cv-access", accountId] });
           await client.invalidateQueries({ queryKey: ["profile-completion", accountId] });
           await client.invalidateQueries({ queryKey: ["candidate-overview", accountId] });
           setSaveState(isDefault ? "default-saved" : "saved");
@@ -188,6 +195,9 @@ function CVBuilderPage() {
     if (form.formState.isDirty && saveState !== "saving") setSaveState("idle");
   }, [data, title, template, theme]);
   const handleDownloadPDF = () => window.print();
+  if (id && detail.data?.contentJson && access.data?.editingLocked) {
+    return <main className="route-cv-builder p-6"><div className="mb-5 rounded-xl bg-amber-50 p-4 print:hidden"><b>CV đang khóa chỉnh sửa</b><p>Hãy xóa bớt để còn tối đa {access.data.limit} CV hoặc nâng cấp Pro.</p><a className="mr-5 underline" href="/candidate?tab=profile">Quản lý CV</a><a className="mr-5 underline" href="/services">Nâng cấp Pro</a><button className="underline" onClick={handleDownloadPDF}>Tải PDF</button></div><div className="mx-auto max-w-[794px] print:hidden"><CVDocument data={previewData} template={template} theme={theme} /></div><div className="cv-print-document"><CVDocument data={previewData} template={template} theme={theme} /></div></main>;
+  }
   if (id && !account)
     return (
       <div className="p-8">

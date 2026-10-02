@@ -1,0 +1,2 @@
+ALTER TABLE "province" ADD COLUMN "is_active" BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE "ward" ADD COLUMN "is_active" BOOLEAN NOT NULL DEFAULT true;

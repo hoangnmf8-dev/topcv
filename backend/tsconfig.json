@@ -43,5 +43,5 @@
     "skipLibCheck": true,
   },
   "include": ["src/**/*"],
-  "files": ["src/types/*"]
+  "files": ["src/types/index.type.ts"]
 }

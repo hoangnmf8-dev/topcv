@@ -47,6 +47,9 @@ export type OrderMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
+  requestKey: string | null
+  paymentDeadlineAt: Date | null
+  paidAt: Date | null
 }
 
 export type OrderMaxAggregateOutputType = {
@@ -62,6 +65,9 @@ export type OrderMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
+  requestKey: string | null
+  paymentDeadlineAt: Date | null
+  paidAt: Date | null
 }
 
 export type OrderCountAggregateOutputType = {
@@ -78,6 +84,10 @@ export type OrderCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   deletedAt: number
+  requestKey: number
+  planSnapshot: number
+  paymentDeadlineAt: number
+  paidAt: number
   _all: number
 }
 
@@ -103,6 +113,9 @@ export type OrderMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  requestKey?: true
+  paymentDeadlineAt?: true
+  paidAt?: true
 }
 
 export type OrderMaxAggregateInputType = {
@@ -118,6 +131,9 @@ export type OrderMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  requestKey?: true
+  paymentDeadlineAt?: true
+  paidAt?: true
 }
 
 export type OrderCountAggregateInputType = {
@@ -134,6 +150,10 @@ export type OrderCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  requestKey?: true
+  planSnapshot?: true
+  paymentDeadlineAt?: true
+  paidAt?: true
   _all?: true
 }
 
@@ -237,6 +257,10 @@ export type OrderGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
+  requestKey: string
+  planSnapshot: runtime.JsonValue
+  paymentDeadlineAt: Date | null
+  paidAt: Date | null
   _count: OrderCountAggregateOutputType | null
   _avg: OrderAvgAggregateOutputType | null
   _sum: OrderSumAggregateOutputType | null
@@ -276,9 +300,14 @@ export type OrderWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  requestKey?: Prisma.StringFilter<"Order"> | string
+  planSnapshot?: Prisma.JsonFilter<"Order">
+  paymentDeadlineAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   purchaser?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
   plan?: Prisma.XOR<Prisma.ServicePlanScalarRelationFilter, Prisma.ServicePlanWhereInput>
   payments?: Prisma.PaymentListRelationFilter
+  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
 }
 
 export type OrderOrderByWithRelationInput = {
@@ -295,14 +324,20 @@ export type OrderOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
+  planSnapshot?: Prisma.SortOrder
+  paymentDeadlineAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   purchaser?: Prisma.AccountOrderByWithRelationInput
   plan?: Prisma.ServicePlanOrderByWithRelationInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
+  subscription?: Prisma.SubscriptionOrderByWithRelationInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   code?: string
+  requestKey?: string
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
@@ -317,10 +352,14 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  planSnapshot?: Prisma.JsonFilter<"Order">
+  paymentDeadlineAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   purchaser?: Prisma.XOR<Prisma.AccountScalarRelationFilter, Prisma.AccountWhereInput>
   plan?: Prisma.XOR<Prisma.ServicePlanScalarRelationFilter, Prisma.ServicePlanWhereInput>
   payments?: Prisma.PaymentListRelationFilter
-}, "id" | "code">
+  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
+}, "id" | "code" | "requestKey">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -336,6 +375,10 @@ export type OrderOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
+  planSnapshot?: Prisma.SortOrder
+  paymentDeadlineAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
   _avg?: Prisma.OrderAvgOrderByAggregateInput
   _max?: Prisma.OrderMaxOrderByAggregateInput
@@ -360,6 +403,10 @@ export type OrderScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  requestKey?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  planSnapshot?: Prisma.JsonWithAggregatesFilter<"Order">
+  paymentDeadlineAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
 }
 
 export type OrderCreateInput = {
@@ -374,9 +421,14 @@ export type OrderCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   purchaser: Prisma.AccountCreateNestedOneWithoutPurchasedOrdersInput
   plan: Prisma.ServicePlanCreateNestedOneWithoutOrdersInput
   payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateInput = {
@@ -393,7 +445,12 @@ export type OrderUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
@@ -408,9 +465,14 @@ export type OrderUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaser?: Prisma.AccountUpdateOneRequiredWithoutPurchasedOrdersNestedInput
   plan?: Prisma.ServicePlanUpdateOneRequiredWithoutOrdersNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateInput = {
@@ -427,7 +489,12 @@ export type OrderUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateManyInput = {
@@ -444,6 +511,10 @@ export type OrderCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
 }
 
 export type OrderUpdateManyMutationInput = {
@@ -458,6 +529,10 @@ export type OrderUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type OrderUncheckedUpdateManyInput = {
@@ -474,6 +549,10 @@ export type OrderUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type OrderListRelationFilter = {
@@ -500,6 +579,10 @@ export type OrderCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
+  planSnapshot?: Prisma.SortOrder
+  paymentDeadlineAt?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
 }
 
 export type OrderAvgOrderByAggregateInput = {
@@ -519,6 +602,9 @@ export type OrderMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
+  paymentDeadlineAt?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
 }
 
 export type OrderMinOrderByAggregateInput = {
@@ -534,6 +620,9 @@ export type OrderMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  requestKey?: Prisma.SortOrder
+  paymentDeadlineAt?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
 }
 
 export type OrderSumOrderByAggregateInput = {
@@ -543,6 +632,11 @@ export type OrderSumOrderByAggregateInput = {
 export type OrderScalarRelationFilter = {
   is?: Prisma.OrderWhereInput
   isNot?: Prisma.OrderWhereInput
+}
+
+export type OrderNullableScalarRelationFilter = {
+  is?: Prisma.OrderWhereInput | null
+  isNot?: Prisma.OrderWhereInput | null
 }
 
 export type OrderCreateNestedManyWithoutPurchaserInput = {
@@ -655,6 +749,22 @@ export type OrderUncheckedUpdateManyWithoutPlanNestedInput = {
   deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
 }
 
+export type OrderCreateNestedOneWithoutSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutSubscriptionInput, Prisma.OrderUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutSubscriptionInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutSubscriptionInput, Prisma.OrderUncheckedCreateWithoutSubscriptionInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutSubscriptionInput
+  upsert?: Prisma.OrderUpsertWithoutSubscriptionInput
+  disconnect?: Prisma.OrderWhereInput | boolean
+  delete?: Prisma.OrderWhereInput | boolean
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.OrderUpdateWithoutSubscriptionInput>, Prisma.OrderUncheckedUpdateWithoutSubscriptionInput>
+}
+
 export type OrderCreateWithoutPurchaserInput = {
   id?: string
   code: string
@@ -667,8 +777,13 @@ export type OrderCreateWithoutPurchaserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   plan: Prisma.ServicePlanCreateNestedOneWithoutOrdersInput
   payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPurchaserInput = {
@@ -684,7 +799,12 @@ export type OrderUncheckedCreateWithoutPurchaserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPurchaserInput = {
@@ -730,6 +850,10 @@ export type OrderScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  requestKey?: Prisma.StringFilter<"Order"> | string
+  planSnapshot?: Prisma.JsonFilter<"Order">
+  paymentDeadlineAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
 }
 
 export type OrderCreateWithoutPaymentsInput = {
@@ -744,8 +868,13 @@ export type OrderCreateWithoutPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   purchaser: Prisma.AccountCreateNestedOneWithoutPurchasedOrdersInput
   plan: Prisma.ServicePlanCreateNestedOneWithoutOrdersInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPaymentsInput = {
@@ -762,6 +891,11 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPaymentsInput = {
@@ -792,8 +926,13 @@ export type OrderUpdateWithoutPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaser?: Prisma.AccountUpdateOneRequiredWithoutPurchasedOrdersNestedInput
   plan?: Prisma.ServicePlanUpdateOneRequiredWithoutOrdersNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPaymentsInput = {
@@ -810,6 +949,11 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutPlanInput = {
@@ -824,8 +968,13 @@ export type OrderCreateWithoutPlanInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   purchaser: Prisma.AccountCreateNestedOneWithoutPurchasedOrdersInput
   payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPlanInput = {
@@ -841,7 +990,12 @@ export type OrderUncheckedCreateWithoutPlanInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPlanInput = {
@@ -870,6 +1024,106 @@ export type OrderUpdateManyWithWhereWithoutPlanInput = {
   data: Prisma.XOR<Prisma.OrderUpdateManyMutationInput, Prisma.OrderUncheckedUpdateManyWithoutPlanInput>
 }
 
+export type OrderCreateWithoutSubscriptionInput = {
+  id?: string
+  code: string
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  status?: $Enums.OrderStatus
+  startedAt?: Date | string | null
+  expiresAt?: Date | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
+  purchaser: Prisma.AccountCreateNestedOneWithoutPurchasedOrdersInput
+  plan: Prisma.ServicePlanCreateNestedOneWithoutOrdersInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutSubscriptionInput = {
+  id?: string
+  code: string
+  purchasedByAccountId: string
+  planId: string
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  status?: $Enums.OrderStatus
+  startedAt?: Date | string | null
+  expiresAt?: Date | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutSubscriptionInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutSubscriptionInput, Prisma.OrderUncheckedCreateWithoutSubscriptionInput>
+}
+
+export type OrderUpsertWithoutSubscriptionInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutSubscriptionInput, Prisma.OrderUncheckedUpdateWithoutSubscriptionInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutSubscriptionInput, Prisma.OrderUncheckedCreateWithoutSubscriptionInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutSubscriptionInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutSubscriptionInput, Prisma.OrderUncheckedUpdateWithoutSubscriptionInput>
+}
+
+export type OrderUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaser?: Prisma.AccountUpdateOneRequiredWithoutPurchasedOrdersNestedInput
+  plan?: Prisma.ServicePlanUpdateOneRequiredWithoutOrdersNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  purchasedByAccountId?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+}
+
 export type OrderCreateManyPurchaserInput = {
   id?: string
   code: string
@@ -883,6 +1137,10 @@ export type OrderCreateManyPurchaserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
 }
 
 export type OrderUpdateWithoutPurchaserInput = {
@@ -897,8 +1155,13 @@ export type OrderUpdateWithoutPurchaserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   plan?: Prisma.ServicePlanUpdateOneRequiredWithoutOrdersNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPurchaserInput = {
@@ -914,7 +1177,12 @@ export type OrderUncheckedUpdateWithoutPurchaserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutPurchaserInput = {
@@ -930,6 +1198,10 @@ export type OrderUncheckedUpdateManyWithoutPurchaserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type OrderCreateManyPlanInput = {
@@ -945,6 +1217,10 @@ export type OrderCreateManyPlanInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  requestKey?: string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Date | string | null
+  paidAt?: Date | string | null
 }
 
 export type OrderUpdateWithoutPlanInput = {
@@ -959,8 +1235,13 @@ export type OrderUpdateWithoutPlanInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaser?: Prisma.AccountUpdateOneRequiredWithoutPurchasedOrdersNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutOrderNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPlanInput = {
@@ -976,7 +1257,12 @@ export type OrderUncheckedUpdateWithoutPlanInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutOrderNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutPlanInput = {
@@ -992,6 +1278,10 @@ export type OrderUncheckedUpdateManyWithoutPlanInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestKey?: Prisma.StringFieldUpdateOperationsInput | string
+  planSnapshot?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  paymentDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -1039,9 +1329,14 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  requestKey?: boolean
+  planSnapshot?: boolean
+  paymentDeadlineAt?: boolean
+  paidAt?: boolean
   purchaser?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   plan?: boolean | Prisma.ServicePlanDefaultArgs<ExtArgs>
   payments?: boolean | Prisma.Order$paymentsArgs<ExtArgs>
+  subscription?: boolean | Prisma.Order$subscriptionArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
@@ -1059,6 +1354,10 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  requestKey?: boolean
+  planSnapshot?: boolean
+  paymentDeadlineAt?: boolean
+  paidAt?: boolean
   purchaser?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   plan?: boolean | Prisma.ServicePlanDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
@@ -1077,6 +1376,10 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  requestKey?: boolean
+  planSnapshot?: boolean
+  paymentDeadlineAt?: boolean
+  paidAt?: boolean
   purchaser?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   plan?: boolean | Prisma.ServicePlanDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
@@ -1095,13 +1398,18 @@ export type OrderSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  requestKey?: boolean
+  planSnapshot?: boolean
+  paymentDeadlineAt?: boolean
+  paidAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "purchasedByAccountId" | "planId" | "totalAmount" | "currency" | "status" | "startedAt" | "expiresAt" | "metadata" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "purchasedByAccountId" | "planId" | "totalAmount" | "currency" | "status" | "startedAt" | "expiresAt" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "requestKey" | "planSnapshot" | "paymentDeadlineAt" | "paidAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   purchaser?: boolean | Prisma.AccountDefaultArgs<ExtArgs>
   plan?: boolean | Prisma.ServicePlanDefaultArgs<ExtArgs>
   payments?: boolean | Prisma.Order$paymentsArgs<ExtArgs>
+  subscription?: boolean | Prisma.Order$subscriptionArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1119,6 +1427,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     purchaser: Prisma.$AccountPayload<ExtArgs>
     plan: Prisma.$ServicePlanPayload<ExtArgs>
     payments: Prisma.$PaymentPayload<ExtArgs>[]
+    subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1134,6 +1443,10 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
+    requestKey: string
+    planSnapshot: runtime.JsonValue
+    paymentDeadlineAt: Date | null
+    paidAt: Date | null
   }, ExtArgs["result"]["order"]>
   composites: {}
 }
@@ -1531,6 +1844,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   purchaser<T extends Prisma.AccountDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AccountDefaultArgs<ExtArgs>>): Prisma.Prisma__AccountClient<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   plan<T extends Prisma.ServicePlanDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServicePlanDefaultArgs<ExtArgs>>): Prisma.Prisma__ServicePlanClient<runtime.Types.Result.GetResult<Prisma.$ServicePlanPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   payments<T extends Prisma.Order$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscription<T extends Prisma.Order$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1573,6 +1887,10 @@ export interface OrderFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly requestKey: Prisma.FieldRef<"Order", 'String'>
+  readonly planSnapshot: Prisma.FieldRef<"Order", 'Json'>
+  readonly paymentDeadlineAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly paidAt: Prisma.FieldRef<"Order", 'DateTime'>
 }
     
 
@@ -1995,6 +2313,25 @@ export type Order$paymentsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * Order.subscription
+ */
+export type Order$subscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
 }
 
 /**

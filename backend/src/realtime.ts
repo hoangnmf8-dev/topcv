@@ -70,6 +70,7 @@ export function initRealtime(server: HttpServer) {
     const sockets = online.get(id) ?? new Set<string>();
     sockets.add(socket.id);
     online.set(id, sockets);
+    void prisma.account.update({ where: { id }, data: { lastActiveAt: new Date() } }).catch(() => {});
     void notifyPresence(id).catch(() => {});
     socket.on("message:receipt", async (payload, ack) => {
       const parsed = z
@@ -105,6 +106,7 @@ export function initRealtime(server: HttpServer) {
         const account = await accountService.getAccount(socket.data.token);
         if (!account || account.deletedAt || account.status !== "active")
           socket.disconnect(true);
+        else await prisma.account.update({ where: { id }, data: { lastActiveAt: new Date() } });
       } catch {
         socket.disconnect(true);
       }
@@ -113,8 +115,10 @@ export function initRealtime(server: HttpServer) {
       clearTimeout(expire);
       clearInterval(check);
       sockets.delete(socket.id);
-      if (!sockets.size) online.delete(id);
-      void notifyPresence(id).catch(() => {});
+      if (!sockets.size) {
+        online.delete(id);
+        void prisma.account.update({ where: { id }, data: { lastActiveAt: new Date() } }).then(() => notifyPresence(id)).catch(() => {});
+      }
     });
   });
   return io;
@@ -122,4 +126,8 @@ export function initRealtime(server: HttpServer) {
 export function publishMessage(accountIds: string[], message: unknown) {
   const rooms = accountIds.map((id) => `account:${id}`);
   io.to(rooms).emit("message:new", message);
+}
+
+export function publishNotification(accountId: string) {
+  io?.to(`account:${accountId}`).emit("notification:new");
 }

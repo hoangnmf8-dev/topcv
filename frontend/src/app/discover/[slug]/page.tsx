@@ -18,7 +18,6 @@ import {
   MapPin,
   Search,
   ShieldCheck,
-  Sparkles,
   Star,
   Target,
   Upload,
@@ -554,7 +553,7 @@ function TemplateGallery({ byStyle }: { byStyle: boolean }) {
         />
         <div className="relative mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16">
           <span className="mx-auto grid size-12 place-items-center rounded-2xl border border-white/20 bg-white/10 backdrop-blur">
-            <Sparkles className="size-6" />
+            <FileText className="size-6" aria-hidden="true" />
           </span>
           <p className="mt-5 text-xs font-bold uppercase tracking-[0.2em] text-emerald-200">
             Thư viện mẫu CV TopCV

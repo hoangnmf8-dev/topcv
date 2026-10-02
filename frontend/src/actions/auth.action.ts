@@ -109,15 +109,21 @@ export async function loginAction(values: LoginInput): Promise<AuthActionResult>
 }
 
 export async function getProfileAction(): Promise<AuthActionResult<unknown>> {
-  const accessToken = await getAccesToken();
+  let accessToken = await getAccesToken();
+  if (!accessToken && await makeRefreshToken()) accessToken = await getAccesToken();
   if (!accessToken) {
     return { success: false, message: "Phiên đăng nhập đã hết hạn." };
   }
   try {
-    const response = await fetch(`${backendUrl}/auth/profile`, {
+    const send = () => fetch(`${backendUrl}/auth/profile`, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: "no-store",
     });
+    let response = await send();
+    if (response.status === 401 && await makeRefreshToken()) {
+      accessToken = await getAccesToken();
+      response = await send();
+    }
     const payload = (await response.json().catch(() => ({}))) as BackendResponse<unknown>;
     if (!response.ok || !payload.success || payload.data === undefined) {
       return { success: false, message: messageFrom(payload, "Không thể tải hồ sơ.") };
@@ -160,8 +166,8 @@ export async function makeRefreshToken() {
       newAccessToken: string;
       newRefreshToken: string;
     }>;
-    if (!response.ok || !payload.success || !payload.data) {
-      await deleteToken();
+    if (!response.ok || !payload.success || !payload.data?.newAccessToken || !payload.data?.newRefreshToken) {
+      if (response.status === 401) await deleteToken();
       return false;
     }
     await saveSession({
@@ -170,7 +176,6 @@ export async function makeRefreshToken() {
     });
     return true;
   } catch {
-    await deleteToken();
     return false;
   }
 }
@@ -185,6 +190,7 @@ export async function logoutAction(): Promise<{ success: boolean; message?: stri
   try {
     if (!accessToken && refreshToken) {
       if (!await makeRefreshToken()) {
+        if (await getRefreshToken()) return { success: false, message: "Không thể kết nối để đăng xuất. Vui lòng thử lại." };
         await deleteToken();
         return { success: true };
       }
@@ -205,6 +211,7 @@ export async function logoutAction(): Promise<{ success: boolean; message?: stri
     let response = await send();
     if (response.status === 401) {
       if (!await makeRefreshToken()) {
+        if (await getRefreshToken()) return { success: false, message: "Không thể kết nối để đăng xuất. Vui lòng thử lại." };
         await deleteToken();
         return { success: true };
       }

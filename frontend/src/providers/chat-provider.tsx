@@ -17,6 +17,7 @@ type State = {
   total: number;
   counts: Record<string, number>;
   online: Record<string, boolean>;
+  lastActive: Record<string, string | null>;
   pending: string[];
 };
 const ChatContext = createContext<{
@@ -92,14 +93,19 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       void client.invalidateQueries({ queryKey: ["messages", accountId] });
       void client.invalidateQueries({ queryKey: ["chat-state", accountId] });
     };
+    const syncNotifications = () => {
+      void client.invalidateQueries({ queryKey: ["notifications", accountId] });
+    };
     socket.on("session:ready", () => {
       refreshed = false;
       setConnected(true);
       sync();
+      syncNotifications();
     });
     socketRef.current = socket;
     socket.on("message:new", sync);
     socket.on("message:state", sync);
+    socket.on("notification:new", syncNotifications);
     socket.on(
       "presence:changed",
       () =>

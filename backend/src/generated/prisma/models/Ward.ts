@@ -29,6 +29,7 @@ export type WardMinAggregateOutputType = {
   provinceId: string | null
   code: string | null
   fullName: string | null
+  isActive: boolean | null
 }
 
 export type WardMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type WardMaxAggregateOutputType = {
   provinceId: string | null
   code: string | null
   fullName: string | null
+  isActive: boolean | null
 }
 
 export type WardCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type WardCountAggregateOutputType = {
   provinceId: number
   code: number
   fullName: number
+  isActive: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type WardMinAggregateInputType = {
   provinceId?: true
   code?: true
   fullName?: true
+  isActive?: true
 }
 
 export type WardMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type WardMaxAggregateInputType = {
   provinceId?: true
   code?: true
   fullName?: true
+  isActive?: true
 }
 
 export type WardCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type WardCountAggregateInputType = {
   provinceId?: true
   code?: true
   fullName?: true
+  isActive?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type WardGroupByOutputType = {
   provinceId: string
   code: string
   fullName: string
+  isActive: boolean
   _count: WardCountAggregateOutputType | null
   _min: WardMinAggregateOutputType | null
   _max: WardMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type WardWhereInput = {
   provinceId?: Prisma.UuidFilter<"Ward"> | string
   code?: Prisma.StringFilter<"Ward"> | string
   fullName?: Prisma.StringFilter<"Ward"> | string
+  isActive?: Prisma.BoolFilter<"Ward"> | boolean
   province?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
   jobPosts?: Prisma.JobPostListRelationFilter
 }
@@ -183,6 +191,7 @@ export type WardOrderByWithRelationInput = {
   provinceId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   province?: Prisma.ProvinceOrderByWithRelationInput
   jobPosts?: Prisma.JobPostOrderByRelationAggregateInput
 }
@@ -196,6 +205,7 @@ export type WardWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.WardWhereInput | Prisma.WardWhereInput[]
   provinceId?: Prisma.UuidFilter<"Ward"> | string
   fullName?: Prisma.StringFilter<"Ward"> | string
+  isActive?: Prisma.BoolFilter<"Ward"> | boolean
   province?: Prisma.XOR<Prisma.ProvinceScalarRelationFilter, Prisma.ProvinceWhereInput>
   jobPosts?: Prisma.JobPostListRelationFilter
 }, "id" | "code" | "id_provinceId">
@@ -205,6 +215,7 @@ export type WardOrderByWithAggregationInput = {
   provinceId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
   _count?: Prisma.WardCountOrderByAggregateInput
   _max?: Prisma.WardMaxOrderByAggregateInput
   _min?: Prisma.WardMinOrderByAggregateInput
@@ -218,12 +229,14 @@ export type WardScalarWhereWithAggregatesInput = {
   provinceId?: Prisma.UuidWithAggregatesFilter<"Ward"> | string
   code?: Prisma.StringWithAggregatesFilter<"Ward"> | string
   fullName?: Prisma.StringWithAggregatesFilter<"Ward"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Ward"> | boolean
 }
 
 export type WardCreateInput = {
   id?: string
   code: string
   fullName: string
+  isActive?: boolean
   province: Prisma.ProvinceCreateNestedOneWithoutWardsInput
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutWardInput
 }
@@ -233,6 +246,7 @@ export type WardUncheckedCreateInput = {
   provinceId: string
   code: string
   fullName: string
+  isActive?: boolean
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutWardInput
 }
 
@@ -240,6 +254,7 @@ export type WardUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   province?: Prisma.ProvinceUpdateOneRequiredWithoutWardsNestedInput
   jobPosts?: Prisma.JobPostUpdateManyWithoutWardNestedInput
 }
@@ -249,6 +264,7 @@ export type WardUncheckedUpdateInput = {
   provinceId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutWardNestedInput
 }
 
@@ -257,12 +273,14 @@ export type WardCreateManyInput = {
   provinceId: string
   code: string
   fullName: string
+  isActive?: boolean
 }
 
 export type WardUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type WardUncheckedUpdateManyInput = {
@@ -270,6 +288,7 @@ export type WardUncheckedUpdateManyInput = {
   provinceId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type WardScalarRelationFilter = {
@@ -297,6 +316,7 @@ export type WardCountOrderByAggregateInput = {
   provinceId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
 }
 
 export type WardMaxOrderByAggregateInput = {
@@ -304,6 +324,7 @@ export type WardMaxOrderByAggregateInput = {
   provinceId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
 }
 
 export type WardMinOrderByAggregateInput = {
@@ -311,6 +332,7 @@ export type WardMinOrderByAggregateInput = {
   provinceId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
 }
 
 export type WardCreateNestedOneWithoutJobPostsInput = {
@@ -373,6 +395,7 @@ export type WardCreateWithoutJobPostsInput = {
   id?: string
   code: string
   fullName: string
+  isActive?: boolean
   province: Prisma.ProvinceCreateNestedOneWithoutWardsInput
 }
 
@@ -381,6 +404,7 @@ export type WardUncheckedCreateWithoutJobPostsInput = {
   provinceId: string
   code: string
   fullName: string
+  isActive?: boolean
 }
 
 export type WardCreateOrConnectWithoutJobPostsInput = {
@@ -403,6 +427,7 @@ export type WardUpdateWithoutJobPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   province?: Prisma.ProvinceUpdateOneRequiredWithoutWardsNestedInput
 }
 
@@ -411,12 +436,14 @@ export type WardUncheckedUpdateWithoutJobPostsInput = {
   provinceId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type WardCreateWithoutProvinceInput = {
   id?: string
   code: string
   fullName: string
+  isActive?: boolean
   jobPosts?: Prisma.JobPostCreateNestedManyWithoutWardInput
 }
 
@@ -424,6 +451,7 @@ export type WardUncheckedCreateWithoutProvinceInput = {
   id?: string
   code: string
   fullName: string
+  isActive?: boolean
   jobPosts?: Prisma.JobPostUncheckedCreateNestedManyWithoutWardInput
 }
 
@@ -461,18 +489,21 @@ export type WardScalarWhereInput = {
   provinceId?: Prisma.UuidFilter<"Ward"> | string
   code?: Prisma.StringFilter<"Ward"> | string
   fullName?: Prisma.StringFilter<"Ward"> | string
+  isActive?: Prisma.BoolFilter<"Ward"> | boolean
 }
 
 export type WardCreateManyProvinceInput = {
   id?: string
   code: string
   fullName: string
+  isActive?: boolean
 }
 
 export type WardUpdateWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jobPosts?: Prisma.JobPostUpdateManyWithoutWardNestedInput
 }
 
@@ -480,6 +511,7 @@ export type WardUncheckedUpdateWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   jobPosts?: Prisma.JobPostUncheckedUpdateManyWithoutWardNestedInput
 }
 
@@ -487,6 +519,7 @@ export type WardUncheckedUpdateManyWithoutProvinceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -525,6 +558,7 @@ export type WardSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   provinceId?: boolean
   code?: boolean
   fullName?: boolean
+  isActive?: boolean
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
   jobPosts?: boolean | Prisma.Ward$jobPostsArgs<ExtArgs>
   _count?: boolean | Prisma.WardCountOutputTypeDefaultArgs<ExtArgs>
@@ -535,6 +569,7 @@ export type WardSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   provinceId?: boolean
   code?: boolean
   fullName?: boolean
+  isActive?: boolean
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ward"]>
 
@@ -543,6 +578,7 @@ export type WardSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   provinceId?: boolean
   code?: boolean
   fullName?: boolean
+  isActive?: boolean
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ward"]>
 
@@ -551,9 +587,10 @@ export type WardSelectScalar = {
   provinceId?: boolean
   code?: boolean
   fullName?: boolean
+  isActive?: boolean
 }
 
-export type WardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provinceId" | "code" | "fullName", ExtArgs["result"]["ward"]>
+export type WardOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provinceId" | "code" | "fullName" | "isActive", ExtArgs["result"]["ward"]>
 export type WardInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   province?: boolean | Prisma.ProvinceDefaultArgs<ExtArgs>
   jobPosts?: boolean | Prisma.Ward$jobPostsArgs<ExtArgs>
@@ -577,6 +614,7 @@ export type $WardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     provinceId: string
     code: string
     fullName: string
+    isActive: boolean
   }, ExtArgs["result"]["ward"]>
   composites: {}
 }
@@ -1006,6 +1044,7 @@ export interface WardFieldRefs {
   readonly provinceId: Prisma.FieldRef<"Ward", 'String'>
   readonly code: Prisma.FieldRef<"Ward", 'String'>
   readonly fullName: Prisma.FieldRef<"Ward", 'String'>
+  readonly isActive: Prisma.FieldRef<"Ward", 'Boolean'>
 }
     
 

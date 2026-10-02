@@ -100,7 +100,7 @@ async function main() {
     await update("message_attachments",row,{file_name:"huong-dan-phong-van.txt",file_url:`data:text/plain;base64,${Buffer.from(text).toString("base64")}`,file_size:Buffer.byteLength(text)});
   }
   for(const row of before.notifications) if(marker.test(JSON.stringify(row))) await update("notifications",row,{title:"Theo dõi tiến độ ứng tuyển",description:"Bạn có thể xem trạng thái hồ sơ và phản hồi tuyển dụng tại mục Việc đã ứng tuyển.",metadata:cleanMetadata(row.metadata)});
-  for(const row of before.service_plans) if(marker.test(JSON.stringify(row))) {
+  for(const row of before.service_plans) if(!/^(candidate|company)_(free|pro|premium)$/.test(row.code) && marker.test(JSON.stringify(row))) {
     const candidate=row.audience==="candidate";
     await update("service_plans",row,{code:candidate?"TOPCV-PRO-30":"RECRUITMENT-30",name:candidate?"TopCV Pro 30 ngày":"Gói tuyển dụng 30 ngày",description:candidate?"Công cụ hoàn thiện hồ sơ và quản lý hành trình tìm việc trong 30 ngày.":"Quản lý tin tuyển dụng, theo dõi hồ sơ ứng tuyển và phối hợp tuyển chọn trong 30 ngày.",metadata:cleanMetadata(row.metadata)});
   }

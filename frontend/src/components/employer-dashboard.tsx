@@ -1,4 +1,5 @@
 "use client";
+import { BillingPanel } from "./billing-panel";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   EmployerSummary,
@@ -174,7 +175,7 @@ export function EmployerDashboard() {
           {tab === "candidates" && <EmployerApplications />}{" "}
           {tab === "talent" && <EmployerTalent />}{" "}
           {tab === "analytics" && <EmployerSummary report />}{" "}
-          {tab === "billing" && <Billing />}{" "}
+          {tab === "billing" && <div className="space-y-6"><BillingPanel view="services" /><BillingPanel /></div>}{" "}
           {tab === "company" && <Company />}{" "}
         </section>
       </div>

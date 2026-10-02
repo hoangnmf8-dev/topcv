@@ -211,9 +211,17 @@ export default function Page() {
       setPreviewOpen(false);
       router.push("/employer");
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.errors?.code === "JOB_LIMIT_REACHED") {
+        toast.error(error.response.data.errors.message, {
+          description: "Tạm dừng hoặc đóng một tin hiện có trước khi đăng thêm. Hãy lưu lại nội dung trước khi chuyển trang.",
+          action: { label: "Quản lý tin", onClick: () => router.push("/employer?tab=jobs") },
+          duration: 10000,
+        });
+        return;
+      }
       toast.error(
         axios.isAxiosError(error)
-          ? (error.response?.data?.message ??
+          ? (error.response?.data?.errors?.message ?? error.response?.data?.message ??
               "Không thể đăng tin. Vui lòng thử lại.")
           : "Không thể đăng tin.",
       );
@@ -381,8 +389,11 @@ export default function Page() {
                   </div>
                   <Field
                     label="Kinh nghiệm tối thiểu"
+                    type="number"
                     value={data.experience}
-                    change={(v) => set("experience", v)}
+                    change={(v) => {
+                      if (v === "" || (Number.isInteger(Number(v)) && Number(v) >= 0 && Number(v) <= 99)) set("experience", v);
+                    }}
                   />
                   <div>
                     <p className="mb-2 font-bold">Hạn nhận hồ sơ</p>
@@ -594,6 +605,11 @@ function ContentEditor({
       const response = await aiService.generateTextAI(task, {
         currentText: value,
         jobTitle: job.title,
+        skills: job.skills,
+        overviewRequirements: job.overviewRequirements,
+        ...(job.experience !== "" ? { experienceYearsMin: Number(job.experience) } : {}),
+        jobDescription: job.description,
+        candidateRequirements: job.requirements,
       });
       if (
         !response.success ||
@@ -631,7 +647,7 @@ function ContentEditor({
           ) : (
             <Sparkles className="size-3.5" />
           )}
-          {loading ? "Đang cải thiện..." : "Cải thiện văn phong với AI"}
+          {loading ? "Đang viết..." : label === "Quyền lợi" ? "Cải thiện văn phong với AI" : "Viết chi tiết với AI"}
         </button>
       </div>
       <textarea
@@ -675,7 +691,7 @@ function Preview({ data }: { data: Data & { location: string } }) {
           </p>
           <p className="flex gap-2">
             <UsersRound className="size-5 shrink-0 text-green-500" />
-            {data.experience} kinh nghiệm
+            {data.experience === "" ? "Chưa cập nhật kinh nghiệm" : Number(data.experience) === 0 ? "Không yêu cầu kinh nghiệm" : `${data.experience} năm kinh nghiệm`}
           </p>
           <p className="flex gap-2">
             <CalendarDays className="size-5 shrink-0 text-green-500" />
@@ -786,7 +802,7 @@ function Overview({ data }: { data: Data }) {
         <b>Yêu cầu:</b>
         <div className="flex flex-wrap gap-2">
           {data.experience !== "" && (
-            <Tag>{data.experience} năm kinh nghiệm</Tag>
+            <Tag>{Number(data.experience) === 0 ? "Không yêu cầu kinh nghiệm" : `${data.experience} năm kinh nghiệm`}</Tag>
           )}
           {requirements.map((item) => (
             <Tag key={item}>{item}</Tag>

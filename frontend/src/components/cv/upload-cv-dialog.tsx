@@ -16,8 +16,10 @@ import { UPLOAD } from "@/constants/upload.constant";
 import { cvKeys } from "@/cache-key/cv.key";
 import uploadService from "@/services/upload.service";
 import { useAccountStore } from "@/stores/auth.store";
+import { useCvAccess } from "@/hooks/use-cv-access";
 
 export function UploadCvDialog() {
+  const access = useCvAccess();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
@@ -98,6 +100,7 @@ export function UploadCvDialog() {
       toast.success("Đã tải CV PDF lên");
       await Promise.all([
         client.invalidateQueries({ queryKey: cvKeys.all(accountId) }),
+        client.invalidateQueries({ queryKey: ["cv-access", accountId] }),
         client.invalidateQueries({
           queryKey: ["profile-completion", accountId],
         }),
@@ -123,6 +126,7 @@ export function UploadCvDialog() {
         type="button"
         className="h-10"
         variant="outline"
+        disabled={!access.data?.canCreate}
         onClick={() => changeOpen(true)}
       >
         <Upload />

@@ -3,6 +3,7 @@ import { AppError } from "../exceptions";
 import uploadService from "./upload.service";
 import type { CvSaveInput, CvCreateInput } from "../types/cv.type";
 import { cvSaveSchema } from "../validators/cv.validate";
+import { candidateAccess, assertCvAccess } from "./subscription.service";
 
 export class CvService {
   constructor(private db = prisma) {}
@@ -34,11 +35,14 @@ export class CvService {
       const existing=await tx.cv.findUnique({where:{id}});
       if(existing && (existing.candidateId!==candidate.id || existing.deletedAt)) throw new AppError("Không tìm thấy CV", "NOT_FOUND",404);
       if(!create && !existing) throw new AppError("Không tìm thấy CV", "NOT_FOUND",404);
+      const access = await candidateAccess(accountId, candidate.id, tx);
+      assertCvAccess(access, !existing);
+      const isDefault = (!existing && access.count === 0) || (create && existing?.isDefault && access.count === 1) ? true : input.isDefault;
       // A retried POST with the same client-generated id must not create another CV.
       // Reuse the same row on retries; saving changed input must not discard edits.
       if(existing?.fileKey && !cvSaveSchema.safeParse({title:existing.title,templateCode:existing.templateCode,contentJson:existing.contentJson}).success) throw new AppError("CV PDF không thể sửa bằng trình tạo CV", "INVALID_CV",400);
-      if(input.isDefault) await tx.cv.updateMany({where:{candidateId:candidate.id,isDefault:true,deletedAt:null},data:{isDefault:false}});
-      const data={title:input.title,templateCode:input.templateCode,contentJson:input.contentJson,...(input.isDefault!==undefined?{isDefault:input.isDefault}:{})};
+      if(isDefault) await tx.cv.updateMany({where:{candidateId:candidate.id,isDefault:true,deletedAt:null},data:{isDefault:false}});
+      const data={title:input.title,templateCode:input.templateCode,contentJson:input.contentJson,...(isDefault!==undefined?{isDefault}:{})};
       // A previously exported PDF no longer represents the edited content.
       return existing ? tx.cv.update({where:{id},data:{...data,fileKey:null}}) : tx.cv.create({data:{...data,id,candidateId:candidate.id}});
     });

@@ -1,4 +1,6 @@
 "use client";
+import { BillingPanel } from "./billing-panel";
+import { CvCreateActions } from "./cv/cv-create-actions";
 import { CvList } from "./cv/cv-list";
 import { UploadCvDialog } from "./cv/upload-cv-dialog";
 import { ProfileCompletion } from "./profile-completion";
@@ -135,9 +137,9 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
           {tab === "jobs" && <List title="Tin tuyển dụng của bạn" />}{" "}
           {tab === "candidates" && <MiniAts />}{" "}
           {tab === "analytics" && <Analytics />}{" "}
-          {tab === "services" && <ServicesOnly />}{" "}
-          {tab === "orders" && <Orders />}
-          {tab === "payments" && <Payments />}{" "}
+          {tab === "services" && <BillingPanel view="services" />}{" "}
+          {tab === "orders" && <BillingPanel />}
+          {tab === "payments" && <BillingPanel view="payments" />}{" "}
           {tab === "security" && <Security />}
         </section>
       </div>
@@ -275,16 +277,7 @@ function Profile() {
       <Panel title="Hồ sơ & CV">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
           <ProfileCompletion />
-          <UploadCvDialog />
-          <Link
-            href="/cv-builder?new=1"
-            className="rounded-xl bg-[#00b14f] px-4 py-2.5 text-sm font-bold text-white"
-          >
-            <span className="inline-flex items-center gap-2">
-              <Plus className="size-4" />
-              Tạo CV mới
-            </span>
-          </Link>
+          <CvCreateActions />
         </div>
         <CvList />
       </Panel>

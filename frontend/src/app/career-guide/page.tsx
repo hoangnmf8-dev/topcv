@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import type { CareerArticle } from "@/types/career";
-const careerArticles: CareerArticle[] = [];
+import { careerArticles } from "@/data/career-articles";
+export const metadata = { title: "Cẩm nang nghề nghiệp | TopCV", description: "Hướng dẫn viết CV, định hướng nghề nghiệp, đánh giá offer và xây dựng portfolio." };
 
 const categories = [
   {
@@ -74,8 +74,10 @@ export default function CareerGuide() {
           </div>
           <div className="relative overflow-hidden rounded-[1.75rem] border border-white/20 bg-white shadow-2xl">
             <Image
-              src="/banner-career-guide.jpg"
-              alt="Ứng viên cùng xây dựng lộ trình phát triển nghề nghiệp"
+              src={careerArticles[2].image}
+              alt={careerArticles[2].imageAlt}
+              unoptimized
+              priority
               width={1536}
               height={1024}
               className="h-auto w-full"
@@ -84,9 +86,6 @@ export default function CareerGuide() {
         </div>
       </section>
       <div className="mx-auto max-w-[1120px] px-4 py-9 sm:px-6">
-        <p className="mb-6 rounded-2xl border border-dashed bg-white p-8 text-center text-slate-500">
-          Chưa có bài viết.
-        </p>
         <section>
           <div className="mb-5">
             <p className="text-sm font-bold text-[#008f40]">
@@ -128,21 +127,11 @@ export default function CareerGuide() {
             {careerArticles.map((article, index) => (
               <Link
                 href={`/career-guide/${article.slug}`}
-                id={
-                  index === 0
-                    ? "job-search"
-                    : index === 1
-                      ? "salary"
-                      : index === 2
-                        ? "orientation"
-                        : "skills"
-                }
+                id={article.categoryId}
                 key={article.slug}
                 className="group overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <div
-                  className={`h-2 ${index === 0 ? "bg-[#087b43]" : index === 1 ? "bg-[#203246]" : index === 2 ? "bg-[#b46b08]" : "bg-[#2563eb]"}`}
-                />
+                <Image src={article.image} alt={article.imageAlt} width={1200} height={750} unoptimized className="h-52 w-full object-cover transition duration-500 group-hover:scale-[1.02]" />
                 <article className="p-6">
                   <div className="flex items-center justify-between gap-3">
                     <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">

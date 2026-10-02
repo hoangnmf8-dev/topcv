@@ -1,4 +1,5 @@
 "use client";
+import { NotificationBell } from "./notification-bell";
 import { MessageBadge } from "@/providers/chat-provider";
 
 import Link from "next/link";
@@ -10,6 +11,7 @@ import {
   Building2,
   Calculator,
   ChevronDown,
+  Crown,
   FileText,
   MessageCircle,
   Menu,
@@ -133,7 +135,7 @@ export function SiteHeader({
 }: { onMenuClick?: () => void; menuOpen?: boolean } = {}) {
   const { candidate } = useCandidateStore((state) => state);
   const [open, setOpen] = useState<string | null>(null);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm backdrop-blur">
       <div className="mx-auto flex h-[76px] max-w-[1280px] items-center gap-5 px-4 sm:px-6">
@@ -218,8 +220,9 @@ export function SiteHeader({
           </Link>
           <Link
             href="/services"
-            className="ml-2 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-sm font-bold text-amber-700"
+            className="ml-2 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-sm font-bold text-amber-700"
           >
+            <Crown aria-hidden="true" className="size-4 shrink-0" />
             TopCV Pro
           </Link>
         </nav>
@@ -231,52 +234,7 @@ export function SiteHeader({
           >
             <span className="relative"><MessageCircle className="size-5" /><MessageBadge /></span>
           </Link>
-          <div className="relative">
-            <button
-              onClick={() => setNotificationsOpen((value) => !value)}
-              className="relative grid size-10 place-items-center rounded-full bg-slate-50 text-slate-600"
-              aria-label="Thông báo"
-              aria-expanded={notificationsOpen}
-            >
-              <Bell className="size-5" />
-              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                0
-              </span>
-            </button>
-            {notificationsOpen && (
-              <div className="absolute right-0 top-12 w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white p-3 shadow-2xl">
-                <div className="flex items-center justify-between px-2 py-2">
-                  <b className="text-sm text-slate-900">Thông báo mới</b>
-                  <button
-                    onClick={() => setNotificationsOpen(false)}
-                    className="text-xs font-semibold text-emerald-700"
-                  >
-                    Đánh dấu đã đọc
-                  </button>
-                </div>
-                {([] as string[][]).map(([title, detail], index) => (
-                  <Link
-                    href={index === 0 ? "/candidate" : "/#jobs"}
-                    onClick={() => setNotificationsOpen(false)}
-                    key={title}
-                    className="block rounded-xl px-3 py-3 transition hover:bg-emerald-50"
-                  >
-                    <span className="flex items-start gap-2">
-                      <i
-                        className={`mt-1.5 size-2 shrink-0 rounded-full ${index < 2 ? "bg-emerald-500" : "bg-amber-500"}`}
-                      />
-                      <span>
-                        <b className="block text-sm text-slate-800">{title}</b>
-                        <small className="mt-1 block leading-5 text-slate-500">
-                          {detail}
-                        </small>
-                      </span>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+          <NotificationBell />
           <Link
             href="/candidate"
             className="hidden items-center gap-2 border-l border-slate-200 pl-3 text-sm font-semibold text-slate-700 sm:flex"
