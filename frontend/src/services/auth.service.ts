@@ -40,6 +40,13 @@ class AuthServie {
       message: "Thay đổi mật khẩu thành công",
       status: 201,
     };
+  };
+  async login() {
+    // try {
+    //   const response = httpRequest.
+    // } catch(error) {
+
+    // }
   }
 }
 const authService = new AuthServie();

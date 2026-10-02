@@ -30,22 +30,24 @@ import { isAxiosError } from "axios";
 import jobPostService from "@/services/job-post.service";
 import { toJobCard } from "@/lib/utils";
 import { QuickApplyDialog } from "@/components/quick-apply-dialog";
+import { useApplicationStatus } from "@/hooks/use-application-status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { jobPostDetailKey } from "@/cache-key";
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const application = useApplicationStatus(id);
   const { data, isPending, isError, error, refetch, isFetching } = useQuery({
     queryKey: jobPostDetailKey(id),
     queryFn: ({ signal }) => jobPostService.getJobPost(id, signal),
     retry: (count, error) =>
       !(isAxiosError(error) && error.response?.status === 404) && count < 2,
   });
-  console.log("🚀 ~ JobDetailPage ~ data:", data);
   const [applyOpen, setApplyOpen] = useState(false);
   const { saved: savedIds, toggle } = useSavedJobs();
-  if (isPending) return <LoadingState fullscreen message="Đang tải thông tin việc làm…" />;
+  if (isPending)
+    return <LoadingState fullscreen message="Đang tải thông tin việc làm…" />;
   if (isError || !data) {
     const missing = isAxiosError(error) && error.response?.status === 404;
     return (
@@ -165,10 +167,11 @@ export default function JobDetailPage() {
                   <Button
                     size="lg"
                     onClick={() => setApplyOpen(true)}
+                    disabled={!!application.data || application.isFetching}
                     className="h-12 flex-1 rounded-xl bg-emerald-600 font-semibold shadow-lg shadow-emerald-600/20 transition-all hover:-translate-y-0.5 hover:bg-emerald-700"
                   >
                     <Send className="size-4" />
-                    Ứng tuyển ngay
+                    {application.data ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
                   </Button>
                   <Button
                     size="lg"

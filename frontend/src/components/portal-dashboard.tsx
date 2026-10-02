@@ -1,5 +1,8 @@
 "use client";
 import { CvList } from "./cv/cv-list";
+import { UploadCvDialog } from "./cv/upload-cv-dialog";
+import { ProfileCompletion } from "./profile-completion";
+import { useProfileCompletion } from "@/hooks/use-profile-completion";
 
 import { LogoutButton } from "@/components/logout-button";
 import { CandidateOverview } from "@/components/candidate-overview";
@@ -56,6 +59,7 @@ const employerTabs = [
 
 export function PortalDashboard({ mode }: { mode: Mode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const completion = useProfileCompletion();
   const candidate = mode === "candidate";
   const tabs = candidate ? candidateTabs : employerTabs;
   const { candidate: candidateStore } = useCandidateStore((state) => state);
@@ -105,7 +109,7 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
             </p>
             <p className="mt-1 text-xs text-slate-500">
               {candidate
-                ? `Hồ sơ hoàn thiện ${candidateStore?.profileCompletion ?? 0}%`
+                ? completion.data ? `Hồ sơ hoàn thiện ${completion.data.percentage}%` : "Đang tải mức độ hoàn thiện hồ sơ…"
                 : "Chưa có thông tin gói dịch vụ"}
             </p>
           </div>
@@ -270,19 +274,8 @@ function Profile() {
       </section>
       <Panel title="Hồ sơ & CV">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5">
-          <div>
-            <p className="text-sm text-slate-500">Mức độ hoàn thiện hồ sơ</p>
-            <div className="mt-3 h-2 w-64 rounded-full bg-slate-100">
-              <div
-                className="h-full rounded-full bg-[#00b14f]"
-                style={{ width: `${candidate?.profileCompletion ?? 0}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-slate-500">
-              {candidate?.profileCompletion ?? 0}% · Cập nhật thông tin để hoàn
-              thiện hồ sơ.
-            </p>
-          </div>
+          <ProfileCompletion />
+          <UploadCvDialog />
           <Link
             href="/cv-builder?new=1"
             className="rounded-xl bg-[#00b14f] px-4 py-2.5 text-sm font-bold text-white"

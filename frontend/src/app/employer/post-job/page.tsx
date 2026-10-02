@@ -1,7 +1,11 @@
 "use client";
 import { useState, useRef } from "react";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { vi } from "react-day-picker/locale";
 import { formatJobSalary } from "@/lib/job-salary";
 import { httpRequest } from "@/lib/utils";
@@ -25,7 +29,13 @@ import { useQuery } from "@tanstack/react-query";
 import locationService from "@/services/location.service";
 import jobCategoryService from "@/services/job-category.service";
 import { provinceKey, jobCategoryKey } from "@/cache-key";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const initial = {
   title: "",
@@ -42,84 +52,175 @@ const initial = {
   saturdaySchedule: "UNSPECIFIED" as "WORK" | "OFF" | "UNSPECIFIED",
   overviewRequirements: "",
   deadline: "",
-  description:
-    "",
-  requirements:
-    "",
-  benefits:
-    "",
+  description: "",
+  requirements: "",
+  benefits: "",
   skills: "",
 };
 type Data = typeof initial;
-const salaryValue = (value: string, currency: string) => value.trim() === "" ? null : Number(value) * (currency === "triệu VNĐ/tháng" ? 1000000 : 1);
-const money = (d: Data) => formatJobSalary(
-  d.negotiable ? null : salaryValue(d.salaryMin, d.currency),
-  d.negotiable ? null : salaryValue(d.salaryMax, d.currency),
-  d.currency === "USD/tháng" ? "USD" : "VND",
-);
-const splitTags = (value: string) => [...new Set(value.split(",").map(item => item.trim()).filter(Boolean))];
+const salaryValue = (value: string, currency: string) =>
+  value.trim() === ""
+    ? null
+    : Number(value) * (currency === "triệu VNĐ/tháng" ? 1000000 : 1);
+const money = (d: Data) =>
+  formatJobSalary(
+    d.negotiable ? null : salaryValue(d.salaryMin, d.currency),
+    d.negotiable ? null : salaryValue(d.salaryMax, d.currency),
+    d.currency === "USD/tháng" ? "USD" : "VND",
+  );
+const splitTags = (value: string) => [
+  ...new Set(
+    value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
+  ),
+];
 
 export default function Page() {
   const router = useRouter();
   const [step, setStep] = useState(0),
     [data, setData] = useState<Data>(initial);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const provinces = useQuery({ queryKey: provinceKey, queryFn: ({ signal }) => locationService.getProvince(signal), staleTime: 300000 });
-  const categories = useQuery({ queryKey: jobCategoryKey, queryFn: ({ signal }) => jobCategoryService.getJobCategory(signal), staleTime: 300000 });
-  const wards = useQuery({ queryKey: ["wards", data.provinceId], queryFn: ({ signal }) => locationService.getWards(data.provinceId, signal), enabled: !!data.provinceId, staleTime: 300000 });
-  const jobTitles = categories.data?.data.find(item => item.id === data.category)?.jobTitles ?? [];
-  const province = provinces.data?.data.find((item) => item.id === data.provinceId);
-  const ward = wards.data?.find((item) => item.id === data.wardId && item.provinceId === data.provinceId);
-  const previewData = { ...data, location: [data.address.trim(), ward?.fullName, province?.name].filter(Boolean).join(", ") };
+  const provinces = useQuery({
+    queryKey: provinceKey,
+    queryFn: ({ signal }) => locationService.getProvince(signal),
+    staleTime: 300000,
+  });
+  const categories = useQuery({
+    queryKey: jobCategoryKey,
+    queryFn: ({ signal }) => jobCategoryService.getJobCategory(signal),
+    staleTime: 300000,
+  });
+  const wards = useQuery({
+    queryKey: ["wards", data.provinceId],
+    queryFn: ({ signal }) => locationService.getWards(data.provinceId, signal),
+    enabled: !!data.provinceId,
+    staleTime: 300000,
+  });
+  const jobTitles =
+    categories.data?.data.find((item) => item.id === data.category)
+      ?.jobTitles ?? [];
+  const province = provinces.data?.data.find(
+    (item) => item.id === data.provinceId,
+  );
+  const ward = wards.data?.find(
+    (item) => item.id === data.wardId && item.provinceId === data.provinceId,
+  );
+  const previewData = {
+    ...data,
+    location: [data.address.trim(), ward?.fullName, province?.name]
+      .filter(Boolean)
+      .join(", "),
+  };
   const addressInvalid = !province || !ward || !data.address.trim();
   const set = <K extends keyof Data>(k: K, v: Data[K]) =>
     setData((x) => ({ ...x, [k]: v }));
   const [publishing, setPublishing] = useState(false);
   const publishLock = useRef(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const changeSalary = (key: "salaryMin" | "salaryMax", value: string) => setData(current => {
-    const next = { ...current, [key]: value };
-    return { ...next, negotiable: next.salaryMin.trim() === "" && next.salaryMax.trim() === "" };
-  });
-  const invalid = !data.negotiable && (
-    [data.salaryMin, data.salaryMax].some(value => value !== "" && (!Number.isFinite(Number(value)) || Number(value) < 0)) ||
-    (data.salaryMin !== "" && data.salaryMax !== "" && Number(data.salaryMin) > Number(data.salaryMax))
-  );
-  const basicInvalid = invalid || addressInvalid || !data.title.trim() || !data.category || !jobTitles.some(item => item.id === data.jobTitleId) ||
-    !data.deadline || new Date(data.deadline + "T23:59:59").getTime() <= Date.now() ||
-    (data.experience !== "" && (!Number.isInteger(Number(data.experience)) || Number(data.experience) < 0 || Number(data.experience) > 99));
-  const descriptionInvalid = !data.description.trim() || !data.requirements.trim() || data.description.length > JOB_TEXT_LIMITS.description || data.requirements.length > JOB_TEXT_LIMITS.requirements;
+  const changeSalary = (key: "salaryMin" | "salaryMax", value: string) =>
+    setData((current) => {
+      const next = { ...current, [key]: value };
+      return {
+        ...next,
+        negotiable:
+          next.salaryMin.trim() === "" && next.salaryMax.trim() === "",
+      };
+    });
+  const invalid =
+    !data.negotiable &&
+    ([data.salaryMin, data.salaryMax].some(
+      (value) =>
+        value !== "" && (!Number.isFinite(Number(value)) || Number(value) < 0),
+    ) ||
+      (data.salaryMin !== "" &&
+        data.salaryMax !== "" &&
+        Number(data.salaryMin) > Number(data.salaryMax)));
+  const basicInvalid =
+    invalid ||
+    addressInvalid ||
+    !data.title.trim() ||
+    !data.category ||
+    !jobTitles.some((item) => item.id === data.jobTitleId) ||
+    !data.deadline ||
+    new Date(data.deadline + "T23:59:59").getTime() <= Date.now() ||
+    (data.experience !== "" &&
+      (!Number.isInteger(Number(data.experience)) ||
+        Number(data.experience) < 0 ||
+        Number(data.experience) > 99));
+  const descriptionInvalid =
+    !data.description.trim() ||
+    !data.requirements.trim() ||
+    data.description.length > JOB_TEXT_LIMITS.description ||
+    data.requirements.length > JOB_TEXT_LIMITS.requirements;
   const goToStep = (next: number) => {
-    if (next > 0 && basicInvalid) { toast.error("Vui lòng hoàn thành thông tin cơ bản, mức lương và hạn nhận hồ sơ hợp lệ."); return; }
-    if (next > 1 && descriptionInvalid) { toast.error("Vui lòng nhập mô tả và yêu cầu ứng viên."); return; }
+    if (next > 0 && basicInvalid) {
+      toast.error(
+        "Vui lòng hoàn thành thông tin cơ bản, mức lương và hạn nhận hồ sơ hợp lệ.",
+      );
+      return;
+    }
+    if (next > 1 && descriptionInvalid) {
+      toast.error("Vui lòng nhập mô tả và yêu cầu ứng viên.");
+      return;
+    }
     setStep(next);
   };
   const publish = async () => {
     if (publishLock.current) return;
-    if (basicInvalid || descriptionInvalid || (!data.benefits.trim() || data.benefits.length > JOB_TEXT_LIMITS.benefits)) {
-      toast.error("Vui lòng hoàn thành thông tin tin tuyển dụng."); return;
+    if (
+      basicInvalid ||
+      descriptionInvalid ||
+      !data.benefits.trim() ||
+      data.benefits.length > JOB_TEXT_LIMITS.benefits
+    ) {
+      toast.error("Vui lòng hoàn thành thông tin tin tuyển dụng.");
+      return;
     }
     publishLock.current = true;
     setPublishing(true);
     try {
       await httpRequest.post("/job-post", {
-        title: data.title.trim(), jobCategoryId: data.category, jobTitleId: data.jobTitleId,
-        provinceId: data.provinceId, wardId: data.wardId, address: data.address.trim(),
-        salaryMin: data.negotiable ? null : salaryValue(data.salaryMin, data.currency),
-        salaryMax: data.negotiable ? null : salaryValue(data.salaryMax, data.currency),
+        title: data.title.trim(),
+        jobCategoryId: data.category,
+        jobTitleId: data.jobTitleId,
+        provinceId: data.provinceId,
+        wardId: data.wardId,
+        address: data.address.trim(),
+        salaryMin: data.negotiable
+          ? null
+          : salaryValue(data.salaryMin, data.currency),
+        salaryMax: data.negotiable
+          ? null
+          : salaryValue(data.salaryMax, data.currency),
         currency: data.currency === "USD/tháng" ? "USD" : "VND",
         saturdaySchedule: data.saturdaySchedule,
-        experienceYearsMin: data.experience === "" ? null : Number(data.experience),
+        experienceYearsMin:
+          data.experience === "" ? null : Number(data.experience),
         deadlineAt: new Date(data.deadline + "T23:59:59").toISOString(),
-        overview: { requirements: splitTags(data.overviewRequirements), specialties: splitTags(data.skills) },
-        description: data.description, requirements: data.requirements, benefits: data.benefits,
+        overview: {
+          requirements: splitTags(data.overviewRequirements),
+          specialties: splitTags(data.skills),
+        },
+        description: data.description,
+        requirements: data.requirements,
+        benefits: data.benefits,
       });
       toast.success("Đã gửi tin tuyển dụng, đang chờ duyệt.");
       setPreviewOpen(false);
       router.push("/employer");
     } catch (error) {
-      toast.error(axios.isAxiosError(error) ? error.response?.data?.message ?? "Không thể đăng tin. Vui lòng thử lại." : "Không thể đăng tin.");
-    } finally { publishLock.current = false; setPublishing(false); }
+      toast.error(
+        axios.isAxiosError(error)
+          ? (error.response?.data?.message ??
+              "Không thể đăng tin. Vui lòng thử lại.")
+          : "Không thể đăng tin.",
+      );
+    } finally {
+      publishLock.current = false;
+      setPublishing(false);
+    }
   };
   const labels = [
     "Thông tin cơ bản",
@@ -157,11 +258,73 @@ export default function Page() {
                   change={(v) => set("title", v)}
                 />
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <AddressSelect label="Ngành nghề" value={data.category} onChange={(category) => setData(current => ({ ...current, category, jobTitleId: "" }))} options={(categories.data?.data ?? []).map((item) => ({ id: item.id, label: item.name }))} loading={categories.isPending} error={categories.isError} retry={() => void categories.refetch()} />
-                  <AddressSelect label="Chức danh" value={data.jobTitleId} onChange={(value) => set("jobTitleId", value)} options={jobTitles.map(item => ({ id: item.id, label: item.name }))} disabled={!data.category} loading={categories.isPending} error={categories.isError} retry={() => void categories.refetch()} />
-                  <AddressSelect label="Tỉnh/Thành phố" value={data.provinceId} onChange={(provinceId) => setData((current) => ({ ...current, provinceId, wardId: "" }))} options={(provinces.data?.data ?? []).map((item) => ({ id: item.id, label: item.name }))} loading={provinces.isPending} error={provinces.isError} retry={() => void provinces.refetch()} />
-                  <AddressSelect label="Phường/Xã" value={data.wardId} onChange={(value) => set("wardId", value)} options={(wards.data ?? []).map((item) => ({ id: item.id, label: item.fullName }))} disabled={!data.provinceId} loading={!!data.provinceId && wards.isPending} error={wards.isError} retry={() => void wards.refetch()} />
-                  <Field label="Địa chỉ cụ thể (số nhà, đường)" value={data.address} change={(value) => set("address", value)} />
+                  <AddressSelect
+                    label="Ngành nghề"
+                    value={data.category}
+                    onChange={(category) =>
+                      setData((current) => ({
+                        ...current,
+                        category,
+                        jobTitleId: "",
+                      }))
+                    }
+                    options={(categories.data?.data ?? []).map((item) => ({
+                      id: item.id,
+                      label: item.name,
+                    }))}
+                    loading={categories.isPending}
+                    error={categories.isError}
+                    retry={() => void categories.refetch()}
+                  />
+                  <AddressSelect
+                    label="Chức danh"
+                    value={data.jobTitleId}
+                    onChange={(value) => set("jobTitleId", value)}
+                    options={jobTitles.map((item) => ({
+                      id: item.id,
+                      label: item.name,
+                    }))}
+                    disabled={!data.category}
+                    loading={categories.isPending}
+                    error={categories.isError}
+                    retry={() => void categories.refetch()}
+                  />
+                  <AddressSelect
+                    label="Tỉnh/Thành phố"
+                    value={data.provinceId}
+                    onChange={(provinceId) =>
+                      setData((current) => ({
+                        ...current,
+                        provinceId,
+                        wardId: "",
+                      }))
+                    }
+                    options={(provinces.data?.data ?? []).map((item) => ({
+                      id: item.id,
+                      label: item.name,
+                    }))}
+                    loading={provinces.isPending}
+                    error={provinces.isError}
+                    retry={() => void provinces.refetch()}
+                  />
+                  <AddressSelect
+                    label="Phường/Xã"
+                    value={data.wardId}
+                    onChange={(value) => set("wardId", value)}
+                    options={(wards.data ?? []).map((item) => ({
+                      id: item.id,
+                      label: item.fullName,
+                    }))}
+                    disabled={!data.provinceId}
+                    loading={!!data.provinceId && wards.isPending}
+                    error={wards.isError}
+                    retry={() => void wards.refetch()}
+                  />
+                  <Field
+                    label="Địa chỉ cụ thể (số nhà, đường)"
+                    value={data.address}
+                    change={(value) => set("address", value)}
+                  />
                   <Field
                     label="Lương tối thiểu"
                     value={data.salaryMin}
@@ -188,12 +351,31 @@ export default function Page() {
                   </label>
                   <div className="font-bold">
                     <p className="mb-2">Lịch làm thứ Bảy</p>
-                    <Select value={data.saturdaySchedule} onValueChange={value=>{if(value === "WORK" || value === "OFF" || value === "UNSPECIFIED")set("saturdaySchedule",value);}}>
-                      <SelectTrigger aria-label="Lịch làm thứ Bảy" className="w-full data-[size=default]:h-12 rounded-xl bg-white px-3 font-normal"><SelectValue /></SelectTrigger>
+                    <Select
+                      value={data.saturdaySchedule === "WORK" ? "Làm thứ 7"
+                        : (data.saturdaySchedule === "OFF" ? "Nghỉ thứ 7" : "Không đề cập")
+                      }
+                      onValueChange={(value) => {
+                        if (
+                          value === "WORK" ||
+                          value === "OFF" ||
+                          value === "UNSPECIFIED"
+                        )
+                          set("saturdaySchedule", value);
+                      }}
+                    >
+                      <SelectTrigger
+                        aria-label="Lịch làm thứ Bảy"
+                        className="w-full data-[size=default]:h-12 rounded-xl bg-white px-3 font-normal"
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent alignItemWithTrigger={false}>
                         <SelectItem value="WORK">Làm thứ 7</SelectItem>
                         <SelectItem value="OFF">Nghỉ thứ 7</SelectItem>
-                        <SelectItem value="UNSPECIFIED">Không đề cập</SelectItem>
+                        <SelectItem value="UNSPECIFIED">
+                          Không đề cập
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -205,14 +387,43 @@ export default function Page() {
                   <div>
                     <p className="mb-2 font-bold">Hạn nhận hồ sơ</p>
                     <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                      <PopoverTrigger type="button" className="flex h-12 w-full items-center gap-2 rounded-xl border px-3 text-left">
+                      <PopoverTrigger
+                        type="button"
+                        className="flex h-12 w-full items-center gap-2 rounded-xl border px-3 text-left"
+                      >
                         <CalendarDays className="size-5 text-slate-400" />
-                        {data.deadline ? new Date(data.deadline + "T00:00:00").toLocaleDateString("vi-VN") : "Chọn ngày"}
+                        {data.deadline
+                          ? new Date(
+                              data.deadline + "T00:00:00",
+                            ).toLocaleDateString("vi-VN")
+                          : "Chọn ngày"}
                       </PopoverTrigger>
                       <PopoverContent align="start" className="w-auto p-0">
-                        <Calendar mode="single" locale={vi} selected={data.deadline ? new Date(data.deadline + "T00:00:00") : undefined}
-                          disabled={{ before: new Date(new Date().setHours(0, 0, 0, 0)) }}
-                          onSelect={(date) => { if (date) { set("deadline", [date.getFullYear(), String(date.getMonth()+1).padStart(2,"0"), String(date.getDate()).padStart(2,"0")].join("-")); setCalendarOpen(false); } }} />
+                        <Calendar
+                          mode="single"
+                          locale={vi}
+                          selected={
+                            data.deadline
+                              ? new Date(data.deadline + "T00:00:00")
+                              : undefined
+                          }
+                          disabled={{
+                            before: new Date(new Date().setHours(0, 0, 0, 0)),
+                          }}
+                          onSelect={(date) => {
+                            if (date) {
+                              set(
+                                "deadline",
+                                [
+                                  date.getFullYear(),
+                                  String(date.getMonth() + 1).padStart(2, "0"),
+                                  String(date.getDate()).padStart(2, "0"),
+                                ].join("-"),
+                              );
+                              setCalendarOpen(false);
+                            }
+                          }}
+                        />
                       </PopoverContent>
                     </Popover>
                   </div>
@@ -221,7 +432,15 @@ export default function Page() {
                   <input
                     type="checkbox"
                     checked={data.negotiable}
-                    onChange={(e) => { if (e.target.checked) setData(current => ({ ...current, salaryMin: "", salaryMax: "", negotiable: true })); }}
+                    onChange={(e) => {
+                      if (e.target.checked)
+                        setData((current) => ({
+                          ...current,
+                          salaryMin: "",
+                          salaryMax: "",
+                          negotiable: true,
+                        }));
+                    }}
                   />
                   Mức lương thỏa thuận
                 </label>
@@ -284,7 +503,11 @@ export default function Page() {
                 Quay lại
               </button>
               <button
-                disabled={basicInvalid || (step >= 1 && descriptionInvalid) || (step === 2 && !data.benefits.trim())}
+                disabled={
+                  basicInvalid ||
+                  (step >= 1 && descriptionInvalid) ||
+                  (step === 2 && !data.benefits.trim())
+                }
                 onClick={() =>
                   step === 2 ? setPreviewOpen(true) : goToStep(step + 1)
                 }
@@ -347,7 +570,12 @@ function ContentEditor({
   change: (v: string) => void;
   job: Data;
 }) {
-  const maxLength = label === "Mô tả công việc" ? JOB_TEXT_LIMITS.description : label === "Yêu cầu ứng viên" ? JOB_TEXT_LIMITS.requirements : JOB_TEXT_LIMITS.benefits;
+  const maxLength =
+    label === "Mô tả công việc"
+      ? JOB_TEXT_LIMITS.description
+      : label === "Yêu cầu ứng viên"
+        ? JOB_TEXT_LIMITS.requirements
+        : JOB_TEXT_LIMITS.benefits;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const pending = useRef(false);
@@ -357,17 +585,32 @@ function ContentEditor({
     setLoading(true);
     setError("");
     try {
-      const task = label === "Mô tả công việc" ? "job_description"
-        : label === "Yêu cầu ứng viên" ? "job_requirements" : "job_benefits";
+      const task =
+        label === "Mô tả công việc"
+          ? "job_description"
+          : label === "Yêu cầu ứng viên"
+            ? "job_requirements"
+            : "job_benefits";
       const response = await aiService.generateTextAI(task, {
-        currentText: value, jobTitle: job.title,
+        currentText: value,
+        jobTitle: job.title,
       });
-      if (!response.success || typeof response.data !== "string" || !response.data.trim()) {
-        throw new Error(response.message || "AI chưa trả về nội dung. Vui lòng thử lại.");
+      if (
+        !response.success ||
+        typeof response.data !== "string" ||
+        !response.data.trim()
+      ) {
+        throw new Error(
+          response.message || "AI chưa trả về nội dung. Vui lòng thử lại.",
+        );
       }
       change(response.data.trim());
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Không thể cải thiện nội dung. Vui lòng thử lại.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Không thể cải thiện nội dung. Vui lòng thử lại.",
+      );
     } finally {
       pending.current = false;
       setLoading(false);
@@ -377,17 +620,38 @@ function ContentEditor({
     <section className="rounded-2xl border border-slate-200 p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-bold">{label}</h2>
-        <button type="button" onClick={generate} disabled={loading || !value.trim()}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#00b14f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#009b45] disabled:opacity-60">
-          {loading ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+        <button
+          type="button"
+          onClick={generate}
+          disabled={loading || !value.trim()}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#00b14f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#009b45] disabled:opacity-60"
+        >
+          {loading ? (
+            <Loader2 className="size-3.5 animate-spin" />
+          ) : (
+            <Sparkles className="size-3.5" />
+          )}
           {loading ? "Đang cải thiện..." : "Cải thiện văn phong với AI"}
         </button>
       </div>
-      <textarea aria-label={label} maxLength={maxLength} rows={10} value={value} readOnly={loading}
+      <textarea
+        aria-label={label}
+        maxLength={maxLength}
+        rows={10}
+        value={value}
+        readOnly={loading}
         onChange={(e) => change(e.target.value)}
-        className="mt-4 w-full rounded-xl border p-4 font-normal leading-7" />
-      <p className="mt-2 text-xs text-slate-500">{value.length.toLocaleString("vi-VN")}/{maxLength.toLocaleString("vi-VN")} ký tự</p>
-      {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
+        className="mt-4 w-full rounded-xl border p-4 font-normal leading-7"
+      />
+      <p className="mt-2 text-xs text-slate-500">
+        {value.length.toLocaleString("vi-VN")}/
+        {maxLength.toLocaleString("vi-VN")} ký tự
+      </p>
+      {error && (
+        <p role="alert" className="mt-2 text-sm text-red-600">
+          {error}
+        </p>
+      )}
     </section>
   );
 }
@@ -400,9 +664,7 @@ function Preview({ data }: { data: Data & { location: string } }) {
         <h2 className="break-words text-lg font-bold sm:text-xl">
           {data.title}
         </h2>
-        <p className="mt-2 text-sm text-slate-500">
-          Thông tin nhà tuyển dụng
-        </p>
+        <p className="mt-2 text-sm text-slate-500">Thông tin nhà tuyển dụng</p>
         <p className="mt-4 text-lg font-extrabold text-[#00a64f] sm:text-xl">
           {money(data)}
         </p>
@@ -523,7 +785,9 @@ function Overview({ data }: { data: Data }) {
       <div className="mt-6 grid gap-4 text-sm sm:grid-cols-[120px_1fr]">
         <b>Yêu cầu:</b>
         <div className="flex flex-wrap gap-2">
-          {data.experience !== "" && <Tag>{data.experience} năm kinh nghiệm</Tag>}
+          {data.experience !== "" && (
+            <Tag>{data.experience} năm kinh nghiệm</Tag>
+          )}
           {requirements.map((item) => (
             <Tag key={item}>{item}</Tag>
           ))}
@@ -573,21 +837,63 @@ function Section({ title, content }: { title: string; content: string }) {
   );
 }
 
-function AddressSelect({ label, value, onChange, options, loading, error, retry, disabled = false }: {
-  label: string; value: string; onChange: (value: string) => void; options: { id: string; label: string }[];
-  loading: boolean; error: boolean; retry: () => void; disabled?: boolean;
+function AddressSelect({
+  label,
+  value,
+  onChange,
+  options,
+  loading,
+  error,
+  retry,
+  disabled = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { id: string; label: string }[];
+  loading: boolean;
+  error: boolean;
+  retry: () => void;
+  disabled?: boolean;
 }) {
-  return <div className="min-w-0">
-    <p className="mb-2 font-bold">{label}</p>
-    <Select value={value || null} onValueChange={(next) => next && onChange(next)} modal={false} disabled={disabled || loading}>
-      <SelectTrigger aria-label={label} className="w-full data-[size=default]:h-12 rounded-xl bg-white px-3">
-        <SelectValue>{options.find((item) => item.id === value)?.label ?? (loading ? "Đang tải..." : "Chọn " + label.toLowerCase())}</SelectValue>
-      </SelectTrigger>
-      <SelectContent alignItemWithTrigger={false} className="max-h-72">
-        {options.map((item) => <SelectItem key={item.id} value={item.id}>{item.label}</SelectItem>)}
-        {!options.length && <p className="p-3 text-sm text-slate-500">Chưa có dữ liệu.</p>}
-      </SelectContent>
-    </Select>
-    {error && <button type="button" onClick={retry} className="mt-2 text-sm text-red-600">Không tải được dữ liệu. Thử lại</button>}
-  </div>;
+  return (
+    <div className="min-w-0">
+      <p className="mb-2 font-bold">{label}</p>
+      <Select
+        value={value || null}
+        onValueChange={(next) => next && onChange(next)}
+        modal={false}
+        disabled={disabled || loading}
+      >
+        <SelectTrigger
+          aria-label={label}
+          className="w-full data-[size=default]:h-12 rounded-xl bg-white px-3"
+        >
+          <SelectValue>
+            {options.find((item) => item.id === value)?.label ??
+              (loading ? "Đang tải..." : "Chọn " + label.toLowerCase())}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent alignItemWithTrigger={false} className="max-h-72">
+          {options.map((item) => (
+            <SelectItem key={item.id} value={item.id}>
+              {item.label}
+            </SelectItem>
+          ))}
+          {!options.length && (
+            <p className="p-3 text-sm text-slate-500">Chưa có dữ liệu.</p>
+          )}
+        </SelectContent>
+      </Select>
+      {error && (
+        <button
+          type="button"
+          onClick={retry}
+          className="mt-2 text-sm text-red-600"
+        >
+          Không tải được dữ liệu. Thử lại
+        </button>
+      )}
+    </div>
+  );
 }

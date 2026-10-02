@@ -1883,6 +1883,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const AccountScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  googleSubject: 'googleSubject',
   passwordHash: 'passwordHash',
   role: 'role',
   status: 'status',

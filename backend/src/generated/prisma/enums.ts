@@ -80,7 +80,6 @@ export type SaturdaySchedule = (typeof SaturdaySchedule)[keyof typeof SaturdaySc
 
 export const MessageType = {
   text: 'text',
-  image: 'image',
   file: 'file'
 } as const
 

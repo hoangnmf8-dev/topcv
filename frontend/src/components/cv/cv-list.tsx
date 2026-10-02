@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Trash2, FileText } from "lucide-react";
+import uploadService from "@/services/upload.service";
 import { toast } from "sonner";
 import { LoadingState } from "@/components/loading-state";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,15 @@ import { useAccountStore } from "@/stores/auth.store";
 import type { CvSummary } from "@/types/cv.type";
 
 export function CvList() {
+  const [viewing, setViewing] = useState<string | null>(null);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState("");
+  async function viewPdf(cv: CvSummary) {
+    if (!cv.fileKey) return;
+    setViewing(cv.id); setPdfUrl(null); setPdfError("");
+    try { setPdfUrl(await uploadService.getUrlFile(cv.fileKey)); }
+    catch { setPdfError("Không thể mở CV. Vui lòng thử lại."); }
+  }
   const account = useAccountStore(s => s.account);
   const accountId = account?.id ?? "";
   const client = useQueryClient();
@@ -29,6 +39,7 @@ export function CvList() {
       await Promise.all([
         client.invalidateQueries({queryKey:cvKeys.all(accountId)}),
         client.invalidateQueries({queryKey:["candidate-overview",accountId]}),
+        client.invalidateQueries({queryKey:["profile-completion",accountId]}),
         client.invalidateQueries({queryKey:["candidate-records",accountId]}),
       ]);
     },
@@ -37,16 +48,17 @@ export function CvList() {
 
   return <div className="mt-6 space-y-4">
     <h3 className="font-bold">Danh sách CV</h3>
+    <Dialog open={!!viewing} onOpenChange={open=>{if(!open){setViewing(null);setPdfUrl(null);}}}><DialogContent className="sm:max-w-4xl"><DialogHeader><DialogTitle>Xem CV PDF</DialogTitle><DialogDescription>CV đã tải lên của bạn.</DialogDescription></DialogHeader>{pdfError?<p role="alert" className="text-red-600">{pdfError}</p>:pdfUrl?<><iframe src={pdfUrl} title="CV PDF" className="h-[65vh] w-full rounded-lg border"/><a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-emerald-700 underline">Mở PDF trong tab mới</a></>:<LoadingState message="Đang tải CV PDF…" />}</DialogContent></Dialog>
     {query.isPending && <LoadingState message="Đang tải CV…" />}
     {query.isError && <button onClick={()=>void query.refetch()} className="text-red-600">Không tải được CV. Thử lại</button>}
-    {query.isSuccess && !query.data.length && <p className="text-sm text-slate-500">Bạn chưa có CV. Chọn Tạo CV mới để bắt đầu.</p>}
+    {query.isSuccess && !query.data.length && <p className="text-sm text-slate-500">Bạn chưa có CV. Tạo CV mới hoặc tải CV PDF lên để bắt đầu.</p>}
     <div className="grid gap-4 xl:grid-cols-2">
       {query.data?.map(cv => <article key={cv.id} className="rounded-xl border p-4">
         <h4 className="font-semibold">{cv.title} {cv.isDefault && <span className="text-xs text-emerald-700">Mặc định</span>}</h4>
         <p className="my-2 text-xs text-slate-500">Cập nhật: {new Date(cv.updatedAt).toLocaleString("vi-VN")}</p>
         <div className="mt-3 flex flex-wrap gap-2">
-          {cv.isEditable ? <Link href={`/cv-builder?id=${cv.id}`} className="inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"><Pencil className="size-4" />Chỉnh sửa CV</Link> : <Button variant="outline" disabled title="CV PDF không có nội dung chỉnh sửa"><Pencil />Chỉnh sửa CV</Button>}
-          <Button variant="destructive" disabled={deletion.isPending} onClick={()=>{deletion.reset();setSelected(cv);}}><Trash2 />Xóa CV</Button>
+          {cv.isEditable ? <Link href={`/cv-builder?id=${cv.id}`} className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"><Pencil className="size-4" />Chỉnh sửa CV</Link> : <Button className="h-10" variant="outline" disabled={!cv.fileKey} onClick={()=>void viewPdf(cv)}><FileText />Xem CV PDF</Button>}
+          <Button className="h-10" variant="destructive" disabled={deletion.isPending} onClick={()=>{deletion.reset();setSelected(cv);}}><Trash2 />Xóa CV</Button>
         </div>
       </article>)}
     </div>

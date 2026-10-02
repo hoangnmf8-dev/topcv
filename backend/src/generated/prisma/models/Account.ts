@@ -27,6 +27,7 @@ export type AggregateAccount = {
 export type AccountMinAggregateOutputType = {
   id: string | null
   email: string | null
+  googleSubject: string | null
   passwordHash: string | null
   role: $Enums.UserRole | null
   status: $Enums.AccountStatus | null
@@ -40,6 +41,7 @@ export type AccountMinAggregateOutputType = {
 export type AccountMaxAggregateOutputType = {
   id: string | null
   email: string | null
+  googleSubject: string | null
   passwordHash: string | null
   role: $Enums.UserRole | null
   status: $Enums.AccountStatus | null
@@ -53,6 +55,7 @@ export type AccountMaxAggregateOutputType = {
 export type AccountCountAggregateOutputType = {
   id: number
   email: number
+  googleSubject: number
   passwordHash: number
   role: number
   status: number
@@ -68,6 +71,7 @@ export type AccountCountAggregateOutputType = {
 export type AccountMinAggregateInputType = {
   id?: true
   email?: true
+  googleSubject?: true
   passwordHash?: true
   role?: true
   status?: true
@@ -81,6 +85,7 @@ export type AccountMinAggregateInputType = {
 export type AccountMaxAggregateInputType = {
   id?: true
   email?: true
+  googleSubject?: true
   passwordHash?: true
   role?: true
   status?: true
@@ -94,6 +99,7 @@ export type AccountMaxAggregateInputType = {
 export type AccountCountAggregateInputType = {
   id?: true
   email?: true
+  googleSubject?: true
   passwordHash?: true
   role?: true
   status?: true
@@ -180,6 +186,7 @@ export type AccountGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type AccountGroupByOutputType = {
   id: string
   email: string
+  googleSubject: string | null
   passwordHash: string
   role: $Enums.UserRole
   status: $Enums.AccountStatus
@@ -214,6 +221,7 @@ export type AccountWhereInput = {
   NOT?: Prisma.AccountWhereInput | Prisma.AccountWhereInput[]
   id?: Prisma.UuidFilter<"Account"> | string
   email?: Prisma.StringFilter<"Account"> | string
+  googleSubject?: Prisma.StringNullableFilter<"Account"> | string | null
   passwordHash?: Prisma.StringFilter<"Account"> | string
   role?: Prisma.EnumUserRoleFilter<"Account"> | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFilter<"Account"> | $Enums.AccountStatus
@@ -233,6 +241,7 @@ export type AccountWhereInput = {
 export type AccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  googleSubject?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -252,6 +261,7 @@ export type AccountOrderByWithRelationInput = {
 export type AccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  googleSubject?: string
   AND?: Prisma.AccountWhereInput | Prisma.AccountWhereInput[]
   OR?: Prisma.AccountWhereInput[]
   NOT?: Prisma.AccountWhereInput | Prisma.AccountWhereInput[]
@@ -269,11 +279,12 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   sentMessages?: Prisma.MessageListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
-}, "id" | "email">
+}, "id" | "email" | "googleSubject">
 
 export type AccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  googleSubject?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -293,6 +304,7 @@ export type AccountScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AccountScalarWhereWithAggregatesInput | Prisma.AccountScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Account"> | string
   email?: Prisma.StringWithAggregatesFilter<"Account"> | string
+  googleSubject?: Prisma.StringNullableWithAggregatesFilter<"Account"> | string | null
   passwordHash?: Prisma.StringWithAggregatesFilter<"Account"> | string
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"Account"> | $Enums.UserRole
   status?: Prisma.EnumAccountStatusWithAggregatesFilter<"Account"> | $Enums.AccountStatus
@@ -306,6 +318,7 @@ export type AccountScalarWhereWithAggregatesInput = {
 export type AccountCreateInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -325,6 +338,7 @@ export type AccountCreateInput = {
 export type AccountUncheckedCreateInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -344,6 +358,7 @@ export type AccountUncheckedCreateInput = {
 export type AccountUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -363,6 +378,7 @@ export type AccountUpdateInput = {
 export type AccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -382,6 +398,7 @@ export type AccountUncheckedUpdateInput = {
 export type AccountCreateManyInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -395,6 +412,7 @@ export type AccountCreateManyInput = {
 export type AccountUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -408,6 +426,7 @@ export type AccountUpdateManyMutationInput = {
 export type AccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -421,6 +440,7 @@ export type AccountUncheckedUpdateManyInput = {
 export type AccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  googleSubject?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -434,6 +454,7 @@ export type AccountCountOrderByAggregateInput = {
 export type AccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  googleSubject?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -447,6 +468,7 @@ export type AccountMaxOrderByAggregateInput = {
 export type AccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  googleSubject?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -469,6 +491,10 @@ export type AccountScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type EnumUserRoleFieldUpdateOperationsInput = {
@@ -580,6 +606,7 @@ export type AccountUpdateOneRequiredWithoutPurchasedOrdersNestedInput = {
 export type AccountCreateWithoutAuditLogsInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -598,6 +625,7 @@ export type AccountCreateWithoutAuditLogsInput = {
 export type AccountUncheckedCreateWithoutAuditLogsInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -632,6 +660,7 @@ export type AccountUpdateToOneWithWhereWithoutAuditLogsInput = {
 export type AccountUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -650,6 +679,7 @@ export type AccountUpdateWithoutAuditLogsInput = {
 export type AccountUncheckedUpdateWithoutAuditLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -668,6 +698,7 @@ export type AccountUncheckedUpdateWithoutAuditLogsInput = {
 export type AccountCreateWithoutCandidateInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -686,6 +717,7 @@ export type AccountCreateWithoutCandidateInput = {
 export type AccountUncheckedCreateWithoutCandidateInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -720,6 +752,7 @@ export type AccountUpdateToOneWithWhereWithoutCandidateInput = {
 export type AccountUpdateWithoutCandidateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -738,6 +771,7 @@ export type AccountUpdateWithoutCandidateInput = {
 export type AccountUncheckedUpdateWithoutCandidateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -756,6 +790,7 @@ export type AccountUncheckedUpdateWithoutCandidateInput = {
 export type AccountCreateWithoutCompanyInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -774,6 +809,7 @@ export type AccountCreateWithoutCompanyInput = {
 export type AccountUncheckedCreateWithoutCompanyInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -808,6 +844,7 @@ export type AccountUpdateToOneWithWhereWithoutCompanyInput = {
 export type AccountUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -826,6 +863,7 @@ export type AccountUpdateWithoutCompanyInput = {
 export type AccountUncheckedUpdateWithoutCompanyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -844,6 +882,7 @@ export type AccountUncheckedUpdateWithoutCompanyInput = {
 export type AccountCreateWithoutSentMessagesInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -862,6 +901,7 @@ export type AccountCreateWithoutSentMessagesInput = {
 export type AccountUncheckedCreateWithoutSentMessagesInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -896,6 +936,7 @@ export type AccountUpdateToOneWithWhereWithoutSentMessagesInput = {
 export type AccountUpdateWithoutSentMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -914,6 +955,7 @@ export type AccountUpdateWithoutSentMessagesInput = {
 export type AccountUncheckedUpdateWithoutSentMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -932,6 +974,7 @@ export type AccountUncheckedUpdateWithoutSentMessagesInput = {
 export type AccountCreateWithoutNotificationsInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -950,6 +993,7 @@ export type AccountCreateWithoutNotificationsInput = {
 export type AccountUncheckedCreateWithoutNotificationsInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -984,6 +1028,7 @@ export type AccountUpdateToOneWithWhereWithoutNotificationsInput = {
 export type AccountUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -1002,6 +1047,7 @@ export type AccountUpdateWithoutNotificationsInput = {
 export type AccountUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -1020,6 +1066,7 @@ export type AccountUncheckedUpdateWithoutNotificationsInput = {
 export type AccountCreateWithoutPurchasedOrdersInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -1038,6 +1085,7 @@ export type AccountCreateWithoutPurchasedOrdersInput = {
 export type AccountUncheckedCreateWithoutPurchasedOrdersInput = {
   id?: string
   email: string
+  googleSubject?: string | null
   passwordHash: string
   role: $Enums.UserRole
   status?: $Enums.AccountStatus
@@ -1072,6 +1120,7 @@ export type AccountUpdateToOneWithWhereWithoutPurchasedOrdersInput = {
 export type AccountUpdateWithoutPurchasedOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -1090,6 +1139,7 @@ export type AccountUpdateWithoutPurchasedOrdersInput = {
 export type AccountUncheckedUpdateWithoutPurchasedOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  googleSubject?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumAccountStatusFieldUpdateOperationsInput | $Enums.AccountStatus
@@ -1166,6 +1216,7 @@ export type AccountCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Typ
 export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  googleSubject?: boolean
   passwordHash?: boolean
   role?: boolean
   status?: boolean
@@ -1186,6 +1237,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  googleSubject?: boolean
   passwordHash?: boolean
   role?: boolean
   status?: boolean
@@ -1199,6 +1251,7 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  googleSubject?: boolean
   passwordHash?: boolean
   role?: boolean
   status?: boolean
@@ -1212,6 +1265,7 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type AccountSelectScalar = {
   id?: boolean
   email?: boolean
+  googleSubject?: boolean
   passwordHash?: boolean
   role?: boolean
   status?: boolean
@@ -1222,7 +1276,7 @@ export type AccountSelectScalar = {
   deletedAt?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "status" | "lastLoginAt" | "verifyEmail" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "googleSubject" | "passwordHash" | "role" | "status" | "lastLoginAt" | "verifyEmail" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   candidate?: boolean | Prisma.Account$candidateArgs<ExtArgs>
   company?: boolean | Prisma.Account$companyArgs<ExtArgs>
@@ -1248,6 +1302,7 @@ export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
+    googleSubject: string | null
     passwordHash: string
     role: $Enums.UserRole
     status: $Enums.AccountStatus
@@ -1687,6 +1742,7 @@ export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.
 export interface AccountFieldRefs {
   readonly id: Prisma.FieldRef<"Account", 'String'>
   readonly email: Prisma.FieldRef<"Account", 'String'>
+  readonly googleSubject: Prisma.FieldRef<"Account", 'String'>
   readonly passwordHash: Prisma.FieldRef<"Account", 'String'>
   readonly role: Prisma.FieldRef<"Account", 'UserRole'>
   readonly status: Prisma.FieldRef<"Account", 'AccountStatus'>

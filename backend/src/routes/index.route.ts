@@ -1,4 +1,6 @@
 import cvRouter from "./cv.route";
+import applicationRouter from "./application.route";
+import savedJobRouter from "./saved-job.route";
 import employerRouter from "./employer.route";
 import candidateRouter from "./candidate.route";
 import express from "express";
@@ -12,6 +14,8 @@ import aiRouter from "./ai.route";
 import conversationRouter from "./conversation.route";
 
 const indexRouter = express.Router();
+indexRouter.use("/application", applicationRouter);
+indexRouter.use("/saved-job", savedJobRouter);
 indexRouter.use("/cv", cvRouter);
 indexRouter.use("/auth", authRouter);
 indexRouter.use("/upload", uploadRouter);

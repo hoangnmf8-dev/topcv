@@ -28,6 +28,8 @@ import candidateService from "@/services/candidate.service";
 
 export function CandidateProfileForm() {
   const id = useId();
+  const client = useQueryClient();
+  const account = useAccountStore(state => state.account);
   const { candidate, setCandidate } = useCandidateStore((state) => state);
   const [avatarFile, setAvatarUrl] = useState<File>();
   const avatarUrl = useImagePreview(avatarFile, candidate?.avatarUrl ?? "");
@@ -49,7 +51,8 @@ export function CandidateProfileForm() {
         phone: candidate?.phone ?? "",
         headline: candidate?.headline ?? "",
         experienceYears: candidate?.experienceYears ?? 0,
-        address: candidate?.address,
+        address: candidate?.address ?? "",
+        careerGoal: candidate?.careerGoal ?? "",
         isSearchable: candidate?.isSearchable,
       },
     });
@@ -85,6 +88,9 @@ export function CandidateProfileForm() {
       );
       if (candidateReponse.success) {
         await setCandidate(candidateReponse.data);
+        useAccountStore.getState().updateCandidate(candidateReponse.data);
+        await client.invalidateQueries({ queryKey: ["profile-completion", account?.id] });
+        await client.invalidateQueries({ queryKey: ["candidate-overview", account?.id] });
         setAvatarUrl(undefined);
         toast.success(candidateReponse.message || "Lưu thông tin thành công");
         clearErrors("root.server");
@@ -107,10 +113,11 @@ export function CandidateProfileForm() {
       phone: candidate?.phone ?? "",
       headline: candidate?.headline ?? "",
       experienceYears: candidate?.experienceYears ?? 0,
-      address: candidate?.address,
+      address: candidate?.address ?? "",
+        careerGoal: candidate?.careerGoal ?? "",
       isSearchable: candidate?.isSearchable,
     });
-  }, []);
+  }, [candidate, reset]);
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="text-xl font-bold">Chỉnh sửa hồ sơ ứng viên</h2>

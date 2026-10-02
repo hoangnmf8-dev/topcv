@@ -5,12 +5,14 @@ import { CandidateInfoRegister } from "../types/auth.type";
 import { CandidateUpdate } from "../types/candidate.type";
 import { hashString } from "../utils/hashing";
 import { prisma } from "../utils/prisma";
+import type { z } from "zod";
+import type { candidateUpdateSchema } from "../validators/candidate.validate";
 
 class CandidateService {
   async createCandidate(candidateInfo: CandidateInfoRegister) {
     const {fullName, email, phone, password, confirmPassword, role} = candidateInfo;
     return await prisma.$transaction(async (tx) => {
-      const newCandidateAccount = await prisma.account.create({
+      const newCandidateAccount = await tx.account.create({
         data: {
           email,
           role: "candidate", 
@@ -19,7 +21,7 @@ class CandidateService {
       });
       const newCandidateProfile = await prisma.candidate.create({
         data: {
-          phone,
+          phone: phone ?? null,
           fullName,
           accountId: newCandidateAccount.id
         }
@@ -27,11 +29,13 @@ class CandidateService {
       return newCandidateAccount;
     });
   };
-  async updateCandidate(id: string, data: CandidateUpdate) {
+  async updateCandidate(id: string, data: z.infer<typeof candidateUpdateSchema>, accountId: string) {
     const candidate = await prisma.candidate.findUnique({
       where: {
         id,
-        deletedAt: null
+        deletedAt: null,
+        accountId,
+        account: { role: "candidate", status: "active", deletedAt: null }
       }
     });
     if(!candidate) {
@@ -42,7 +46,13 @@ class CandidateService {
         id
       },
       data: {
-        ...data
+        fullName: data.fullName,
+        phone: data.phone,
+        isSearchable: data.isSearchable,
+        ...(data.headline !== undefined ? {headline: data.headline} : {}),
+        ...(data.experienceYears !== undefined ? {experienceYears: data.experienceYears} : {}),
+        ...(data.address !== undefined ? {address: data.address} : {}),
+        ...(data.careerGoal !== undefined ? {careerGoal: data.careerGoal} : {}),
       }
     })
     return newCandidate

@@ -27,7 +27,7 @@ export const candidateProfileSchema = z.object({
     .string()
     .trim()
     .min(1, "Không được để trống")
-    .max(200, "Tối đa 200 kí tự"),
+    .max(150, "Tối đa 150 kí tự"),
   phone: z
     .string()
     .trim()
@@ -41,7 +41,7 @@ export const candidateProfileSchema = z.object({
   experienceYears: z
     .number()
     .int("Phải là số nguyên không âm")
-    .min(0)
+    .min(0).max(80)
     .optional(),
   address: z.string().trim().max(300, "Địa chỉ tối đa 300 ký tự").optional(),
   isSearchable: z.boolean(),

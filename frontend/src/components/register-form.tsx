@@ -216,7 +216,7 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
         <Controller control={control} name="termsAccepted" render={({ field }) => <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground"><Checkbox id="terms" className="mt-0.5" checked={field.value} onCheckedChange={(checked) => field.onChange(checked === true)} /><span className="leading-snug">Tôi đồng ý với <a href="#" className="font-medium text-primary hover:underline">Điều khoản dịch vụ</a> và <a href="#" className="font-medium text-primary hover:underline">Chính sách bảo mật</a></span></label>} />
         {errors.termsAccepted && <ErrorText>{errors.termsAccepted.message}</ErrorText>}
         <Button type="submit" size="lg" className="w-full font-semibold" disabled={isSubmitting}><Mail />{isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản & nhận OTP"}</Button>
-        <GoogleButton label="Đăng ký với Google" />
+        <GoogleButton label="Đăng ký với Google" role={isCompany ? "company" : "candidate"} />
       </FieldGroup>
     </AuthForm>
   );

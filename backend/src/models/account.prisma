@@ -1,6 +1,7 @@
 model Account {
   id           String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String        @unique @db.VarChar(255)
+  googleSubject String?      @unique @map("google_subject") @db.VarChar(255)
   passwordHash String        @map("password_hash") @db.VarChar(255)
   role         UserRole
   status       AccountStatus @default(active)

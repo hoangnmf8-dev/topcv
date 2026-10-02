@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 function GoogleIcon() {
   return (
@@ -22,18 +23,31 @@ function GoogleIcon() {
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38Z"
       />
     </svg>
-  )
+  );
 }
 
-export function GoogleButton({ label }: { label: string }) {
+export function GoogleButton({
+  label,
+  role = "candidate",
+}: {
+  label: string;
+  role?: "candidate" | "company";
+}) {
+  const [pending, setPending] = useState(false);
   return (
     <Button
       type="button"
       variant="outline"
       className="w-full bg-card font-medium"
+      disabled={pending}
+      onClick={() => {
+        if (pending) return;
+        setPending(true);
+        window.location.assign(`/api/auth/google?role=${role}`);
+      }}
     >
       <GoogleIcon />
-      {label}
+      {pending ? "Đang kết nối Google..." : label}
     </Button>
-  )
+  );
 }

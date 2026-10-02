@@ -1,4 +1,5 @@
 "use client";
+import { useSavedJobs } from "@/hooks/use-saved-jobs";
 
 import { LoadingState } from "@/components/loading-state";
 import { JobCard } from "@/components/job-card";
@@ -217,11 +218,11 @@ function FieldJobsContent({
     [experience, setExperience] = useState("Tất cả"),
     [mode, setMode] = useState("Tất cả"),
     [sort, setSort] = useState("newest"),
-    [saved, setSaved] = useState<string[]>([]),
     [saturdaySchedule, setSaturdaySchedule] = useState<SaturdayFilter>(null),
     [specialties, setSpecialties] = useState<string[]>(initialSpecialties),
     [page, setPage] = useState(1);
   const [salaryReset, setSalaryReset] = useState(0);
+  const { saved, toggle } = useSavedJobs();
   const [companyCode, setCompanyCode] = useState(initialCompanyCode);
   const [searchQuery, setSearchQuery] = useState(initialSearch.query.trim());
   const [searchLocations, setSearchLocations] = useState(initialLocations);
@@ -514,11 +515,9 @@ function FieldJobsContent({
                     <JobCard
                       key={job.id}
                       job={job}
-                      saved={saved.includes(job.id)}
+                      saved={saved.has(job.id)}
                       onSelect={() => router.push("/jobs/" + job.id)}
-                      onToggleSave={() =>
-                        toast.info("Lưu việc làm hiện chưa khả dụng.")
-                      }
+                      onToggleSave={() => toggle(job.id)}
                     />
                   ))}
                 </div>

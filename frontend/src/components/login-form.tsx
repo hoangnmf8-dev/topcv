@@ -11,12 +11,26 @@ import { loginAction } from "@/actions/auth.action";
 import { AuthForm } from "@/components/auth-form";
 import { GoogleButton } from "@/components/google-button";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { useAccountStore } from "@/stores/auth.store";
 import { type LoginInput, loginSchema } from "@/validators/auth.validate";
 
-export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }) {
+export function LoginForm({
+  onForgotPassword,
+}: {
+  onForgotPassword: () => void;
+}) {
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
   const router = useRouter();
@@ -42,17 +56,27 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }
       toast.success("Đăng nhập thành công");
       router.replace(account.role === "company" ? "/employer" : "/");
     } catch {
-      setServerError("Đăng nhập thành công nhưng không thể tải hồ sơ. Vui lòng thử lại.");
+      setServerError(
+        "Đăng nhập thành công nhưng không thể tải hồ sơ. Vui lòng thử lại.",
+      );
     }
   }
 
   return (
-    <AuthForm onSubmit={handleSubmit(onSubmit)} onSubmitError={() => setServerError("Không thể gửi yêu cầu đăng nhập. Vui lòng thử lại.")} noValidate>
+    <AuthForm
+      onSubmit={handleSubmit(onSubmit)}
+      onSubmitError={() =>
+        setServerError("Không thể gửi yêu cầu đăng nhập. Vui lòng thử lại.")
+      }
+      noValidate
+    >
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="login-email">Email</FieldLabel>
           <InputGroup className="h-11" aria-invalid={Boolean(errors.email)}>
-            <InputGroupAddon><Mail /></InputGroupAddon>
+            <InputGroupAddon>
+              <Mail />
+            </InputGroupAddon>
             <InputGroupInput
               id="login-email"
               type="email"
@@ -62,13 +86,19 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }
               {...register("email", { onChange: () => setServerError("") })}
             />
           </InputGroup>
-          {errors.email && <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="mt-1 text-sm text-destructive">
+              {errors.email.message}
+            </p>
+          )}
         </Field>
 
         <Field>
           <FieldLabel htmlFor="login-password">Mật khẩu</FieldLabel>
           <InputGroup className="h-11" aria-invalid={Boolean(errors.password)}>
-            <InputGroupAddon><Lock /></InputGroupAddon>
+            <InputGroupAddon>
+              <Lock />
+            </InputGroupAddon>
             <InputGroupInput
               id="login-password"
               type={showPassword ? "text" : "password"}
@@ -89,18 +119,38 @@ export function LoginForm({ onForgotPassword }: { onForgotPassword: () => void }
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>
-          {errors.password && <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="mt-1 text-sm text-destructive">
+              {errors.password.message}
+            </p>
+          )}
         </Field>
 
         <div className="flex items-center justify-between gap-4">
-          <button type="button" onClick={onForgotPassword} className="text-sm font-medium text-primary hover:underline">
+          <button
+            type="button"
+            onClick={onForgotPassword}
+            className="text-sm font-medium text-primary hover:underline"
+          >
             Quên mật khẩu?
           </button>
         </div>
 
-        {serverError && <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{serverError}</p>}
+        {serverError && (
+          <p
+            role="alert"
+            className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          >
+            {serverError}
+          </p>
+        )}
 
-        <Button type="submit" size="lg" disabled={isSubmitting} className="w-full font-semibold">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={isSubmitting}
+          className="w-full font-semibold"
+        >
           {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
         </Button>
         <FieldSeparator>Hoặc đăng nhập bằng</FieldSeparator>

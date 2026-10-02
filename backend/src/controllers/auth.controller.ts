@@ -2,8 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import authService from "../services/auth.service";
 import { successResponse } from "../utils/response";
 
-import { redisClient } from "../utils/redis";
-import { uuidv7 } from "uuidv7";
+import googleAuthService from "../services/google-auth.service";
+import {
+  googleStartSchema,
+  googleCallbackSchema,
+} from "../validators/google-auth.validate";
+import { BadRequest } from "../exceptions";
 import { SUCCESS_MESSAGE } from "../constants/message.constant";
 import { COOKIE_NAME } from "../constants/cookie.constant";
 import { TTL } from "../constants/ttl.constant";
@@ -30,13 +34,17 @@ class AuthController {
     const { email, otp } = req.body;
     try {
       const token = await authService.registerVerifyEmail(email, otp);
-      res.cookie(COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN, token.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
-        path: "/auth",
-      });
+      res.cookie(
+        COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN,
+        token.refreshToken,
+        {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
+          path: "/auth",
+        },
+      );
       return successResponse(
         res,
         token.accessToken,
@@ -50,7 +58,12 @@ class AuthController {
     try {
       const { email } = req.body;
       await authService.resendVerifyEmail(email);
-      return successResponse(res, {}, SUCCESS_MESSAGE.AUTH_CONTROLER.RESEND_OTP, 201);
+      return successResponse(
+        res,
+        {},
+        SUCCESS_MESSAGE.AUTH_CONTROLER.RESEND_OTP,
+        201,
+      );
     } catch (error) {
       next(error);
     }
@@ -59,13 +72,17 @@ class AuthController {
     const body = req.body;
     try {
       const token = await authService.login(body);
-      res.cookie(COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN, token?.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
-        path: "/auth",
-      });
+      res.cookie(
+        COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN,
+        token?.refreshToken,
+        {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
+          path: "/auth",
+        },
+      );
       return successResponse(res, token, SUCCESS_MESSAGE.AUTH_CONTROLER.LOGIN);
     } catch (error) {
       next(error);
@@ -91,7 +108,12 @@ class AuthController {
     try {
       const accessToken = req.accesToken as string;
       const profile = await authService.getProfile(accessToken);
-      return successResponse(res, profile, SUCCESS_MESSAGE.AUTH_CONTROLER.GET_PROFILE, 200);
+      return successResponse(
+        res,
+        profile,
+        SUCCESS_MESSAGE.AUTH_CONTROLER.GET_PROFILE,
+        200,
+      );
     } catch (error) {
       next(error);
     }
@@ -100,14 +122,23 @@ class AuthController {
     try {
       const refreshToken = req.cookies.refreshToken;
       const newToken = await authService.getNewToken(refreshToken);
-      res.cookie(COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN, newToken?.newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
-        path: "/auth",
-      });
-      return successResponse(res, newToken, SUCCESS_MESSAGE.AUTH_CONTROLER.REFRESH_TOKEN, 201);
+      res.cookie(
+        COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN,
+        newToken?.newRefreshToken,
+        {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
+          path: "/auth",
+        },
+      );
+      return successResponse(
+        res,
+        newToken,
+        SUCCESS_MESSAGE.AUTH_CONTROLER.REFRESH_TOKEN,
+        201,
+      );
     } catch (error) {
       next(error);
     }
@@ -116,7 +147,11 @@ class AuthController {
     try {
       const { email } = req.body;
       const account = await authService.forgotPassword(email);
-      return successResponse(res, account, SUCCESS_MESSAGE.AUTH_CONTROLER.CREATE_OTP);
+      return successResponse(
+        res,
+        account,
+        SUCCESS_MESSAGE.AUTH_CONTROLER.CREATE_OTP,
+      );
     } catch (error) {
       next(error);
     }
@@ -125,7 +160,11 @@ class AuthController {
     try {
       const { accountId, password } = req.body;
       await authService.resetForgotPassword(accountId, password);
-      return successResponse(res, {}, SUCCESS_MESSAGE.AUTH_CONTROLER.RESET_PASSWORD);
+      return successResponse(
+        res,
+        {},
+        SUCCESS_MESSAGE.AUTH_CONTROLER.RESET_PASSWORD,
+      );
     } catch (error) {
       next(error);
     }
@@ -134,67 +173,67 @@ class AuthController {
     try {
       const { accountId, password } = req.body;
       await authService.resetForgotPassword(accountId, password);
-      return successResponse(res, {}, SUCCESS_MESSAGE.AUTH_CONTROLER.RESET_PASSWORD);
+      return successResponse(
+        res,
+        {},
+        SUCCESS_MESSAGE.AUTH_CONTROLER.RESET_PASSWORD,
+      );
     } catch (error) {
       next(error);
     }
   }
   async googleRedirect(req: Request, res: Response, next: NextFunction) {
-    const { role } = req.query; //frontend dùng window location chuyển hướng window.location.href =
-    //`http://localhost:3100/auth/google?role=${role}`;
-    const state = uuidv7();
-    await redisClient.setEx(`oauth2:${state}`, 5 * 60, role as unknown as string);
-    const url = `https://accounts.google.com/o/oauth2/v2/auth`;
-    const params = {
-      client_id: process.env.GOOGLE_CLIENT_ID,
-      redirect_uri: process.env.GOOGLE_CALLBACK_URL,
-      response_type: "code",
-      scope: "email profile",
-      access_type: "offline",
-      state,
-    };
-    const urlRedirect = `${url}?${new URLSearchParams(params as unknown as URLSearchParams).toString()}`;
-    res.redirect(urlRedirect);
+    try {
+      const input = googleStartSchema.safeParse(req.query);
+      if (!input.success)
+        throw new BadRequest(
+          "Thông tin đăng nhập Google không hợp lệ",
+          "GOOGLE_INVALID_INPUT",
+        );
+      return successResponse(
+        res,
+        await googleAuthService.start(input.data),
+        "Tiếp tục đăng nhập Google",
+      );
+    } catch (error) {
+      next(error);
+    }
   }
   async googleCallback(req: Request, res: Response, next: NextFunction) {
-    console.log(req.query)
-    const { code, state } = req.query;
-    const response = await fetch(`https:oauth2.googleapis.com/token`, {
-      method: "POST",
-      body: JSON.stringify({
-        code,
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: process.env.GOOGLE_CALLBACK_URL,
-        grant_type: "authorization_code",
-      }),
-    });
-    const { access_token } = await response.json();
-    const responseUser = await fetch(
-      `https://www.googleapis.com/oauth2/v2/userinfo`,
-      {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      },
-    );
-    const { email, name, picture } = await responseUser.json();
-    const token = await authService.authGoogle(
-      email,
-      name,
-      state as unknown as string,
-      picture,
-    );
-    res.cookie(COOKIE_NAME.AUTH_CONTROLLER.REFRESH_TOKEN, token?.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: TTL.AUTH_CONTROLLER.REFRESH_TOKEN,
-      path: "/auth",
-    });
-    return successResponse(res, token.accessToken, SUCCESS_MESSAGE.AUTH_CONTROLER.LOGIN);
-  };
-};
+    try {
+      const input = googleCallbackSchema.safeParse(req.body);
+      if (!input.success)
+        throw new BadRequest(
+          "Thông tin xác minh Google không hợp lệ",
+          "GOOGLE_INVALID_INPUT",
+        );
+      return successResponse(
+        res,
+        await googleAuthService.callback(input.data),
+        "Đăng nhập Google thành công",
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+  googleCallbackRedirect(req: Request, res: Response, next: NextFunction) {
+    try {
+      const url = new URL(
+        "/api/auth/google/callback",
+        process.env.FRONTEND_URL ?? "http://localhost:3000",
+      );
+      for (const key of ["code", "state", "error"]) {
+        const value = req.query[key];
+        if (typeof value === "string") url.searchParams.set(key, value);
+      }
+      res.setHeader("Cache-Control", "no-store");
+      res.setHeader("Referrer-Policy", "no-referrer");
+      res.redirect(url.toString());
+    } catch (error) {
+      next(error);
+    }
+  }
+}
 
 const authController = new AuthController();
 export default authController;

@@ -1,3 +1,5 @@
+import createCode from "../utils/code";
+import completionService from "./profile-completion.service";
 import { uuidv7 } from "zod";
 import {
   AccountBlockedError,
@@ -124,7 +126,7 @@ class AuthService {
         id: newAccount.id,
       },
       data: {
-        verfifyEmail: true,
+        verifyEmail: true,
       },
     });
     const accessToken = jwtService.createAccessToken(
@@ -271,6 +273,11 @@ class AuthService {
         },
       },
     });
+    if (existProfile?.candidate) {
+      const completion = await completionService.get(existProfile.id);
+      const profile = await prisma.candidate.findUnique({ where: { id: existProfile.candidate.id } });
+      return { ...existProfile, candidate: { ...profile, ...existProfile.candidate, profileCompletion: completion.percentage } };
+    }
     return existProfile;
   }
   async logout(accessToken: string, refreshToken: string) {
@@ -383,52 +390,31 @@ class AuthService {
       },
     });
   }
-  async authGoogle(
-    email: string,
-    name: string,
-    state: string,
-    picture?: string,
-  ) {
-    const role = await redisClient.get(`oauth2:${state}`);
-    console.log("🚀 ~ AuthService ~ authGoogle ~ role:", role);
-    let newAccount: any;
-    const existAccount = await prisma.account.findUnique({
-      where: {
-        email,
-      },
+  async authGoogle(email: string, name: string, role: "candidate" | "company", authoritativeEmail: boolean, googleSubject: string) {
+    const account = await prisma.$transaction(async (tx) => {
+      const linked = await tx.account.findUnique({ where: { googleSubject } });
+      const existing = linked ?? await tx.account.findUnique({ where: { email } });
+      if (existing) {
+        if (existing.deletedAt || existing.status !== "active" || !["candidate", "company"].includes(existing.role)) {
+          throw new AccountBlockedError("Tài khoản không được phép đăng nhập", "GOOGLE_ACCOUNT_BLOCKED");
+        }
+        if (!linked && (!authoritativeEmail || (existing.googleSubject && existing.googleSubject !== googleSubject))) throw new BadRequest("Vui lòng đăng nhập bằng mật khẩu cho email này", "GOOGLE_EMAIL_LINK_DENIED");
+        return tx.account.update({ where: { id: existing.id }, data: { googleSubject, verifyEmail: true, lastLoginAt: new Date() } });
+      }
+      const fullName = name.trim().slice(0, 150) || email.split("@")[0]!;
+      return tx.account.create({ data: {
+        email, role, googleSubject, passwordHash: hashString(cryptoRandomString({ length: 64, type: "url-safe" })),
+        verifyEmail: true, lastLoginAt: new Date(),
+        ...(role === "candidate" ? { candidate: { create: { fullName } } } :
+          { company: { create: { name: fullName, code: createCode(fullName) } } }),
+      } });
     });
-    //Đăng kí
-    if (!existAccount) {
-      if (role === ROLE.CANDIDATE) {
-        newAccount = await candidateService.createCandidate({
-          role,
-          email,
-          fullName: name,
-        });
-      }
-      if (role === ROLE.COMPANY) {
-        newAccount = await companyService.createCompany({
-          role,
-          email,
-          fullName: name,
-        });
-      }
-    }
-    if (existAccount) {
-      newAccount = existAccount;
-    }
-    const accessToken = jwtService.createAccessToken(
-      newAccount.id,
-      newAccount.role,
-    );
-    const refreshToken = jwtService.createRefreshToken(
-      newAccount.id,
-      newAccount.role,
-    );
-    //Lưu refresh token vào redis
+    const accessToken = jwtService.createAccessToken(account.id, account.role);
+    const refreshToken = jwtService.createRefreshToken(account.id, account.role);
     await this.saveRefreshToken(accessToken, refreshToken);
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, role: account.role };
   }
+
 }
 const authService = new AuthService();
 export default authService;

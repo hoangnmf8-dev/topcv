@@ -101,16 +101,16 @@ class UploadService {
     }
   }
   async createUploadUrl(accountId: string, input: PresignUploadInput) {
-    if (input.purpose === "cvImage") {
+    if (["cvImage", "cv"].includes(input.purpose)) {
       const candidate = await prisma.candidate.findFirst({
         where: {
           accountId,
           deletedAt: null,
-          account: { status: "active", deletedAt: null },
+          account: { role: "candidate", status: "active", deletedAt: null },
         },
       });
       if (!candidate)
-        throw new AppError("Không có quyền tải ảnh CV", "FORBIDDEN", 403);
+        throw new AppError("Không có quyền tải CV", "FORBIDDEN", 403);
     }
     this.validateFile(input);
     const rule = this.uploadRules[input.purpose];
@@ -231,7 +231,7 @@ class UploadService {
       throw new AppError("Key CV không hợp lệ", "INVALID_CV_KEY", 400);
     }
     const candidate = await prisma.candidate.findFirst({
-      where: { accountId, deletedAt: null },
+      where: { accountId, deletedAt: null, account: { role: "candidate", status: "active", deletedAt: null } },
       select: { id: true },
     });
     if (!candidate)
@@ -249,20 +249,20 @@ class UploadService {
     ) {
       throw new AppError("File CV không hợp lệ", "INVALID_CV_FILE", 400);
     }
+    const header = await r2Client.send(new GetObjectCommand({ Bucket: R2_PRIVATE_BUCKET_NAME, Key: input.objectKey, Range: "bytes=0-4" }));
+    const bytes = await header.Body?.transformToByteArray();
+    if (!bytes || Buffer.from(bytes).toString("ascii") !== "%PDF-")
+      throw new AppError("Nội dung file không phải PDF", "INVALID_CV_FILE", 400);
     return prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT id FROM candidate WHERE id = ${candidate.id}::uuid FOR UPDATE`;
+      const existing = await tx.cv.findFirst({ where: { candidateId: candidate.id, fileKey: input.objectKey } });
+      if (existing?.deletedAt) throw new AppError("CV đã bị xóa, hãy chọn lại file để tải lên", "CV_DELETED", 409);
       if (input.isDefault)
         await tx.cv.updateMany({
-          where: { candidateId: candidate.id, isDefault: true },
+          where: { candidateId: candidate.id, isDefault: true, deletedAt: null },
           data: { isDefault: false },
         });
-      const existing = await tx.cv.findFirst({
-        where: {
-          candidateId: candidate.id,
-          fileKey: input.objectKey,
-          deletedAt: null,
-        },
-      });
-      const data = { title: input.title, isDefault: input.isDefault ?? false };
+      const data = { title: input.title, ...(input.isDefault !== undefined ? {isDefault: input.isDefault} : {}) };
       return existing
         ? tx.cv.update({ where: { id: existing.id }, data })
         : tx.cv.create({

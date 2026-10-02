@@ -12,6 +12,15 @@ export function AuthCard() {
   const [tab, setTab] = React.useState("login")
   const [forgotOpen, setForgotOpen] = React.useState(false)
   const [verificationActive, setVerificationActive] = React.useState(false)
+  const [googleError, setGoogleError] = React.useState("")
+  React.useEffect(() => {
+    const url = new URL(window.location.href)
+    const error = url.searchParams.get("authError")
+    if (!error) return
+    setGoogleError(error === "google_cancelled" ? "Bạn đã hủy đăng nhập Google." : error === "google_unavailable" ? "Đăng nhập Google chưa khả dụng. Vui lòng thử lại sau." : "Không thể đăng nhập Google. Vui lòng thử lại hoặc đăng nhập bằng mật khẩu.")
+    url.searchParams.delete("authError")
+    window.history.replaceState(window.history.state, "", url)
+  }, [])
 
   return (
     <div className="w-full max-w-md">
@@ -24,6 +33,7 @@ export function AuthCard() {
 
       <div className="rounded-2xl border border-border bg-card p-6 shadow-xl shadow-foreground/5 sm:p-8">
         <Tabs value={tab} onValueChange={setTab}>
+          {googleError && <p role="alert" className="mb-4 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{googleError}</p>}
           <TabsList className={`h-11 w-full rounded-xl bg-muted p-1 ${verificationActive ? "hidden" : ""}`}>
             <TabsTrigger value="login" className="rounded-lg text-sm font-semibold">
               Đăng nhập

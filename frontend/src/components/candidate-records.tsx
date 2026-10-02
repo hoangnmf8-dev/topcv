@@ -1,12 +1,13 @@
 "use client";
 
 import { LoadingState } from "@/components/loading-state";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { httpRequest } from "@/lib/utils";
 import { formatJobSalary } from "@/lib/job-salary";
 import { useAccountStore } from "@/stores/auth.store";
+import { useSavedJobs } from "@/hooks/use-saved-jobs";
 export type RecordJob={id:string;title:string;salaryMin:string|null;salaryMax:string|null;currency:string|null;status:string;deletedAt:string|null;deadlineAt:string|null;company:{name:string;deletedAt:string|null};province:{name:string}};
 type Row={id?:string;jobPostId:string;status?:string;createdAt?:string;appliedAt?:string;updatedAt?:string;coverLetter?:string|null;cv?:{title:string}|null;jobPost:RecordJob};
 export function ReadJob({job}:{job:RecordJob}) {
@@ -16,10 +17,12 @@ export function ReadJob({job}:{job:RecordJob}) {
 const labels:Record<string,string>={submitted:"Đã nộp",reviewing:"Đang xem xét",interview:"Phỏng vấn",hired:"Đã tuyển",rejected:"Từ chối"};
 export function CandidateRecords({kind}:{kind:"applications"|"saved"}) {
  const account=useAccountStore(s=>s.account);
+ const savedJobs=useSavedJobs();
  const [search,setSearch]=useState(""),[keyword,setKeyword]=useState(""),[status,setStatus]=useState(""),[page,setPage]=useState(1);
  const query=useQuery<{items:Row[];total:number;totalPages:number}>({queryKey:["candidate-records",account?.id,kind,keyword,status,page],enabled:!!account,
  placeholderData:(previous, previousQuery)=>previousQuery?.queryKey[1]===account?.id && previousQuery?.queryKey[2]===kind ? previous : undefined,
  queryFn:async({signal})=>(await httpRequest.get<{items:Row[];total:number;totalPages:number}>("/candidate/me/"+kind,{signal,params:{page,query:keyword,...(kind==="applications"&&status?{status}:{})}})).data});
+ useEffect(()=>{if(query.data && !query.isPlaceholderData){const last=Math.max(1,query.data.totalPages);if(page>last)setPage(last);}},[query.data,query.isPlaceholderData,page]);
  if(!account)return <p className="rounded-2xl bg-white p-6">Vui lòng đăng nhập tài khoản ứng viên.</p>;
  return <section className="rounded-2xl border bg-white p-6 shadow-sm">
  <h2 className="text-xl font-bold">{kind==="applications"?"Việc đã ứng tuyển":"Việc làm đã lưu"}</h2>
@@ -32,7 +35,7 @@ export function CandidateRecords({kind}:{kind:"applications"|"saved"}) {
  {query.isPending?<LoadingState message="Đang tải..." />:query.isError?<p role="alert">Không tải được danh sách. <button onClick={()=>void query.refetch()} className="text-emerald-700">Thử lại</button></p>:<div aria-busy={query.isFetching} className={query.isFetching?"opacity-60":""}>
  <p className="text-sm text-slate-500">{query.data.total} việc làm</p>
  {!query.data.items.length?<div className="py-10 text-center"><p>{keyword||status?"Không có kết quả phù hợp.":kind==="applications"?"Bạn chưa ứng tuyển công việc nào.":"Bạn chưa lưu việc làm nào."}</p><Link href="/discover/jobs-by-field" className="mt-3 inline-block text-emerald-700">Khám phá việc làm</Link></div>:<ul className="divide-y">{query.data.items.map(row=><li key={row.id??row.jobPostId} className="py-5">
- <div className="flex flex-wrap justify-between gap-3"><ReadJob job={row.jobPost}/>{row.status&&<span className="h-fit rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700">{labels[row.status]??row.status}</span>}</div>
+ <div className="flex flex-wrap justify-between gap-3"><ReadJob job={row.jobPost}/>{kind==="saved"&&<button type="button" disabled={savedJobs.isPending} onClick={()=>savedJobs.toggle(row.jobPostId)} className="h-10 rounded-lg border border-emerald-200 px-3 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-50">Bỏ lưu</button>}{row.status&&<span className="h-fit rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700">{labels[row.status]??row.status}</span>}</div>
  <p className="mt-3 text-xs text-slate-500">{row.appliedAt?"Ngày ứng tuyển: ":"Ngày lưu: "}{new Date(row.appliedAt??row.createdAt!).toLocaleDateString("vi-VN")}</p>
  {row.cv&&<p className="mt-2 text-sm">CV: {row.cv.title}</p>}
  {row.coverLetter&&<details className="mt-2 text-sm"><summary>Thư ứng tuyển</summary><p className="mt-2 whitespace-pre-wrap">{row.coverLetter}</p></details>}

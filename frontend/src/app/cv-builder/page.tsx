@@ -163,6 +163,8 @@ function CVBuilderPage() {
           file.current = null;
           uploaded.current = null;
           await client.invalidateQueries({ queryKey: cvKeys.all(accountId) });
+          await client.invalidateQueries({ queryKey: ["profile-completion", accountId] });
+          await client.invalidateQueries({ queryKey: ["candidate-overview", accountId] });
           setSaveState(isDefault ? "default-saved" : "saved");
           toast.success("Đã lưu CV");
           if (!id) router.replace(`/cv-builder?id=${saved.id}`);

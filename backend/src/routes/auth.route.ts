@@ -13,7 +13,8 @@ authRouter.post("/refresh-token", authController.getRefreshToken);
 authRouter.post("/forgot-password", authController.forgotPassword);
 authRouter.post("/reset-forgot-password", validateMiddleware(resetPasswordSchema), authController.resetForgotPassword);
 authRouter.get("/google", authController.googleRedirect);
-authRouter.get("/google/callback", authController.googleCallback);
+authRouter.post("/google/callback", authController.googleCallback);
+authRouter.get("/google/callback", authController.googleCallbackRedirect);
 
 authRouter.use(authMiddleware);
 authRouter.post("/change-password", validateMiddleware(resetPasswordSchema), authController.changePassword);

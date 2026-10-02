@@ -1,7 +1,31 @@
 import { AppError } from "@/exceptions";
 import { httpRequest } from "@/lib/utils";
+import axios from "axios";
 
 class UpLoadService {
+  async uploadCvPdf(
+    uploadUrl: string,
+    file: File,
+    onProgress: (percent: number) => void,
+  ) {
+    await axios.put(uploadUrl, file, {
+      headers: { "Content-Type": "application/pdf" },
+      onUploadProgress: (event) => {
+        if (event.total)
+          onProgress(Math.round((event.loaded / event.total) * 100));
+      },
+    });
+  }
+  async completeCv(objectKey: string, title: string, isDefault: boolean) {
+    return (
+      await httpRequest.post("/upload/completed", {
+        purpose: "cv",
+        objectKey,
+        title,
+        isDefault,
+      })
+    ).data.data;
+  }
   async getPresignedUrl(file: File, purpose: string) {
     const response = await httpRequest.post("/upload/presign", {
       purpose: purpose,

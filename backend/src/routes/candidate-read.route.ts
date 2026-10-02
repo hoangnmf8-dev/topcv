@@ -1,4 +1,5 @@
 import express from "express";
+import completionService from "../services/profile-completion.service";
 import { z } from "zod";
 import { prisma } from "../utils/prisma";
 import type { Prisma } from "../generated/prisma/client";
@@ -72,7 +73,7 @@ router.get("/overview", async (req, res) => {
     applications,
     cvs,
     jobCount,
-    profileCompletion: candidate.profileCompletion ?? 0,
+    profileCompletion: (await completionService.get(req.profile.id)).percentage,
     localRecommendations: !!candidate.currentLocationId,
     jobs,
   });
