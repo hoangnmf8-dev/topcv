@@ -60,6 +60,7 @@ export type JobPostMinAggregateOutputType = {
   status: $Enums.JobStatus | null
   publishedAt: Date | null
   isBoosted: boolean | null
+  boostedUntil: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -87,6 +88,7 @@ export type JobPostMaxAggregateOutputType = {
   status: $Enums.JobStatus | null
   publishedAt: Date | null
   isBoosted: boolean | null
+  boostedUntil: Date | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -115,6 +117,7 @@ export type JobPostCountAggregateOutputType = {
   status: number
   publishedAt: number
   isBoosted: number
+  boostedUntil: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -156,6 +159,7 @@ export type JobPostMinAggregateInputType = {
   status?: true
   publishedAt?: true
   isBoosted?: true
+  boostedUntil?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -183,6 +187,7 @@ export type JobPostMaxAggregateInputType = {
   status?: true
   publishedAt?: true
   isBoosted?: true
+  boostedUntil?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -211,6 +216,7 @@ export type JobPostCountAggregateInputType = {
   status?: true
   publishedAt?: true
   isBoosted?: true
+  boostedUntil?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -326,6 +332,7 @@ export type JobPostGroupByOutputType = {
   status: $Enums.JobStatus
   publishedAt: Date | null
   isBoosted: boolean
+  boostedUntil: Date | null
   createdAt: Date
   updatedAt: Date | null
   deletedAt: Date | null
@@ -377,6 +384,7 @@ export type JobPostWhereInput = {
   status?: Prisma.EnumJobStatusFilter<"JobPost"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   isBoosted?: Prisma.BoolFilter<"JobPost"> | boolean
+  boostedUntil?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"JobPost"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
@@ -412,6 +420,7 @@ export type JobPostOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isBoosted?: Prisma.SortOrder
+  boostedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -450,6 +459,7 @@ export type JobPostWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumJobStatusFilter<"JobPost"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   isBoosted?: Prisma.BoolFilter<"JobPost"> | boolean
+  boostedUntil?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"JobPost"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
@@ -485,6 +495,7 @@ export type JobPostOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isBoosted?: Prisma.SortOrder
+  boostedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -521,6 +532,7 @@ export type JobPostScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumJobStatusWithAggregatesFilter<"JobPost"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"JobPost"> | Date | string | null
   isBoosted?: Prisma.BoolWithAggregatesFilter<"JobPost"> | boolean
+  boostedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"JobPost"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"JobPost"> | Date | string
   updatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"JobPost"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"JobPost"> | Date | string | null
@@ -544,6 +556,7 @@ export type JobPostCreateInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -579,6 +592,7 @@ export type JobPostUncheckedCreateInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -604,6 +618,7 @@ export type JobPostUpdateInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -639,6 +654,7 @@ export type JobPostUncheckedUpdateInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -669,6 +685,7 @@ export type JobPostCreateManyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -692,6 +709,7 @@ export type JobPostUpdateManyMutationInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -720,6 +738,7 @@ export type JobPostUncheckedUpdateManyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -763,6 +782,7 @@ export type JobPostCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   isBoosted?: Prisma.SortOrder
+  boostedUntil?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -796,6 +816,7 @@ export type JobPostMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   isBoosted?: Prisma.SortOrder
+  boostedUntil?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -823,6 +844,7 @@ export type JobPostMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   publishedAt?: Prisma.SortOrder
   isBoosted?: Prisma.SortOrder
+  boostedUntil?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -1098,6 +1120,7 @@ export type JobPostCreateWithoutApplicationsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1132,6 +1155,7 @@ export type JobPostUncheckedCreateWithoutApplicationsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1172,6 +1196,7 @@ export type JobPostUpdateWithoutApplicationsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1206,6 +1231,7 @@ export type JobPostUncheckedUpdateWithoutApplicationsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1230,6 +1256,7 @@ export type JobPostCreateWithoutCompanyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1263,6 +1290,7 @@ export type JobPostUncheckedCreateWithoutCompanyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1322,6 +1350,7 @@ export type JobPostScalarWhereInput = {
   status?: Prisma.EnumJobStatusFilter<"JobPost"> | $Enums.JobStatus
   publishedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   isBoosted?: Prisma.BoolFilter<"JobPost"> | boolean
+  boostedUntil?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"JobPost"> | Date | string
   updatedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"JobPost"> | Date | string | null
@@ -1345,6 +1374,7 @@ export type JobPostCreateWithoutCategoryInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1378,6 +1408,7 @@ export type JobPostUncheckedCreateWithoutCategoryInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1429,6 +1460,7 @@ export type JobPostCreateWithoutJobTitleInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1462,6 +1494,7 @@ export type JobPostUncheckedCreateWithoutJobTitleInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1513,6 +1546,7 @@ export type JobPostCreateWithoutProvinceInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1546,6 +1580,7 @@ export type JobPostUncheckedCreateWithoutProvinceInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1597,6 +1632,7 @@ export type JobPostCreateWithoutSavedJobsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1631,6 +1667,7 @@ export type JobPostUncheckedCreateWithoutSavedJobsInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1671,6 +1708,7 @@ export type JobPostUpdateWithoutSavedJobsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1705,6 +1743,7 @@ export type JobPostUncheckedUpdateWithoutSavedJobsInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1729,6 +1768,7 @@ export type JobPostCreateWithoutWardInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1761,6 +1801,7 @@ export type JobPostUncheckedCreateWithoutWardInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1816,6 +1857,7 @@ export type JobPostCreateManyCompanyInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1839,6 +1881,7 @@ export type JobPostUpdateWithoutCompanyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1872,6 +1915,7 @@ export type JobPostUncheckedUpdateWithoutCompanyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1901,6 +1945,7 @@ export type JobPostUncheckedUpdateManyWithoutCompanyInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1928,6 +1973,7 @@ export type JobPostCreateManyCategoryInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -1951,6 +1997,7 @@ export type JobPostUpdateWithoutCategoryInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1984,6 +2031,7 @@ export type JobPostUncheckedUpdateWithoutCategoryInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2013,6 +2061,7 @@ export type JobPostUncheckedUpdateManyWithoutCategoryInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2040,6 +2089,7 @@ export type JobPostCreateManyJobTitleInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -2063,6 +2113,7 @@ export type JobPostUpdateWithoutJobTitleInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2096,6 +2147,7 @@ export type JobPostUncheckedUpdateWithoutJobTitleInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2125,6 +2177,7 @@ export type JobPostUncheckedUpdateManyWithoutJobTitleInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2152,6 +2205,7 @@ export type JobPostCreateManyProvinceInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -2175,6 +2229,7 @@ export type JobPostUpdateWithoutProvinceInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2208,6 +2263,7 @@ export type JobPostUncheckedUpdateWithoutProvinceInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2237,6 +2293,7 @@ export type JobPostUncheckedUpdateManyWithoutProvinceInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2263,6 +2320,7 @@ export type JobPostCreateManyWardInput = {
   status?: $Enums.JobStatus
   publishedAt?: Date | string | null
   isBoosted?: boolean
+  boostedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string | null
   deletedAt?: Date | string | null
@@ -2286,6 +2344,7 @@ export type JobPostUpdateWithoutWardInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2318,6 +2377,7 @@ export type JobPostUncheckedUpdateWithoutWardInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2346,6 +2406,7 @@ export type JobPostUncheckedUpdateManyWithoutWardInput = {
   status?: Prisma.EnumJobStatusFieldUpdateOperationsInput | $Enums.JobStatus
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isBoosted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  boostedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2414,6 +2475,7 @@ export type JobPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   status?: boolean
   publishedAt?: boolean
   isBoosted?: boolean
+  boostedUntil?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -2450,6 +2512,7 @@ export type JobPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   publishedAt?: boolean
   isBoosted?: boolean
+  boostedUntil?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -2483,6 +2546,7 @@ export type JobPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   status?: boolean
   publishedAt?: boolean
   isBoosted?: boolean
+  boostedUntil?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -2516,12 +2580,13 @@ export type JobPostSelectScalar = {
   status?: boolean
   publishedAt?: boolean
   isBoosted?: boolean
+  boostedUntil?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type JobPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "jobTitleId" | "jobCategoryId" | "provinceId" | "wardId" | "address" | "title" | "description" | "requirements" | "benefits" | "overview" | "salaryMin" | "salaryMax" | "currency" | "saturdaySchedule" | "employmentType" | "experienceYearsMin" | "deadlineAt" | "status" | "publishedAt" | "isBoosted" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobPost"]>
+export type JobPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "companyId" | "jobTitleId" | "jobCategoryId" | "provinceId" | "wardId" | "address" | "title" | "description" | "requirements" | "benefits" | "overview" | "salaryMin" | "salaryMax" | "currency" | "saturdaySchedule" | "employmentType" | "experienceYearsMin" | "deadlineAt" | "status" | "publishedAt" | "isBoosted" | "boostedUntil" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["jobPost"]>
 export type JobPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   company?: boolean | Prisma.CompanyDefaultArgs<ExtArgs>
   jobTitle?: boolean | Prisma.JobPost$jobTitleArgs<ExtArgs>
@@ -2581,6 +2646,7 @@ export type $JobPostPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     status: $Enums.JobStatus
     publishedAt: Date | null
     isBoosted: boolean
+    boostedUntil: Date | null
     createdAt: Date
     updatedAt: Date | null
     deletedAt: Date | null
@@ -3036,6 +3102,7 @@ export interface JobPostFieldRefs {
   readonly status: Prisma.FieldRef<"JobPost", 'JobStatus'>
   readonly publishedAt: Prisma.FieldRef<"JobPost", 'DateTime'>
   readonly isBoosted: Prisma.FieldRef<"JobPost", 'Boolean'>
+  readonly boostedUntil: Prisma.FieldRef<"JobPost", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"JobPost", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"JobPost", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"JobPost", 'DateTime'>

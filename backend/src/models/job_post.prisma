@@ -39,6 +39,7 @@ model JobPost {
   status             JobStatus @default(PENDING)
   publishedAt        DateTime? @map("published_at") @db.Timestamptz
   isBoosted          Boolean   @map("is_boosted") @default(false) @db.Boolean
+  boostedUntil       DateTime? @map("boosted_until") @db.Timestamptz
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt          DateTime? @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt          DateTime? @map("deleted_at") @db.Timestamptz
@@ -56,6 +57,7 @@ model JobPost {
   @@index([provinceId, status])
   @@index([wardId, provinceId])
   @@index([status, deadlineAt])
+  @@index([boostedUntil])
 
   @@map("job_post")
 }

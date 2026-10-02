@@ -10,12 +10,13 @@ export async function expireJobPosts(
   now = new Date(),
   db: Prisma.TransactionClient = prisma,
 ) {
+  await db.jobPost.updateMany({where:{isBoosted:true,boostedUntil:{lte:now}},data:{isBoosted:false}});
   return db.jobPost.updateMany({
     where: {
       deletedAt: null,
       status: { in: ["PUBLISHED", "PENDING", "PAUSED"] },
       deadlineAt: { lte: now },
     },
-    data: { status: "EXPIRED" },
+    data: { status: "EXPIRED", isBoosted: false },
   });
 }

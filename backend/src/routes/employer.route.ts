@@ -7,6 +7,7 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 import uploadService from "../services/upload.service";
 import { Prisma } from "../generated/prisma/client";
 import { AppError } from "../exceptions";
+import { boostJob,jobBoostUsage } from "../services/job-boost.service";
 
 const router = Router();
 const statuses = z.enum(["submitted", "reviewing", "interview", "hired", "rejected"]);
@@ -20,12 +21,14 @@ router.use(async (req, res, next) => {
   res.locals.companyId = company.id;
   next();
 });
+router.get("/job-boost-usage",async(req,res)=>{res.json({data:await jobBoostUsage(req.profile.id)});});
+router.post("/job-posts/:id/boost",async(req,res)=>{res.json({data:await boostJob(req.profile.id,z.uuid().parse(req.params.id))});});
 router.get("/job-posts", async (req, res) => {
  const parsed=paging.extend({status:z.enum(["PENDING","PUBLISHED","PAUSED","REJECTED","CLOSED","EXPIRED"]).optional()}).safeParse(req.query);
  if(!parsed.success){res.status(400).json({message:"Bộ lọc không hợp lệ"});return;}
  const q=parsed.data;
  const where={companyId:res.locals.companyId as string,deletedAt:null,title:{contains:q.query,mode:"insensitive" as const},...(q.status?{status:q.status}:{})};
- const [total,items]=await prisma.$transaction([prisma.jobPost.count({where}),prisma.jobPost.findMany({where,orderBy:[{createdAt:"desc"},{id:"desc"}],skip:(q.page-1)*10,take:10,select:{id:true,title:true,status:true,deadlineAt:true,category:{select:{name:true}},province:{select:{name:true}},_count:{select:{applications:{where:{deletedAt:null}}}}}})]);
+ const [total,items]=await prisma.$transaction([prisma.jobPost.count({where}),prisma.jobPost.findMany({where,orderBy:[{createdAt:"desc"},{id:"desc"}],skip:(q.page-1)*10,take:10,select:{id:true,title:true,status:true,deadlineAt:true,boostedUntil:true,category:{select:{name:true}},province:{select:{name:true}},_count:{select:{applications:{where:{deletedAt:null}}}}}})]);
  res.json({data:{total,items,page:q.page,pages:Math.ceil(total/10)}});
 });
 router.patch("/job-posts/:id/status",async(req,res)=>{

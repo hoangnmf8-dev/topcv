@@ -14,7 +14,7 @@ import {
 } from "./subscription.service";
 
 export async function syncPlans() {
-  for (const [code, name] of [["cvLimit", "Số CV tối đa"], ["aiLimit", "Lượt AI trong kỳ"], ["activeJobLimit", "Số tin tuyển dụng hoạt động"], ["publicCvViewLimit", "Lượt xem CV công khai trong kỳ"]] as const) {
+  for (const [code, name] of [["cvLimit", "Số CV tối đa"], ["aiLimit", "Lượt AI trong kỳ"], ["activeJobLimit", "Số tin tuyển dụng hoạt động"], ["publicCvViewLimit", "Lượt xem CV công khai trong kỳ"], ["jobBoostLimit", "Lượt đẩy tin trong 30 ngày"]] as const) {
     await prisma.entitlement.upsert({ where: { code }, create: { code, name, valueType: "number" }, update: {} });
   }
   const descriptions = { candidate: { jobFeatures: "Tìm việc, lưu việc, ứng tuyển và nhắn tin", cvFeatures: "Tạo CV từ các mẫu hiện có và xuất PDF" }, company: { applicationFeatures: "Nhận và quản lý hồ sơ ứng tuyển", candidateCvFeatures: "Xem CV của ứng viên đã ứng tuyển", recruitmentFeatures: "Nhắn tin và dashboard tuyển dụng" } };
@@ -56,7 +56,7 @@ export async function syncPlans() {
         update: data,
       });
       const limits = tier === "free" ? FREE_BENEFITS : PRO_BENEFITS;
-      const scoped = audience === "candidate" ? { cvLimit: limits.cvLimit, aiLimit: limits.aiLimit } : { activeJobLimit: limits.activeJobLimit, publicCvViewLimit: tier === "free" ? 10 : 100 };
+      const scoped = audience === "candidate" ? { cvLimit: limits.cvLimit, aiLimit: limits.aiLimit } : { activeJobLimit: limits.activeJobLimit, publicCvViewLimit: tier === "free" ? 10 : 100, jobBoostLimit: tier === "pro" ? 20 : 0 };
       for (const [code, value] of Object.entries({ ...scoped, ...descriptions[audience] })) {
         const entitlement = await prisma.entitlement.findUniqueOrThrow({ where: { code } });
         await prisma.planEntitlement.upsert({ where: { planId_entitlementId: { planId: plan.id, entitlementId: entitlement.id } }, create: { planId: plan.id, entitlementId: entitlement.id, value: value as Prisma.InputJsonValue }, update: {} });

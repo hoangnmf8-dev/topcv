@@ -44,6 +44,7 @@ class JobPostService {
       );
     return {
       ...job,
+      isBoosted: Boolean(job.isBoosted && job.boostedUntil && job.boostedUntil > new Date()),
       company: {
         ...job.company,
         logoUrl: job.company.logoKey
@@ -102,6 +103,7 @@ class JobPostService {
     );
     return jobs.map((job) => ({
       ...job,
+      isBoosted: Boolean(job.isBoosted && job.boostedUntil && job.boostedUntil > new Date()),
       company: {
         ...job.company,
         logoUrl: job.company.logoKey ? urls.get(job.company.logoKey) : null,
@@ -216,7 +218,7 @@ class JobPostService {
       deletedAt: null,
       status: "PUBLISHED",
       company: { deletedAt: null },
-      ...(params.sort === "hot" ? { isBoosted: true } : {}),
+      ...(params.sort === "hot" ? { isBoosted: true, boostedUntil: { gt: new Date() } } : {}),
       AND: conditions,
     };
   }

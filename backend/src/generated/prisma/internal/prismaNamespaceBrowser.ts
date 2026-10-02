@@ -278,6 +278,7 @@ export const JobPostScalarFieldEnum = {
   status: 'status',
   publishedAt: 'publishedAt',
   isBoosted: 'isBoosted',
+  boostedUntil: 'boostedUntil',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
