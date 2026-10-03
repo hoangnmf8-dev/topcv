@@ -59,12 +59,23 @@ export const TASK_RULES = {
     Không tự thêm lương, thưởng, bảo hiểm hoặc cam kết của doanh nghiệp.
     Không tự thêm số tiền, tần suất, thời điểm chi trả, tháng lương thứ 13, xét tăng lương, đào tạo, thiết bị, làm việc từ xa hoặc điều kiện hưởng chưa được cung cấp.
     Không dùng mô tả công việc hay chuyên môn để suy ra chế độ đãi ngộ. Nếu đầu vào quá ít thông tin, viết ngắn và chính xác thay vì bịa thêm.
-  `
+  `,
 };
 export type AiTask = keyof typeof TASK_RULES;
-export const AI_TEXT_LIMITS: Record<AiTask, number> = {objective:500,experience:500,job_description:5000,job_requirements:5000,job_benefits:3000};
+export const AI_TEXT_LIMITS: Record<AiTask, number> = {
+  objective: 500,
+  experience: 500,
+  job_description: 5000,
+  job_requirements: 5000,
+  job_benefits: 3000,
+};
 
 export function formatAiText(text: string) {
-  return text.trim().split(/\r?\n/).map(line => line.trim().replace(/^(?:[-*•]+|\d+[.)])\s*/, ""))
-    .filter(Boolean).map(line => `- ${line}`).join("\n");
+  return text
+    .trim()
+    .split(/\r?\n/)
+    .map((line) => line.trim().replace(/^(?:[-*•]+|\d+[.)])\s*/, ""))
+    .filter(Boolean)
+    .map((line) => `- ${line}`)
+    .join("\n");
 }

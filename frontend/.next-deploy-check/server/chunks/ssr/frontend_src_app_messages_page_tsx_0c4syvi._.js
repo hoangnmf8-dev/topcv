@@ -1,0 +1,3 @@
+module.exports=[57584,a=>{"use strict";var b=a.i(57850),c=a.i(51007),d=a.i(44416),e=a.i(18221),f=a.i(73275),g=a.i(15844);a.s(["default",0,function(){return(0,b.jsxs)("main",{className:"min-h-screen bg-slate-50",children:[(0,b.jsx)(f.SiteHeader,{}),(0,b.jsxs)("div",{className:"mx-auto max-w-[1280px] px-4 py-7",children:[(0,b.jsx)("h1",{className:"mb-5 text-2xl font-bold",children:"Tin nhắn"}),(0,b.jsx)(d.Suspense,{fallback:(0,b.jsx)(c.LoadingState,{fullscreen:!0}),children:(0,b.jsx)(e.MessagesPanel,{})})]}),(0,b.jsx)(g.RoleFooter,{variant:"candidate"})]})}])}];
+
+//# sourceMappingURL=frontend_src_app_messages_page_tsx_0c4syvi._.js.map

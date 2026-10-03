@@ -21,23 +21,9 @@ export async function syncPlans() {
   for (const values of Object.values(descriptions)) for (const [code, name] of Object.entries(values)) await prisma.entitlement.upsert({ where: { code }, create: { code, name, valueType: "string" }, update: {} });
   for (const audience of ["candidate", "company"] as const) {
     for (const tier of ["free", "pro", "premium"] as const) {
-      const raw =
-        process.env[
-          audience === "candidate"
-            ? "CANDIDATE_PRO_PRICE_VND"
-            : "COMPANY_PRO_PRICE_VND"
-        ];
-      const price =
-        tier === "pro" &&
-        raw &&
-        /^\d+$/.test(raw) &&
-        Number.isSafeInteger(Number(raw))
-          ? Number(raw)
-          : 0;
       const data = {
         name: tier === "free" ? "Free" : tier === "pro" ? "Pro" : "Premium",
         audience,
-        price,
         currency: "VND",
         durationDays: tier === "free" ? null : 30,
         isFree: tier === "free",
@@ -52,7 +38,8 @@ export async function syncPlans() {
       };
       const plan = await prisma.servicePlan.upsert({
         where: { code: `${audience}_${tier}` },
-        create: { code: `${audience}_${tier}`, ...data },
+        // Prices are managed in the database; new plans start unavailable to buy.
+        create: { code: `${audience}_${tier}`, ...data, price: 0 },
         update: data,
       });
       const limits = tier === "free" ? FREE_BENEFITS : PRO_BENEFITS;

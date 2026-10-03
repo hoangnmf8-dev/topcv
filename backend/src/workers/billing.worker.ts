@@ -11,7 +11,7 @@ import {
 } from "../services/job-expiration.service";
 
 const queue = new Queue("billing-maintenance", {
-  connection: new IORedis({ port: 6379 }),
+  connection: new IORedis(process.env.REDIS_URL ?? "redis://localhost:6379"),
 });
 export async function billingMaintenance() {
   const now = new Date();
@@ -63,7 +63,9 @@ const worker = new Worker(
     throw new Error(`Unknown maintenance job: ${job.name}`);
   },
   {
-    connection: new IORedis({ port: 6379, maxRetriesPerRequest: null }),
+    connection: new IORedis(process.env.REDIS_URL ?? "redis://localhost:6379", {
+      maxRetriesPerRequest: null,
+    }),
     concurrency: 1,
   },
 );

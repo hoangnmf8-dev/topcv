@@ -1,0 +1,3 @@
+module.exports=[76146,a=>{"use strict";var b=a.i(57850),c=a.i(93609),d=a.i(87334),e=a.i(68190);a.s(["BillingOrdersReturn",0,function(){let a=(0,d.useAccountStore)(a=>a.account),f=(0,c.useSearchParams)();if(a?.role==="candidate"){let a=new URLSearchParams(f.toString());a.set("tab","orders"),(0,c.redirect)(`/candidate?${a.toString()}`)}return(0,b.jsx)("main",{className:"mx-auto max-w-5xl p-6",children:(0,b.jsx)(e.BillingPanel,{})})}])}];
+
+//# sourceMappingURL=frontend_src_components_billing-orders-return_tsx_0fzbdpy._.js.map
