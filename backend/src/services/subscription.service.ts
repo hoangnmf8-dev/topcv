@@ -17,7 +17,7 @@ export function nextSubscriptionWindow(now: Date, previousEnd: Date | null, dura
 }
 export function readBenefits(value: unknown, audience?: string): Benefits {
   const b = value as Partial<Benefits> | null;
-  const required = audience === "candidate" ? [b?.cvLimit, b?.aiLimit] : audience === "company" ? [b?.activeJobLimit] : Object.entries(b ?? {}).filter(([k]) => ["cvLimit", "aiLimit", "activeJobLimit"].includes(k)).map(([, v]) => v);
+  const required = audience === "candidate" ? [b?.cvLimit, b?.aiLimit] : audience === "company" ? [b?.activeJobLimit, b?.aiLimit] : Object.entries(b ?? {}).filter(([k]) => ["cvLimit", "aiLimit", "activeJobLimit"].includes(k)).map(([, v]) => v);
   if (!b || !required.length || !required.every(v => Number.isInteger(v) && Number(v) >= 0))
     throw new AppError("Quyền lợi gói không hợp lệ", "INVALID_PLAN", 409);
   return b as Benefits;
@@ -30,7 +30,7 @@ export async function currentPlan(accountId: string, db: Db = prisma, now = new 
   });
   const freePlan = subscription ? null : await db.servicePlan.findFirst({ where: { audience: company ? "company" : "candidate", isFree: true, isActive: true, deletedAt: null }, orderBy: { displayOrder: "asc" } });
   const audience = company ? "company" : "candidate";
-  const benefits = subscription ? readBenefits((subscription.order!.planSnapshot as { benefits: unknown }).benefits, audience) : freePlan ? readBenefits(await planEntitlements(freePlan.id, db), audience) : readBenefits(company ? { activeJobLimit: 2 } : { cvLimit: 3, aiLimit: 5 }, audience);
+  const benefits = subscription ? readBenefits((subscription.order!.planSnapshot as { benefits: unknown }).benefits, audience) : freePlan ? readBenefits(await planEntitlements(freePlan.id, db), audience) : readBenefits(company ? { activeJobLimit: 2, aiLimit: 5 } : { cvLimit: 3, aiLimit: 5 }, audience);
   return { subscription, benefits, name: subscription?.plan.name ?? "Free", companyId: company?.id ?? null };
 }
 export async function candidateAccess(accountId: string, candidateId: string, db: Db = prisma) {
@@ -48,17 +48,21 @@ export async function reserveAi(accountId: string) {
   return prisma.$transaction(async tx => {
     await tx.$queryRaw`SELECT id FROM accounts WHERE id = ${accountId}::uuid FOR UPDATE`;
     const candidate = await tx.candidate.findUnique({ where: { accountId }, select: { id: true } });
-    if (!candidate) throw new AppError("Chỉ ứng viên được sử dụng AI CV", "FORBIDDEN", 403);
-    assertCvAccess(await candidateAccess(accountId, candidate.id, tx), false);
+    if (candidate) assertCvAccess(await candidateAccess(accountId, candidate.id, tx), false);
     const now = new Date();
     const plan = await currentPlan(accountId, tx, now);
+    if (!candidate && !plan.companyId) throw new AppError("Không tìm thấy hồ sơ sử dụng AI", "FORBIDDEN", 403);
+    if (plan.companyId) await tx.$queryRaw`SELECT id FROM company WHERE id = ${plan.companyId}::uuid FOR UPDATE`;
     let subscription = plan.subscription;
     if (!subscription) {
-      const free = await tx.servicePlan.findUniqueOrThrow({ where: { code: "candidate_free" } });
+      const free = await tx.servicePlan.findUniqueOrThrow({ where: { code: plan.companyId ? "company_free" : "candidate_free" } });
       const local = new Date(now.getTime() + 7 * 3600000);
       const startedAt = new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), 1) - 7 * 3600000);
       const expiresAt = new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth() + 1, 1) - 7 * 3600000);
-      const freeSub = await tx.subscription.upsert({ where: { accountId_planId_startedAt: { accountId, planId: free.id, startedAt } }, create: { accountId, planId: free.id, startedAt, expiresAt }, update: {} });
+      const freeSub = plan.companyId
+        ? await tx.subscription.findFirst({ where: { companyId: plan.companyId, planId: free.id, startedAt } })
+          ?? await tx.subscription.create({ data: { companyId: plan.companyId, planId: free.id, startedAt, expiresAt } })
+        : await tx.subscription.upsert({ where: { accountId_planId_startedAt: { accountId, planId: free.id, startedAt } }, create: { accountId, planId: free.id, startedAt, expiresAt }, update: {} });
       subscription = { ...freeSub, plan: { name: free.name, code: free.code }, order: null };
     }
     await tx.$queryRaw`SELECT id FROM subscriptions WHERE id = ${subscription.id}::uuid FOR UPDATE`;
@@ -79,4 +83,19 @@ export async function finishAi(id: string, success: boolean) {
     if (!usage || usage.reserved <= 0) throw new AppError("Không có lượt AI đang giữ chỗ", "INVALID_RESERVATION", 409);
     await tx.subscription.update({ where: { id }, data: { usageState: { ...state, aiLimit: { used: usage.used + (success ? 1 : 0), reserved: usage.reserved - 1 } } as Prisma.InputJsonObject } });
   });
+}
+
+export async function aiUsage(accountId: string) {
+  const now = new Date();
+  const plan = await currentPlan(accountId, prisma, now);
+  const subscription = plan.subscription ?? await prisma.subscription.findFirst({
+    where: { ...(plan.companyId ? { companyId: plan.companyId } : { accountId }), orderId: null, status: "active", startedAt: { lte: now }, expiresAt: { gt: now }, plan: { code: plan.companyId ? "company_free" : "candidate_free" } },
+    orderBy: { startedAt: "desc" },
+  });
+  const usage = (subscription?.usageState as { aiLimit?: { used: number; reserved: number } } | undefined)?.aiLimit;
+  const used = usage?.used ?? 0;
+  const reserved = usage?.reserved ?? 0;
+  const local = new Date(now.getTime() + 7 * 3600000);
+  const resetAt = subscription?.expiresAt ?? new Date(Date.UTC(local.getUTCFullYear(), local.getUTCMonth() + 1, 1) - 7 * 3600000);
+  return { used, reserved, limit: plan.benefits.aiLimit, remaining: Math.max(0, plan.benefits.aiLimit - used - reserved), resetAt };
 }

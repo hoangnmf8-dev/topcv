@@ -9,7 +9,7 @@ class AIController {
       const body = req.body;
       const task = body.task;
       const context = body.context;
-      const usageId = req.profile.role === "candidate" ? await reserveAi(req.profile.id) : null;
+      const usageId = await reserveAi(req.profile.id);
       let response;
       try { response = await aiService.generateTextAI(task, context); }
       catch (error) { if (usageId) await finishAi(usageId, false); throw error; }

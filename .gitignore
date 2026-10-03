@@ -1,6 +1,3 @@
-/deploy/production.env
-/deploy/backend.env
-/deploy/backups/
 /database/db-data/
 /redis/redis-data/
 /database/backups/

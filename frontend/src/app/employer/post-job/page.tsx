@@ -12,6 +12,9 @@ import { httpRequest } from "@/lib/utils";
 import axios from "axios";
 import { JOB_TEXT_LIMITS } from "@/lib/content-limits";
 import aiService from "@/services/ai.service";
+import { billingService } from "@/services/billing.service";
+import { useAccountStore } from "@/stores/auth.store";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -25,7 +28,7 @@ import {
 } from "lucide-react";
 import { EmployerHeader } from "@/components/employer-header";
 import { RoleFooter } from "@/components/role-footer";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import locationService from "@/services/location.service";
 import jobCategoryService from "@/services/job-category.service";
 import { provinceKey, jobCategoryKey } from "@/cache-key";
@@ -590,8 +593,12 @@ function ContentEditor({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const pending = useRef(false);
+  const account = useAccountStore(s => s.account);
+  const client = useQueryClient();
+  const quota = useQuery({ queryKey: ["subscription", account?.id], enabled: !!account, queryFn: billingService.subscription, refetchInterval: 60000 });
+  const exhausted = quota.data?.aiUsage.remaining === 0;
   const generate = async () => {
-    if (pending.current || !value.trim()) return;
+    if (pending.current || !value.trim() || exhausted || !quota.data) return;
     pending.current = true;
     setLoading(true);
     setError("");
@@ -630,6 +637,7 @@ function ContentEditor({
     } finally {
       pending.current = false;
       setLoading(false);
+      await client.invalidateQueries({ queryKey: ["subscription", account?.id] });
     }
   };
   return (
@@ -639,7 +647,7 @@ function ContentEditor({
         <button
           type="button"
           onClick={generate}
-          disabled={loading || !value.trim()}
+          disabled={loading || !value.trim() || exhausted || !quota.data}
           className="inline-flex items-center gap-1.5 rounded-lg bg-[#00b14f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#009b45] disabled:opacity-60"
         >
           {loading ? (
@@ -650,6 +658,11 @@ function ContentEditor({
           {loading ? "Đang viết..." : label === "Quyền lợi" ? "Cải thiện văn phong với AI" : "Viết chi tiết với AI"}
         </button>
       </div>
+      <p className="mt-2 text-xs text-slate-500" aria-live="polite">
+        {quota.data ? `Còn ${quota.data.aiUsage.remaining}/${quota.data.aiUsage.limit} lượt AI · Mỗi lần viết thành công dùng 1 lượt` : quota.isError ? "Không tải được lượt AI." : "Đang tải lượt AI…"}
+        {quota.isError && <button type="button" onClick={() => void quota.refetch()} className="ml-2 underline">Thử lại</button>}
+        {exhausted && <Link href="/employer?tab=billing" className="ml-2 text-emerald-700 underline">Nâng cấp gói</Link>}
+      </p>
       <textarea
         aria-label={label}
         maxLength={maxLength}

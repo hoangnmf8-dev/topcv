@@ -9,6 +9,7 @@ import {
   FREE_BENEFITS,
   PRO_BENEFITS,
   currentPlan,
+  aiUsage,
   nextSubscriptionWindow,
   readBenefits,
 } from "./subscription.service";
@@ -43,7 +44,7 @@ export async function syncPlans() {
         update: data,
       });
       const limits = tier === "free" ? FREE_BENEFITS : PRO_BENEFITS;
-      const scoped = audience === "candidate" ? { cvLimit: limits.cvLimit, aiLimit: limits.aiLimit } : { activeJobLimit: limits.activeJobLimit, publicCvViewLimit: tier === "free" ? 10 : 100, jobBoostLimit: tier === "pro" ? 20 : 0 };
+      const scoped = audience === "candidate" ? { cvLimit: limits.cvLimit, aiLimit: limits.aiLimit } : { aiLimit: limits.aiLimit, activeJobLimit: limits.activeJobLimit, publicCvViewLimit: tier === "free" ? 10 : 100, jobBoostLimit: tier === "pro" ? 20 : 0 };
       for (const [code, value] of Object.entries({ ...scoped, ...descriptions[audience] })) {
         const entitlement = await prisma.entitlement.findUniqueOrThrow({ where: { code } });
         await prisma.planEntitlement.upsert({ where: { planId_entitlementId: { planId: plan.id, entitlementId: entitlement.id } }, create: { planId: plan.id, entitlementId: entitlement.id, value: value as Prisma.InputJsonValue }, update: {} });
@@ -395,5 +396,5 @@ export async function subscriptionOverview(accountId: string) {
     },
     orderBy: { startedAt: "asc" },
   });
-  return { ...plan, scheduled };
+  return { ...plan, scheduled, aiUsage: await aiUsage(accountId) };
 }
