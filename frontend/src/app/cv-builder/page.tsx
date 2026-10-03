@@ -131,7 +131,9 @@ function CVBuilderPage() {
       async (values) => {
         if (pending.current) return;
         if (access.data?.editingLocked || (!id && !access.data?.canCreate)) {
-          toast.error("Gói hiện tại không cho phép lưu CV. Hãy xóa bớt CV hoặc nâng cấp Pro.");
+          toast.error(
+            "Gói hiện tại không cho phép lưu CV. Hãy xóa bớt CV hoặc nâng cấp Pro.",
+          );
           return;
         }
         if (account?.role !== "candidate") {
@@ -169,9 +171,15 @@ function CVBuilderPage() {
           file.current = null;
           uploaded.current = null;
           await client.invalidateQueries({ queryKey: cvKeys.all(accountId) });
-          await client.invalidateQueries({ queryKey: ["cv-access", accountId] });
-          await client.invalidateQueries({ queryKey: ["profile-completion", accountId] });
-          await client.invalidateQueries({ queryKey: ["candidate-overview", accountId] });
+          await client.invalidateQueries({
+            queryKey: ["cv-access", accountId],
+          });
+          await client.invalidateQueries({
+            queryKey: ["profile-completion", accountId],
+          });
+          await client.invalidateQueries({
+            queryKey: ["candidate-overview", accountId],
+          });
           setSaveState(isDefault ? "default-saved" : "saved");
           toast.success("Đã lưu CV");
           if (!id) router.replace(`/cv-builder?id=${saved.id}`);
@@ -196,7 +204,31 @@ function CVBuilderPage() {
   }, [data, title, template, theme]);
   const handleDownloadPDF = () => window.print();
   if (id && detail.data?.contentJson && access.data?.editingLocked) {
-    return <main className="route-cv-builder p-6"><div className="mb-5 rounded-xl bg-amber-50 p-4 print:hidden"><b>CV đang khóa chỉnh sửa</b><p>Hãy xóa bớt để còn tối đa {access.data.limit} CV hoặc nâng cấp Pro.</p><a className="mr-5 underline" href="/candidate?tab=profile">Quản lý CV</a><a className="mr-5 underline" href="/services">Nâng cấp Pro</a><button className="underline" onClick={handleDownloadPDF}>Tải PDF</button></div><div className="mx-auto max-w-[794px] print:hidden"><CVDocument data={previewData} template={template} theme={theme} /></div><div className="cv-print-document"><CVDocument data={previewData} template={template} theme={theme} /></div></main>;
+    return (
+      <main className="route-cv-builder p-6">
+        <div className="mb-5 rounded-xl bg-amber-50 p-4 print:hidden">
+          <b>CV đang khóa chỉnh sửa</b>
+          <p>
+            Hãy xóa bớt để còn tối đa {access.data.limit} CV hoặc nâng cấp Pro.
+          </p>
+          <a className="mr-5 underline" href="/candidate?tab=profile">
+            Quản lý CV
+          </a>
+          <a className="mr-5 underline" href="/services">
+            Nâng cấp Pro
+          </a>
+          <button className="underline" onClick={handleDownloadPDF}>
+            Tải PDF
+          </button>
+        </div>
+        <div className="mx-auto max-w-[794px] print:hidden">
+          <CVDocument data={previewData} template={template} theme={theme} />
+        </div>
+        <div className="cv-print-document">
+          <CVDocument data={previewData} template={template} theme={theme} />
+        </div>
+      </main>
+    );
   }
   if (id && !account)
     return (
@@ -291,7 +323,11 @@ function CVBuilderPage() {
               mobileView === "preview" ? "block" : "hidden lg:block",
             )}
           >
-            <PreviewPanel data={previewData} template={template} theme={theme} />
+            <PreviewPanel
+              data={previewData}
+              template={template}
+              theme={theme}
+            />
           </div>
         </main>
         <div
@@ -318,11 +354,7 @@ function BuilderRoute() {
 
 export default function Page() {
   return (
-    <Suspense
-      fallback={
-        <LoadingState fullscreen message="Đang mở mẫu CV…" />
-      }
-    >
+    <Suspense fallback={<LoadingState fullscreen message="Đang mở mẫu CV…" />}>
       <BuilderRoute />
     </Suspense>
   );

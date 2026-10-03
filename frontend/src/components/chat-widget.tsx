@@ -7,7 +7,9 @@ export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
-  const send = () => {return;};
+  const send = () => {
+    return;
+  };
   return (
     <div className="global-chat-widget fixed bottom-4 right-4 z-50 sm:bottom-5 sm:right-5">
       {open && (
@@ -26,20 +28,30 @@ export function ChatWidget() {
               Chào bạn! Mình có thể hỗ trợ tìm việc, tạo CV hoặc giải đáp dịch
               vụ.
             </div>
-            {messages.map((item,index)=><div key={`${item}-${index}`} className="ml-auto w-fit max-w-[250px] rounded-2xl rounded-tr-sm bg-[#00b14f] px-3 py-2 text-white">{item}</div>)}
-            <p className="text-xs text-slate-400">
-              Chưa có cuộc trò chuyện
-            </p>
+            {messages.map((item, index) => (
+              <div
+                key={`${item}-${index}`}
+                className="ml-auto w-fit max-w-[250px] rounded-2xl rounded-tr-sm bg-[#00b14f] px-3 py-2 text-white"
+              >
+                {item}
+              </div>
+            ))}
+            <p className="text-xs text-slate-400">Chưa có cuộc trò chuyện</p>
           </div>
           <div className="flex gap-2 border-t p-3">
             <input
               value={message}
-              onChange={event=>setMessage(event.target.value)}
-              onKeyDown={event=>event.key==="Enter"&&send()}
+              onChange={(event) => setMessage(event.target.value)}
+              onKeyDown={(event) => event.key === "Enter" && send()}
               className="min-w-0 flex-1 rounded-xl bg-slate-100 px-3 py-2 text-sm outline-none"
               placeholder="Nhập tin nhắn..."
             />
-            <button onClick={send} aria-label="Gửi tin nhắn" className="grid size-9 place-items-center rounded-xl bg-[#00b14f] text-white disabled:opacity-50" disabled>
+            <button
+              onClick={send}
+              aria-label="Gửi tin nhắn"
+              className="grid size-9 place-items-center rounded-xl bg-[#00b14f] text-white disabled:opacity-50"
+              disabled
+            >
               <Send className="size-4" />
             </button>
           </div>

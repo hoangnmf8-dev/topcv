@@ -10,53 +10,65 @@ import type { candidateUpdateSchema } from "../validators/candidate.validate";
 
 class CandidateService {
   async createCandidate(candidateInfo: CandidateInfoRegister) {
-    const {fullName, email, phone, password, confirmPassword, role} = candidateInfo;
+    const { fullName, email, phone, password, confirmPassword, role } =
+      candidateInfo;
     return await prisma.$transaction(async (tx) => {
       const newCandidateAccount = await tx.account.create({
         data: {
           email,
-          role: "candidate", 
-          passwordHash: hashString(password!)
-        }
+          role: "candidate",
+          passwordHash: hashString(password!),
+        },
       });
       const newCandidateProfile = await prisma.candidate.create({
         data: {
           phone: phone ?? null,
           fullName,
-          accountId: newCandidateAccount.id
-        }
+          accountId: newCandidateAccount.id,
+        },
       });
       return newCandidateAccount;
     });
-  };
-  async updateCandidate(id: string, data: z.infer<typeof candidateUpdateSchema>, accountId: string) {
+  }
+  async updateCandidate(
+    id: string,
+    data: z.infer<typeof candidateUpdateSchema>,
+    accountId: string,
+  ) {
     const candidate = await prisma.candidate.findUnique({
       where: {
         id,
         deletedAt: null,
         accountId,
-        account: { role: "candidate", status: "active", deletedAt: null }
-      }
+        account: { role: "candidate", status: "active", deletedAt: null },
+      },
     });
-    if(!candidate) {
-      throw new AccountNotFoundError(ERROR_MESSAGE.ACCOUNT_NOT_FOUND, ERROR_CODE.ACCOUNT_NOT_FOUND);
-    };
+    if (!candidate) {
+      throw new AccountNotFoundError(
+        ERROR_MESSAGE.ACCOUNT_NOT_FOUND,
+        ERROR_CODE.ACCOUNT_NOT_FOUND,
+      );
+    }
     const newCandidate = await prisma.candidate.update({
       where: {
-        id
+        id,
       },
       data: {
         fullName: data.fullName,
         phone: data.phone,
         isSearchable: data.isSearchable,
-        ...(data.headline !== undefined ? {headline: data.headline} : {}),
-        ...(data.experienceYears !== undefined ? {experienceYears: data.experienceYears} : {}),
-        ...(data.address !== undefined ? {address: data.address} : {}),
-        ...(data.careerGoal !== undefined ? {careerGoal: data.careerGoal} : {}),
-      }
-    })
-    return newCandidate
-  };
-};
+        ...(data.headline !== undefined ? { headline: data.headline } : {}),
+        ...(data.experienceYears !== undefined
+          ? { experienceYears: data.experienceYears }
+          : {}),
+        ...(data.address !== undefined ? { address: data.address } : {}),
+        ...(data.careerGoal !== undefined
+          ? { careerGoal: data.careerGoal }
+          : {}),
+      },
+    });
+    return newCandidate;
+  }
+}
 const candidateService = new CandidateService();
 export default candidateService;

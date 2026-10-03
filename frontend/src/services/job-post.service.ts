@@ -12,13 +12,17 @@ class JobPostService {
     return response.data;
   }
 
-  async getJobPostList(filters: JobPostListQuery, signal: AbortSignal): Promise<Job[]> {
+  async getJobPostList(
+    filters: JobPostListQuery,
+    signal: AbortSignal,
+  ): Promise<Job[]> {
     try {
       const response = await httpRequest.get<Job[]>("/job-post", {
         params: filters,
         signal,
       });
-      if (!Array.isArray(response.data)) throw new Error("Dữ liệu việc làm không hợp lệ");
+      if (!Array.isArray(response.data))
+        throw new Error("Dữ liệu việc làm không hợp lệ");
       return response.data;
     } catch (error) {
       if (error instanceof AppError) {

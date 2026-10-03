@@ -175,7 +175,12 @@ export function EmployerDashboard() {
           {tab === "candidates" && <EmployerApplications />}{" "}
           {tab === "talent" && <EmployerTalent />}{" "}
           {tab === "analytics" && <EmployerSummary report />}{" "}
-          {tab === "billing" && <div className="space-y-6"><BillingPanel view="services" /><BillingPanel /></div>}{" "}
+          {tab === "billing" && (
+            <div className="space-y-6">
+              <BillingPanel view="services" />
+              <BillingPanel />
+            </div>
+          )}{" "}
           {tab === "company" && <Company />}{" "}
         </section>
       </div>

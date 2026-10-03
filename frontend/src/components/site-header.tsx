@@ -133,7 +133,7 @@ export function SiteHeader({
   onMenuClick,
   menuOpen = false,
 }: { onMenuClick?: () => void; menuOpen?: boolean } = {}) {
-  const account = useAccountStore(state => state.account);
+  const account = useAccountStore((state) => state.account);
   const { candidate } = useCandidateStore((state) => state);
   const [open, setOpen] = useState<string | null>(null);
 
@@ -155,7 +155,7 @@ export function SiteHeader({
           className="flex shrink-0 items-center gap-2.5"
           aria-label="TopCV về trang chủ"
         >
-          <img src="/topcv-logo-7.png" alt="topcv-logo" className="h-[76px]"/>
+          <img src="/topcv-logo-7.png" alt="topcv-logo" className="h-[76px]" />
         </Link>
         <nav className="hidden h-full items-center gap-1 xl:flex">
           {menus
@@ -228,30 +228,54 @@ export function SiteHeader({
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          {account ? <>
-          <Link
-            href="/messages"
-            className="relative grid size-10 place-items-center rounded-full bg-slate-50 text-slate-600 transition hover:bg-[#e7f9ef] hover:text-[#00b14f]"
-            aria-label="Tin nhắn"
-          >
-            <span className="relative"><MessageCircle className="size-5" /><MessageBadge /></span>
-          </Link>
-          <NotificationBell />
-          <Link
-            href={account.role === "admin" ? "/admin" : account.role === "company" ? "/employer" : "/candidate"}
-            className="hidden items-center gap-2 border-l border-slate-200 pl-3 text-sm font-semibold text-slate-700 sm:flex"
-          >
-            <span className="grid size-9 place-items-center rounded-full bg-slate-100">
-              <Avatar>
-                <AvatarImage src={candidate?.avatarUrl ?? ""} />
-                <AvatarFallback>
-                  <UserRound className="size-5 text-slate-500" />
-                </AvatarFallback>
-              </Avatar>
-            </span>
-            <span className="hidden xl:block">{account.role === "admin" ? "Quản trị viên" : account.role === "company" ? account.company?.name : candidate?.fullName}</span>
-          </Link>
-          </> : <Link href="/login" className="rounded-lg bg-[#00b14f] px-4 py-2 text-sm font-semibold text-white">Đăng nhập</Link>}
+          {account ? (
+            <>
+              <Link
+                href="/messages"
+                className="relative grid size-10 place-items-center rounded-full bg-slate-50 text-slate-600 transition hover:bg-[#e7f9ef] hover:text-[#00b14f]"
+                aria-label="Tin nhắn"
+              >
+                <span className="relative">
+                  <MessageCircle className="size-5" />
+                  <MessageBadge />
+                </span>
+              </Link>
+              <NotificationBell />
+              <Link
+                href={
+                  account.role === "admin"
+                    ? "/admin"
+                    : account.role === "company"
+                      ? "/employer"
+                      : "/candidate"
+                }
+                className="hidden items-center gap-2 border-l border-slate-200 pl-3 text-sm font-semibold text-slate-700 sm:flex"
+              >
+                <span className="grid size-9 place-items-center rounded-full bg-slate-100">
+                  <Avatar>
+                    <AvatarImage src={candidate?.avatarUrl ?? ""} />
+                    <AvatarFallback>
+                      <UserRound className="size-5 text-slate-500" />
+                    </AvatarFallback>
+                  </Avatar>
+                </span>
+                <span className="hidden xl:block">
+                  {account.role === "admin"
+                    ? "Quản trị viên"
+                    : account.role === "company"
+                      ? account.company?.name
+                      : candidate?.fullName}
+                </span>
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-lg bg-[#00b14f] px-4 py-2 text-sm font-semibold text-white"
+            >
+              Đăng nhập
+            </Link>
+          )}
         </div>
       </div>
     </header>

@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { Building2, UserRound } from "lucide-react"
+import { Building2, UserRound } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-export type Role = "candidate" | "employer"
+export type Role = "candidate" | "employer";
 
 const OPTIONS: {
-  value: Role
-  label: string
-  description: string
-  icon: typeof UserRound
+  value: Role;
+  label: string;
+  description: string;
+  icon: typeof UserRound;
 }[] = [
   {
     value: "candidate",
@@ -24,14 +24,14 @@ const OPTIONS: {
     description: "Đăng tin & tìm nhân tài",
     icon: Building2,
   },
-]
+];
 
 export function RoleSelector({
   value,
   onChange,
 }: {
-  value: Role
-  onChange: (role: Role) => void
+  value: Role;
+  onChange: (role: Role) => void;
 }) {
   return (
     <div
@@ -40,8 +40,8 @@ export function RoleSelector({
       className="grid grid-cols-2 gap-3"
     >
       {OPTIONS.map((option) => {
-        const selected = value === option.value
-        const Icon = option.icon
+        const selected = value === option.value;
+        const Icon = option.icon;
         return (
           <button
             key={option.value}
@@ -53,7 +53,7 @@ export function RoleSelector({
               "group flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition-all outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
               selected
                 ? "border-primary bg-accent shadow-sm"
-                : "border-border bg-card hover:border-primary/40 hover:bg-accent/40"
+                : "border-border bg-card hover:border-primary/40 hover:bg-accent/40",
             )}
           >
             <span
@@ -61,7 +61,7 @@ export function RoleSelector({
                 "flex size-9 items-center justify-center rounded-lg transition-colors [&_svg]:size-5",
                 selected
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground group-hover:text-foreground"
+                  : "bg-muted text-muted-foreground group-hover:text-foreground",
               )}
             >
               <Icon />
@@ -70,7 +70,7 @@ export function RoleSelector({
               <span
                 className={cn(
                   "text-sm font-semibold",
-                  selected ? "text-foreground" : "text-foreground"
+                  selected ? "text-foreground" : "text-foreground",
                 )}
               >
                 {option.label}
@@ -80,8 +80,8 @@ export function RoleSelector({
               </span>
             </span>
           </button>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

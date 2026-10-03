@@ -7,14 +7,17 @@ import { ChatPresence } from "./chat-presence";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useChat } from "@/providers/chat-provider";
 import { ArrowLeft, MessageCircle, Send, Search } from "lucide-react";
 import { useAccountStore } from "@/stores/auth.store";
 
-import {
-  conversationService,
-} from "@/services/conversation.service";
+import { conversationService } from "@/services/conversation.service";
 
 export function MessagesPanel() {
   const account = useAccountStore((s) => s.account);
@@ -31,8 +34,10 @@ export function MessagesPanel() {
     queryKey: ["conversations", accountId, search],
     enabled: !!accountId,
     initialPageParam: 1,
-    queryFn: ({ signal, pageParam }) => conversationService.list(signal, pageParam, search),
-    getNextPageParam: (last, pages) => last.length === 20 ? pages.length + 1 : undefined,
+    queryFn: ({ signal, pageParam }) =>
+      conversationService.list(signal, pageParam, search),
+    getNextPageParam: (last, pages) =>
+      last.length === 20 ? pages.length + 1 : undefined,
   });
   if (!account)
     return (
@@ -43,7 +48,11 @@ export function MessagesPanel() {
         </Link>
       </div>
     );
-  const conversations = [...new Map((list.data?.pages.flat() ?? []).map(item => [item.id, item])).values()];
+  const conversations = [
+    ...new Map(
+      (list.data?.pages.flat() ?? []).map((item) => [item.id, item]),
+    ).values(),
+  ];
   const current = conversations.find((item) => item.id === selected);
   const name = (item: NonNullable<typeof current>) =>
     account.role === "company" ? item.candidate.fullName : item.company.name;
@@ -89,7 +98,14 @@ export function MessagesPanel() {
               onClick={() => setSelected(item.id)}
               className={`w-full border-b p-4 text-left ${selected === item.id ? "bg-emerald-50" : "hover:bg-slate-50"}`}
             >
-              <p className="truncate font-semibold">{name(item)}{(state?.counts[item.id]??0)>0 && <span className="ml-2 inline-block rounded-full bg-emerald-600 px-2 text-xs text-white">{state?.counts[item.id]}</span>}</p>
+              <p className="truncate font-semibold">
+                {name(item)}
+                {(state?.counts[item.id] ?? 0) > 0 && (
+                  <span className="ml-2 inline-block rounded-full bg-emerald-600 px-2 text-xs text-white">
+                    {state?.counts[item.id]}
+                  </span>
+                )}
+              </p>
               <p className="mt-1 truncate text-sm text-slate-500">
                 {item.messages[0]?.content ?? "Bắt đầu cuộc trò chuyện"}
               </p>
@@ -100,7 +116,14 @@ export function MessagesPanel() {
               )}
             </button>
           ))}
-          <InfiniteScrollEnd hasNext={!!list.hasNextPage} loading={list.isFetching} error={list.isFetchNextPageError} load={() => { if (!list.isFetching) void list.fetchNextPage(); }} />
+          <InfiniteScrollEnd
+            hasNext={!!list.hasNextPage}
+            loading={list.isFetching}
+            error={list.isFetchNextPageError}
+            load={() => {
+              if (!list.isFetching) void list.fetchNextPage();
+            }}
+          />
         </div>
       </aside>
       <section
@@ -119,7 +142,28 @@ export function MessagesPanel() {
               {current ? name(current) : "Tin nhắn"}
             </h2>
             <p className="text-xs text-slate-500">
-              {!connected ? "Đang kết nối lại…" : current ? <ChatPresence online={!!state?.online[account.role === "company" ? current.candidate.accountId : current.company.accountId]} lastActive={state?.lastActive?.[account.role === "company" ? current.candidate.accountId : current.company.accountId]} /> : "Đã kết nối"}
+              {!connected ? (
+                "Đang kết nối lại…"
+              ) : current ? (
+                <ChatPresence
+                  online={
+                    !!state?.online[
+                      account.role === "company"
+                        ? current.candidate.accountId
+                        : current.company.accountId
+                    ]
+                  }
+                  lastActive={
+                    state?.lastActive?.[
+                      account.role === "company"
+                        ? current.candidate.accountId
+                        : current.company.accountId
+                    ]
+                  }
+                />
+              ) : (
+                "Đã kết nối"
+              )}
             </p>
           </div>
         </header>
@@ -152,14 +196,18 @@ function ConversationThread({
   const lock = useRef(false);
   const bottom = useRef<HTMLDivElement>(null);
   const viewport = useRef<HTMLDivElement>(null);
-  const {ack,connected}=useChat();
+  const { ack, connected } = useChat();
   const history = useInfiniteQuery({
     queryKey: ["messages", accountId, id],
     initialPageParam: undefined as string | undefined,
-    queryFn: ({ signal, pageParam }) => conversationService.messages(id, signal, pageParam),
-    getNextPageParam: (page) => page.length===50 ? page[0]?.id : undefined,
+    queryFn: ({ signal, pageParam }) =>
+      conversationService.messages(id, signal, pageParam),
+    getNextPageParam: (page) => (page.length === 50 ? page[0]?.id : undefined),
   });
-  const messages={...history,data:history.data?.pages.slice().reverse().flat()};
+  const messages = {
+    ...history,
+    data: history.data?.pages.slice().reverse().flat(),
+  };
   const send = useMutation({
     mutationFn: (content: string) => conversationService.send(id, content),
     retry: false,
@@ -172,16 +220,37 @@ function ConversationThread({
   useEffect(() => {
     bottom.current?.scrollIntoView({ block: "nearest" });
   }, [messages.data?.at(-1)?.id]);
-  useEffect(()=>{
-    const root=viewport.current; if(!root || !connected)return;
-    const viewed=new Set<string>();
-    const flush=()=>{if(document.visibilityState==="visible" && viewed.size){ack([...viewed],true);}};
-    const observer=new IntersectionObserver(entries=>{for(const entry of entries){const id=(entry.target as HTMLElement).dataset.unreadId!;if(entry.isIntersecting)viewed.add(id);else viewed.delete(id);}flush();},{root,threshold:0.5});
-    root.querySelectorAll("[data-unread-id]").forEach(el=>observer.observe(el));
-    document.addEventListener("visibilitychange",flush);
-    const retry=setInterval(flush,5000);
-    return ()=>{observer.disconnect();clearInterval(retry);document.removeEventListener("visibilitychange",flush);};
-  },[messages.data,connected,ack]);
+  useEffect(() => {
+    const root = viewport.current;
+    if (!root || !connected) return;
+    const viewed = new Set<string>();
+    const flush = () => {
+      if (document.visibilityState === "visible" && viewed.size) {
+        ack([...viewed], true);
+      }
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = (entry.target as HTMLElement).dataset.unreadId!;
+          if (entry.isIntersecting) viewed.add(id);
+          else viewed.delete(id);
+        }
+        flush();
+      },
+      { root, threshold: 0.5 },
+    );
+    root
+      .querySelectorAll("[data-unread-id]")
+      .forEach((el) => observer.observe(el));
+    document.addEventListener("visibilitychange", flush);
+    const retry = setInterval(flush, 5000);
+    return () => {
+      observer.disconnect();
+      clearInterval(retry);
+      document.removeEventListener("visibilitychange", flush);
+    };
+  }, [messages.data, connected, ack]);
   async function submit() {
     if (!draft.trim() || lock.current) return;
     lock.current = true;
@@ -195,8 +264,20 @@ function ConversationThread({
   }
   return (
     <>
-      <div ref={viewport} className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4">
-        {history.hasNextPage && <button type="button" disabled={history.isFetchingNextPage} onClick={()=>void history.fetchNextPage()} className="block mx-auto text-sm text-emerald-700">{history.isFetchingNextPage?"Đang tải…":"Xem tin nhắn cũ hơn"}</button>}
+      <div
+        ref={viewport}
+        className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4"
+      >
+        {history.hasNextPage && (
+          <button
+            type="button"
+            disabled={history.isFetchingNextPage}
+            onClick={() => void history.fetchNextPage()}
+            className="block mx-auto text-sm text-emerald-700"
+          >
+            {history.isFetchingNextPage ? "Đang tải…" : "Xem tin nhắn cũ hơn"}
+          </button>
+        )}
         {messages.isPending && <LoadingState message="Đang tải tin nhắn..." />}
         {messages.isError && (
           <button
@@ -214,7 +295,11 @@ function ConversationThread({
         {messages.data?.map((item) => (
           <div
             key={item.id}
-            data-unread-id={item.senderAccountId!==accountId && !item.readAt ? item.id : undefined}
+            data-unread-id={
+              item.senderAccountId !== accountId && !item.readAt
+                ? item.id
+                : undefined
+            }
             className={`flex ${item.senderAccountId === accountId ? "justify-end" : "justify-start"}`}
           >
             <div
@@ -229,7 +314,15 @@ function ConversationThread({
                   minute: "2-digit",
                 })}
               </time>
-              {item.senderAccountId===accountId && <p className="text-right text-[10px] opacity-80">{item.readAt?"Đã xem":item.deliveredAt?"Đã nhận · Chưa xem":"Đã gửi"}</p>}
+              {item.senderAccountId === accountId && (
+                <p className="text-right text-[10px] opacity-80">
+                  {item.readAt
+                    ? "Đã xem"
+                    : item.deliveredAt
+                      ? "Đã nhận · Chưa xem"
+                      : "Đã gửi"}
+                </p>
+              )}
             </div>
           </div>
         ))}

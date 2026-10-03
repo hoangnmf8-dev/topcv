@@ -15,11 +15,37 @@ import {
 } from "./subscription.service";
 
 export async function syncPlans() {
-  for (const [code, name] of [["cvLimit", "Số CV tối đa"], ["aiLimit", "Lượt AI trong kỳ"], ["activeJobLimit", "Số tin tuyển dụng hoạt động"], ["publicCvViewLimit", "Lượt xem CV công khai trong kỳ"], ["jobBoostLimit", "Lượt đẩy tin trong 30 ngày"]] as const) {
-    await prisma.entitlement.upsert({ where: { code }, create: { code, name, valueType: "number" }, update: {} });
+  for (const [code, name] of [
+    ["cvLimit", "Số CV tối đa"],
+    ["aiLimit", "Lượt AI trong kỳ"],
+    ["activeJobLimit", "Số tin tuyển dụng hoạt động"],
+    ["publicCvViewLimit", "Lượt xem CV công khai trong kỳ"],
+    ["jobBoostLimit", "Lượt đẩy tin trong 30 ngày"],
+  ] as const) {
+    await prisma.entitlement.upsert({
+      where: { code },
+      create: { code, name, valueType: "number" },
+      update: {},
+    });
   }
-  const descriptions = { candidate: { jobFeatures: "Tìm việc, lưu việc, ứng tuyển và nhắn tin", cvFeatures: "Tạo CV từ các mẫu hiện có và xuất PDF" }, company: { applicationFeatures: "Nhận và quản lý hồ sơ ứng tuyển", candidateCvFeatures: "Xem CV của ứng viên đã ứng tuyển", recruitmentFeatures: "Nhắn tin và dashboard tuyển dụng" } };
-  for (const values of Object.values(descriptions)) for (const [code, name] of Object.entries(values)) await prisma.entitlement.upsert({ where: { code }, create: { code, name, valueType: "string" }, update: {} });
+  const descriptions = {
+    candidate: {
+      jobFeatures: "Tìm việc, lưu việc, ứng tuyển và nhắn tin",
+      cvFeatures: "Tạo CV từ các mẫu hiện có và xuất PDF",
+    },
+    company: {
+      applicationFeatures: "Nhận và quản lý hồ sơ ứng tuyển",
+      candidateCvFeatures: "Xem CV của ứng viên đã ứng tuyển",
+      recruitmentFeatures: "Nhắn tin và dashboard tuyển dụng",
+    },
+  };
+  for (const values of Object.values(descriptions))
+    for (const [code, name] of Object.entries(values))
+      await prisma.entitlement.upsert({
+        where: { code },
+        create: { code, name, valueType: "string" },
+        update: {},
+      });
   for (const audience of ["candidate", "company"] as const) {
     for (const tier of ["free", "pro", "premium"] as const) {
       const data = {
@@ -44,10 +70,36 @@ export async function syncPlans() {
         update: data,
       });
       const limits = tier === "free" ? FREE_BENEFITS : PRO_BENEFITS;
-      const scoped = audience === "candidate" ? { cvLimit: limits.cvLimit, aiLimit: limits.aiLimit } : { aiLimit: limits.aiLimit, activeJobLimit: limits.activeJobLimit, publicCvViewLimit: tier === "free" ? 10 : 100, jobBoostLimit: tier === "pro" ? 20 : 0 };
-      for (const [code, value] of Object.entries({ ...scoped, ...descriptions[audience] })) {
-        const entitlement = await prisma.entitlement.findUniqueOrThrow({ where: { code } });
-        await prisma.planEntitlement.upsert({ where: { planId_entitlementId: { planId: plan.id, entitlementId: entitlement.id } }, create: { planId: plan.id, entitlementId: entitlement.id, value: value as Prisma.InputJsonValue }, update: {} });
+      const scoped =
+        audience === "candidate"
+          ? { cvLimit: limits.cvLimit, aiLimit: limits.aiLimit }
+          : {
+              aiLimit: limits.aiLimit,
+              activeJobLimit: limits.activeJobLimit,
+              publicCvViewLimit: tier === "free" ? 10 : 100,
+              jobBoostLimit: tier === "pro" ? 20 : 0,
+            };
+      for (const [code, value] of Object.entries({
+        ...scoped,
+        ...descriptions[audience],
+      })) {
+        const entitlement = await prisma.entitlement.findUniqueOrThrow({
+          where: { code },
+        });
+        await prisma.planEntitlement.upsert({
+          where: {
+            planId_entitlementId: {
+              planId: plan.id,
+              entitlementId: entitlement.id,
+            },
+          },
+          create: {
+            planId: plan.id,
+            entitlementId: entitlement.id,
+            value: value as Prisma.InputJsonValue,
+          },
+          update: {},
+        });
       }
     }
   }
@@ -59,15 +111,20 @@ export async function plans(audience: "candidate" | "company") {
       orderBy: { displayOrder: "asc" },
     })
     .then((rows) =>
-      Promise.all(rows.map(async (p) => ({
-        ...p,
-        metadata: { ...(p.metadata as Record<string, Prisma.JsonValue>), benefits: await planEntitlements(p.id) },
-        purchasable:
-          !p.isFree &&
-          p.availability === "available" &&
-          p.price.gt(0) &&
-          paymentsConfigured(),
-      }))),
+      Promise.all(
+        rows.map(async (p) => ({
+          ...p,
+          metadata: {
+            ...(p.metadata as Record<string, Prisma.JsonValue>),
+            benefits: await planEntitlements(p.id),
+          },
+          purchasable:
+            !p.isFree &&
+            p.availability === "available" &&
+            p.price.gt(0) &&
+            paymentsConfigured(),
+        })),
+      ),
     );
 }
 export function serializePayment<T extends { providerOrderCode: bigint }>(
@@ -136,7 +193,10 @@ export async function createOrder(
         : null;
     if (audience === "company" && !company)
       throw new AppError("Không tìm thấy doanh nghiệp", "NOT_FOUND", 404);
-    const benefits = readBenefits(await planEntitlements(plan.id, tx), audience);
+    const benefits = readBenefits(
+      await planEntitlements(plan.id, tx),
+      audience,
+    );
     // Reuse an open order when a browser submits with another request key.
     const open = await tx.order.findFirst({
       where: {
@@ -341,7 +401,20 @@ export async function settlePayment(
         usageState: {},
       },
     });
-    await notify(tx, { recipientAccountId: fresh.purchasedByAccountId, type: "payment", title: "Thanh toán thành công", description: window.status === "scheduled" ? "Gói Pro đã được thanh toán và sẽ bắt đầu sau gói hiện tại." : "Thanh toán đã được xác nhận. Gói Pro đã có hiệu lực.", link: snapshot.audience === "company" ? "/employer?tab=billing" : "/candidate?tab=orders", eventKey: `order:${fresh.id}:paid` });
+    await notify(tx, {
+      recipientAccountId: fresh.purchasedByAccountId,
+      type: "payment",
+      title: "Thanh toán thành công",
+      description:
+        window.status === "scheduled"
+          ? "Gói Pro đã được thanh toán và sẽ bắt đầu sau gói hiện tại."
+          : "Thanh toán đã được xác nhận. Gói Pro đã có hiệu lực.",
+      link:
+        snapshot.audience === "company"
+          ? "/employer?tab=billing"
+          : "/candidate?tab=orders",
+      eventKey: `order:${fresh.id}:paid`,
+    });
     return true;
   });
 }

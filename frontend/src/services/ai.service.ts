@@ -5,11 +5,11 @@ class AIService {
   async generateTextAI(task: string, context: Record<string, unknown>) {
     try {
       const response = await httpRequest.post("/ai/generate", {
-        task, 
-        context
+        task,
+        context,
       });
       return response.data;
-    } catch(error) {
+    } catch (error) {
       if (error instanceof AppError) {
         return {
           success: false,
@@ -25,6 +25,6 @@ class AIService {
       };
     }
   }
-};
+}
 const aiService = new AIService();
 export default aiService;

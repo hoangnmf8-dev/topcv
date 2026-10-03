@@ -15,5 +15,9 @@ export function BillingOrdersReturn() {
     redirect(`/candidate?${query.toString()}`);
   }
 
-  return <main className="mx-auto max-w-5xl p-6"><BillingPanel /></main>;
+  return (
+    <main className="mx-auto max-w-5xl p-6">
+      <BillingPanel />
+    </main>
+  );
 }

@@ -81,9 +81,7 @@ export function TopIndustries() {
                 className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-200 hover:border-primary/50 hover:shadow-lg hover:shadow-emerald-950/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-4 motion-safe:hover:-translate-y-0.5 motion-reduce:transition-none sm:p-6"
               >
                 <div className="flex items-center justify-between">
-                  <span
-                    className="grid size-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-100 transition-colors duration-200 group-hover:bg-emerald-100"
-                  >
+                  <span className="grid size-12 place-items-center rounded-2xl bg-emerald-50 text-emerald-600 ring-1 ring-inset ring-emerald-100 transition-colors duration-200 group-hover:bg-emerald-100">
                     <Layers3
                       aria-hidden="true"
                       className="size-6"

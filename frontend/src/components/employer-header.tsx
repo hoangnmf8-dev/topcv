@@ -58,7 +58,10 @@ export function EmployerHeader({
             className="rounded-lg p-1.5 hover:bg-white/10"
             aria-label="Tin nhắn nhà tuyển dụng"
           >
-            <span className="relative"><MessageCircle className="size-5" /><MessageBadge /></span>
+            <span className="relative">
+              <MessageCircle className="size-5" />
+              <MessageBadge />
+            </span>
           </Link>
           <NotificationBell />
           <span className="grid size-8 place-items-center rounded-full bg-slate-100 text-slate-600">

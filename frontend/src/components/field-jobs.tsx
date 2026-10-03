@@ -63,11 +63,7 @@ const jobs: FieldJob[] = [];
 
 export function FieldJobsInteractive() {
   return (
-    <Suspense
-      fallback={
-        <LoadingState fullscreen message="Đang tải bộ lọc…" />
-      }
-    >
+    <Suspense fallback={<LoadingState fullscreen message="Đang tải bộ lọc…" />}>
       <FieldJobsFromSearch />
     </Suspense>
   );
@@ -95,9 +91,7 @@ function FieldJobsFromSearch() {
     staleTime: 5 * 60 * 1000,
   });
   if (isPending)
-    return (
-      <LoadingState fullscreen message="Đang tải danh sách ngành nghề…" />
-    );
+    return <LoadingState fullscreen message="Đang tải danh sách ngành nghề…" />;
   if (isError && !jobCategories?.data)
     return (
       <div role="alert" className="p-6 text-sm text-slate-600">
@@ -126,9 +120,7 @@ function FieldJobsFromSearch() {
       : "Tất cả ngành nghề");
   const query = params.get("q") ?? "";
   if (hasLocation && provinces.isPending)
-    return (
-      <LoadingState fullscreen message="Đang tải địa điểm từ tìm kiếm…" />
-    );
+    return <LoadingState fullscreen message="Đang tải địa điểm từ tìm kiếm…" />;
   if (hasLocation && provinces.isError && !provinces.data)
     return (
       <div role="alert" className="p-6 text-sm text-slate-600">

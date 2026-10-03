@@ -276,8 +276,17 @@ class AuthService {
     });
     if (existProfile?.candidate) {
       const completion = await completionService.get(existProfile.id);
-      const profile = await prisma.candidate.findUnique({ where: { id: existProfile.candidate.id } });
-      return { ...existProfile, candidate: { ...profile, ...existProfile.candidate, profileCompletion: completion.percentage } };
+      const profile = await prisma.candidate.findUnique({
+        where: { id: existProfile.candidate.id },
+      });
+      return {
+        ...existProfile,
+        candidate: {
+          ...profile,
+          ...existProfile.candidate,
+          profileCompletion: completion.percentage,
+        },
+      };
     }
     return existProfile;
   }
@@ -313,19 +322,27 @@ class AuthService {
     );
   }
   async getNewToken(refreshToken: string) {
-    const invalid = () => new Unauthorized(
-      ERROR_MESSAGE.AUTH_SERVICE.INVALID_TOKEN,
-      ERROR_CODE.AUTH_SERVICE.INVALID_TOKEN,
-    );
+    const invalid = () =>
+      new Unauthorized(
+        ERROR_MESSAGE.AUTH_SERVICE.INVALID_TOKEN,
+        ERROR_CODE.AUTH_SERVICE.INVALID_TOKEN,
+      );
     let decodedRefreshToken: JwtPayload;
     try {
-      decodedRefreshToken = jwtService.verifyRefreshToken(refreshToken) as JwtPayload;
-      if (!decodedRefreshToken.accountId || !decodedRefreshToken.jti) throw invalid();
+      decodedRefreshToken = jwtService.verifyRefreshToken(
+        refreshToken,
+      ) as JwtPayload;
+      if (!decodedRefreshToken.accountId || !decodedRefreshToken.jti)
+        throw invalid();
     } catch {
       throw invalid();
     }
     const account = await prisma.account.findFirst({
-      where: { id: decodedRefreshToken.accountId, status: "active", deletedAt: null },
+      where: {
+        id: decodedRefreshToken.accountId,
+        status: "active",
+        deletedAt: null,
+      },
       select: { id: true, role: true },
     });
     if (!account) {
@@ -351,13 +368,21 @@ class AuthService {
         refreshRetryKey(refreshToken),
       ],
       arguments: [
-        JSON.stringify({ access: nextAccess.jti, refresh: nextRefresh.jti, accountId: account.id, role: account.role }),
+        JSON.stringify({
+          access: nextAccess.jti,
+          refresh: nextRefresh.jti,
+          accountId: account.id,
+          role: account.role,
+        }),
         String(Math.max(1, nextRefresh.exp - Math.floor(Date.now() / 1000))),
         JSON.stringify({ newAccessToken, newRefreshToken }),
       ],
     });
     if (typeof result !== "string") throw invalid();
-    return JSON.parse(result) as { newAccessToken: string; newRefreshToken: string };
+    return JSON.parse(result) as {
+      newAccessToken: string;
+      newRefreshToken: string;
+    };
   }
   async forgotPassword(email: string) {
     const account = await prisma.account.findUnique({
@@ -411,31 +436,72 @@ class AuthService {
       },
     });
   }
-  async authGoogle(email: string, name: string, role: "candidate" | "company", authoritativeEmail: boolean, googleSubject: string) {
+  async authGoogle(
+    email: string,
+    name: string,
+    role: "candidate" | "company",
+    authoritativeEmail: boolean,
+    googleSubject: string,
+  ) {
     const account = await prisma.$transaction(async (tx) => {
       const linked = await tx.account.findUnique({ where: { googleSubject } });
-      const existing = linked ?? await tx.account.findUnique({ where: { email } });
+      const existing =
+        linked ?? (await tx.account.findUnique({ where: { email } }));
       if (existing) {
-        if (existing.deletedAt || existing.status !== "active" || !["candidate", "company"].includes(existing.role)) {
-          throw new AccountBlockedError("Tài khoản không được phép đăng nhập", "GOOGLE_ACCOUNT_BLOCKED");
+        if (
+          existing.deletedAt ||
+          existing.status !== "active" ||
+          !["candidate", "company"].includes(existing.role)
+        ) {
+          throw new AccountBlockedError(
+            "Tài khoản không được phép đăng nhập",
+            "GOOGLE_ACCOUNT_BLOCKED",
+          );
         }
-        if (!linked && (!authoritativeEmail || (existing.googleSubject && existing.googleSubject !== googleSubject))) throw new BadRequest("Vui lòng đăng nhập bằng mật khẩu cho email này", "GOOGLE_EMAIL_LINK_DENIED");
-        return tx.account.update({ where: { id: existing.id }, data: { googleSubject, verifyEmail: true, lastLoginAt: new Date() } });
+        if (
+          !linked &&
+          (!authoritativeEmail ||
+            (existing.googleSubject &&
+              existing.googleSubject !== googleSubject))
+        )
+          throw new BadRequest(
+            "Vui lòng đăng nhập bằng mật khẩu cho email này",
+            "GOOGLE_EMAIL_LINK_DENIED",
+          );
+        return tx.account.update({
+          where: { id: existing.id },
+          data: { googleSubject, verifyEmail: true, lastLoginAt: new Date() },
+        });
       }
       const fullName = name.trim().slice(0, 150) || email.split("@")[0]!;
-      return tx.account.create({ data: {
-        email, role, googleSubject, passwordHash: hashString(cryptoRandomString({ length: 64, type: "url-safe" })),
-        verifyEmail: true, lastLoginAt: new Date(),
-        ...(role === "candidate" ? { candidate: { create: { fullName } } } :
-          { company: { create: { name: fullName, code: createCode(fullName) } } }),
-      } });
+      return tx.account.create({
+        data: {
+          email,
+          role,
+          googleSubject,
+          passwordHash: hashString(
+            cryptoRandomString({ length: 64, type: "url-safe" }),
+          ),
+          verifyEmail: true,
+          lastLoginAt: new Date(),
+          ...(role === "candidate"
+            ? { candidate: { create: { fullName } } }
+            : {
+                company: {
+                  create: { name: fullName, code: createCode(fullName) },
+                },
+              }),
+        },
+      });
     });
     const accessToken = jwtService.createAccessToken(account.id, account.role);
-    const refreshToken = jwtService.createRefreshToken(account.id, account.role);
+    const refreshToken = jwtService.createRefreshToken(
+      account.id,
+      account.role,
+    );
     await this.saveRefreshToken(accessToken, refreshToken);
     return { accessToken, refreshToken, role: account.role };
   }
-
 }
 const authService = new AuthService();
 export default authService;

@@ -28,7 +28,7 @@ export interface EducationItem {
 export interface SkillItem {
   id: string;
   name: string;
-  level: number; 
+  level: number;
 }
 
 export interface CVData {

@@ -19,7 +19,11 @@ import conversationRouter from "./conversation.route";
 
 const indexRouter = express.Router();
 // Public GET routes remain readable; private routers authenticate before checking roles.
-indexRouter.use(["/saved-job", "/application", "/cv"], authMiddleware, requireRoles("candidate"));
+indexRouter.use(
+  ["/saved-job", "/application", "/cv"],
+  authMiddleware,
+  requireRoles("candidate"),
+);
 indexRouter.use("/admin", authMiddleware, requireRoles("admin"));
 indexRouter.use("/employer", authMiddleware, requireRoles("company"));
 indexRouter.use("/admin", adminRouter);

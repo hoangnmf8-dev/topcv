@@ -41,7 +41,13 @@ export const cvDataSchema = z
             company: text(255),
             role: text(50),
             timeline: text(100),
-            bullets: z.array(text(500)).max(30).refine(lines => lines.join("\n").length <= 500, "Mô tả công việc tối đa 500 ký tự"),
+            bullets: z
+              .array(text(500))
+              .max(30)
+              .refine(
+                (lines) => lines.join("\n").length <= 500,
+                "Mô tả công việc tối đa 500 ký tự",
+              ),
           })
           .strict(),
       )

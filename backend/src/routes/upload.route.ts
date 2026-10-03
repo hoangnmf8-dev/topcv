@@ -20,6 +20,10 @@ uploadRouter.post(
   validateMiddleware(completeUploadSchema),
   uploadController.uploadCompleted,
 );
-uploadRouter.post("/presign-dowload", authMiddleware, uploadController.getPresidnedDowload);
+uploadRouter.post(
+  "/presign-dowload",
+  authMiddleware,
+  uploadController.getPresidnedDowload,
+);
 
 export default uploadRouter;

@@ -111,7 +111,9 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
             </p>
             <p className="mt-1 text-xs text-slate-500">
               {candidate
-                ? completion.data ? `Hồ sơ hoàn thiện ${completion.data.percentage}%` : "Đang tải mức độ hoàn thiện hồ sơ…"
+                ? completion.data
+                  ? `Hồ sơ hoàn thiện ${completion.data.percentage}%`
+                  : "Đang tải mức độ hoàn thiện hồ sơ…"
                 : "Chưa có thông tin gói dịch vụ"}
             </p>
           </div>
@@ -130,9 +132,16 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
           {candidate && <LogoutButton />}
         </aside>
         <section>
-          {tab === "overview" && (candidate ? <CandidateOverview open={setTab} /> : <Overview candidate={false} />)}{" "}
+          {tab === "overview" &&
+            (candidate ? (
+              <CandidateOverview open={setTab} />
+            ) : (
+              <Overview candidate={false} />
+            ))}{" "}
           {tab === "profile" && <Profile />}{" "}
-          {tab === "applications" && <CandidateRecords key="applications" kind="applications" />}{" "}
+          {tab === "applications" && (
+            <CandidateRecords key="applications" kind="applications" />
+          )}{" "}
           {tab === "saved" && <CandidateRecords key="saved" kind="saved" />}{" "}
           {tab === "jobs" && <List title="Tin tuyển dụng của bạn" />}{" "}
           {tab === "candidates" && <MiniAts />}{" "}

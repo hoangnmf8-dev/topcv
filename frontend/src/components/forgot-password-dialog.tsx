@@ -67,7 +67,9 @@ export function ForgotPasswordDialog({
   // Connect the real password-reset API here before enabling these actions.
   function handleUnavailable(event?: React.FormEvent) {
     event?.preventDefault();
-    setError("Tính năng đặt lại mật khẩu hiện chưa khả dụng. Vui lòng thử lại sau.");
+    setError(
+      "Tính năng đặt lại mật khẩu hiện chưa khả dụng. Vui lòng thử lại sau.",
+    );
   }
 
   const descriptions: Record<Step, string> = {
@@ -124,8 +126,8 @@ export function ForgotPasswordDialog({
               </Field>
               <ErrorText error={error} />
               <Button type="submit" className="w-full">
-                <Mail />Gửi
-                mã OTP
+                <Mail />
+                Gửi mã OTP
               </Button>
             </FieldGroup>
           </form>

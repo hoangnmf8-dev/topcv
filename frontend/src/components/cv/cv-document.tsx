@@ -283,10 +283,7 @@ export function CVDocument({ data, template, theme }: Props) {
       {dark && avatar}
     </header>
   );
-  const intro = section(
-    "Giới thiệu",
-    <ObjectiveText text={data.objective} />,
-  );
+  const intro = section("Giới thiệu", <ObjectiveText text={data.objective} />);
 
   const chips = (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -446,7 +443,10 @@ export function CVDocument({ data, template, theme }: Props) {
           style={{ display: "grid", gridTemplateColumns: "1fr 205px", gap: 32 }}
         >
           <div>
-            {section("Một chút về tôi", <ObjectiveText text={data.objective} />)}
+            {section(
+              "Một chút về tôi",
+              <ObjectiveText text={data.objective} />,
+            )}
             {section(
               "Hành trình sáng tạo",
               <div>
@@ -550,7 +550,10 @@ export function CVDocument({ data, template, theme }: Props) {
               marginBottom: 8,
             }}
           >
-            {section("Mục tiêu nghề nghiệp", <ObjectiveText text={data.objective} />)}
+            {section(
+              "Mục tiêu nghề nghiệp",
+              <ObjectiveText text={data.objective} />,
+            )}
             {section("Thông tin liên hệ", contactBlock)}
           </div>
           <section

@@ -70,7 +70,12 @@ export function JobCard({ job, saved, onSelect, onToggleSave }: JobCardProps) {
             e.stopPropagation();
             onToggleSave();
           }}
-          className={cn("absolute right-4 top-4 grid size-9 shrink-0 place-items-center rounded-full border shadow-sm transition-all hover:scale-105 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95", saved ? "border-emerald-300 bg-emerald-50 text-emerald-600" : "border-slate-200 bg-white text-slate-400")}
+          className={cn(
+            "absolute right-4 top-4 grid size-9 shrink-0 place-items-center rounded-full border shadow-sm transition-all hover:scale-105 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 active:scale-95",
+            saved
+              ? "border-emerald-300 bg-emerald-50 text-emerald-600"
+              : "border-slate-200 bg-white text-slate-400",
+          )}
         >
           <Heart
             className={cn(

@@ -214,17 +214,25 @@ export default function Page() {
       setPreviewOpen(false);
       router.push("/employer");
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data?.errors?.code === "JOB_LIMIT_REACHED") {
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.data?.errors?.code === "JOB_LIMIT_REACHED"
+      ) {
         toast.error(error.response.data.errors.message, {
-          description: "Tạm dừng hoặc đóng một tin hiện có trước khi đăng thêm. Hãy lưu lại nội dung trước khi chuyển trang.",
-          action: { label: "Quản lý tin", onClick: () => router.push("/employer?tab=jobs") },
+          description:
+            "Tạm dừng hoặc đóng một tin hiện có trước khi đăng thêm. Hãy lưu lại nội dung trước khi chuyển trang.",
+          action: {
+            label: "Quản lý tin",
+            onClick: () => router.push("/employer?tab=jobs"),
+          },
           duration: 10000,
         });
         return;
       }
       toast.error(
         axios.isAxiosError(error)
-          ? (error.response?.data?.errors?.message ?? error.response?.data?.message ??
+          ? (error.response?.data?.errors?.message ??
+              error.response?.data?.message ??
               "Không thể đăng tin. Vui lòng thử lại.")
           : "Không thể đăng tin.",
       );
@@ -363,8 +371,12 @@ export default function Page() {
                   <div className="font-bold">
                     <p className="mb-2">Lịch làm thứ Bảy</p>
                     <Select
-                      value={data.saturdaySchedule === "WORK" ? "Làm thứ 7"
-                        : (data.saturdaySchedule === "OFF" ? "Nghỉ thứ 7" : "Không đề cập")
+                      value={
+                        data.saturdaySchedule === "WORK"
+                          ? "Làm thứ 7"
+                          : data.saturdaySchedule === "OFF"
+                            ? "Nghỉ thứ 7"
+                            : "Không đề cập"
                       }
                       onValueChange={(value) => {
                         if (
@@ -395,7 +407,13 @@ export default function Page() {
                     type="number"
                     value={data.experience}
                     change={(v) => {
-                      if (v === "" || (Number.isInteger(Number(v)) && Number(v) >= 0 && Number(v) <= 99)) set("experience", v);
+                      if (
+                        v === "" ||
+                        (Number.isInteger(Number(v)) &&
+                          Number(v) >= 0 &&
+                          Number(v) <= 99)
+                      )
+                        set("experience", v);
                     }}
                   />
                   <div>
@@ -593,9 +611,14 @@ function ContentEditor({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const pending = useRef(false);
-  const account = useAccountStore(s => s.account);
+  const account = useAccountStore((s) => s.account);
   const client = useQueryClient();
-  const quota = useQuery({ queryKey: ["subscription", account?.id], enabled: !!account, queryFn: billingService.subscription, refetchInterval: 60000 });
+  const quota = useQuery({
+    queryKey: ["subscription", account?.id],
+    enabled: !!account,
+    queryFn: billingService.subscription,
+    refetchInterval: 60000,
+  });
   const exhausted = quota.data?.aiUsage.remaining === 0;
   const generate = async () => {
     if (pending.current || !value.trim() || exhausted || !quota.data) return;
@@ -614,7 +637,9 @@ function ContentEditor({
         jobTitle: job.title,
         skills: job.skills,
         overviewRequirements: job.overviewRequirements,
-        ...(job.experience !== "" ? { experienceYearsMin: Number(job.experience) } : {}),
+        ...(job.experience !== ""
+          ? { experienceYearsMin: Number(job.experience) }
+          : {}),
         jobDescription: job.description,
         candidateRequirements: job.requirements,
       });
@@ -637,7 +662,9 @@ function ContentEditor({
     } finally {
       pending.current = false;
       setLoading(false);
-      await client.invalidateQueries({ queryKey: ["subscription", account?.id] });
+      await client.invalidateQueries({
+        queryKey: ["subscription", account?.id],
+      });
     }
   };
   return (
@@ -655,13 +682,36 @@ function ContentEditor({
           ) : (
             <Sparkles className="size-3.5" />
           )}
-          {loading ? "Đang viết..." : label === "Quyền lợi" ? "Cải thiện văn phong với AI" : "Viết chi tiết với AI"}
+          {loading
+            ? "Đang viết..."
+            : label === "Quyền lợi"
+              ? "Cải thiện văn phong với AI"
+              : "Viết chi tiết với AI"}
         </button>
       </div>
       <p className="mt-2 text-xs text-slate-500" aria-live="polite">
-        {quota.data ? `Còn ${quota.data.aiUsage.remaining}/${quota.data.aiUsage.limit} lượt AI · Mỗi lần viết thành công dùng 1 lượt` : quota.isError ? "Không tải được lượt AI." : "Đang tải lượt AI…"}
-        {quota.isError && <button type="button" onClick={() => void quota.refetch()} className="ml-2 underline">Thử lại</button>}
-        {exhausted && <Link href="/employer?tab=billing" className="ml-2 text-emerald-700 underline">Nâng cấp gói</Link>}
+        {quota.data
+          ? `Còn ${quota.data.aiUsage.remaining}/${quota.data.aiUsage.limit} lượt AI · Mỗi lần viết thành công dùng 1 lượt`
+          : quota.isError
+            ? "Không tải được lượt AI."
+            : "Đang tải lượt AI…"}
+        {quota.isError && (
+          <button
+            type="button"
+            onClick={() => void quota.refetch()}
+            className="ml-2 underline"
+          >
+            Thử lại
+          </button>
+        )}
+        {exhausted && (
+          <Link
+            href="/employer?tab=billing"
+            className="ml-2 text-emerald-700 underline"
+          >
+            Nâng cấp gói
+          </Link>
+        )}
       </p>
       <textarea
         aria-label={label}
@@ -704,7 +754,11 @@ function Preview({ data }: { data: Data & { location: string } }) {
           </p>
           <p className="flex gap-2">
             <UsersRound className="size-5 shrink-0 text-green-500" />
-            {data.experience === "" ? "Chưa cập nhật kinh nghiệm" : Number(data.experience) === 0 ? "Không yêu cầu kinh nghiệm" : `${data.experience} năm kinh nghiệm`}
+            {data.experience === ""
+              ? "Chưa cập nhật kinh nghiệm"
+              : Number(data.experience) === 0
+                ? "Không yêu cầu kinh nghiệm"
+                : `${data.experience} năm kinh nghiệm`}
           </p>
           <p className="flex gap-2">
             <CalendarDays className="size-5 shrink-0 text-green-500" />
@@ -815,7 +869,11 @@ function Overview({ data }: { data: Data }) {
         <b>Yêu cầu:</b>
         <div className="flex flex-wrap gap-2">
           {data.experience !== "" && (
-            <Tag>{Number(data.experience) === 0 ? "Không yêu cầu kinh nghiệm" : `${data.experience} năm kinh nghiệm`}</Tag>
+            <Tag>
+              {Number(data.experience) === 0
+                ? "Không yêu cầu kinh nghiệm"
+                : `${data.experience} năm kinh nghiệm`}
+            </Tag>
           )}
           {requirements.map((item) => (
             <Tag key={item}>{item}</Tag>

@@ -12,4 +12,4 @@ export class Unauthorized extends AppError {
   constructor(message: string, code: string) {
     super(message, code, 401);
   }
-};
+}

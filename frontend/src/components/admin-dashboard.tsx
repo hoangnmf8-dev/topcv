@@ -1,6 +1,18 @@
 "use client";
-import { Children, isValidElement, useEffect, useState, type ReactNode } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Children,
+  isValidElement,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   BarChart3,
@@ -22,7 +34,15 @@ import { logoutAction } from "@/actions/auth.action";
 import { RoleFooter } from "./role-footer";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { toast } from "sonner";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 const adminQueryRefresh = {
   staleTime: 60_000,
@@ -31,27 +51,68 @@ const adminQueryRefresh = {
   refetchIntervalInBackground: false,
 } as const;
 
-function AdminSelect({value,onChange,children,className,required,"aria-label":ariaLabel}: {
-  value:string|number;
-  onChange:(event:{target:{value:string}})=>void;
-  children:ReactNode;
-  className?:string;
-  required?:boolean;
-  "aria-label"?:string;
+function AdminSelect({
+  value,
+  onChange,
+  children,
+  className,
+  required,
+  "aria-label": ariaLabel,
+}: {
+  value: string | number;
+  onChange: (event: { target: { value: string } }) => void;
+  children: ReactNode;
+  className?: string;
+  required?: boolean;
+  "aria-label"?: string;
 }) {
-  const options = Children.toArray(children).filter(isValidElement<{value:string|number;children:ReactNode}>).map(option=>({value:String(option.props.value),label:option.props.children}));
-  const selected=options.find(option=>option.value===String(value));
-  return <Select value={String(value)} required={required} onValueChange={next=>{if(next!==null)onChange({target:{value:next}});}}>
-    <SelectTrigger aria-label={ariaLabel} className={className+" h-auto min-h-10 gap-3 rounded-xl bg-white px-3 py-2"}>
-      <SelectValue>{selected?.label ?? "Chọn…"}</SelectValue>
-    </SelectTrigger>
-    <SelectContent align="start" alignItemWithTrigger={false} className="max-w-[calc(100vw-2rem)]">
-      {options.map(option=><SelectItem key={option.value} value={option.value} className="whitespace-normal break-words">{option.label}</SelectItem>)}
-    </SelectContent>
-  </Select>;
+  const options = Children.toArray(children)
+    .filter(isValidElement<{ value: string | number; children: ReactNode }>)
+    .map((option) => ({
+      value: String(option.props.value),
+      label: option.props.children,
+    }));
+  const selected = options.find((option) => option.value === String(value));
+  return (
+    <Select
+      value={String(value)}
+      required={required}
+      onValueChange={(next) => {
+        if (next !== null) onChange({ target: { value: next } });
+      }}
+    >
+      <SelectTrigger
+        aria-label={ariaLabel}
+        className={
+          className + " h-auto min-h-10 gap-3 rounded-xl bg-white px-3 py-2"
+        }
+      >
+        <SelectValue>{selected?.label ?? "Chọn…"}</SelectValue>
+      </SelectTrigger>
+      <SelectContent
+        align="start"
+        alignItemWithTrigger={false}
+        className="max-w-[calc(100vw-2rem)]"
+      >
+        {options.map((option) => (
+          <SelectItem
+            key={option.value}
+            value={option.value}
+            className="whitespace-normal break-words"
+          >
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
 }
 
-function useAdminTab(key: string, allowed: readonly string[], fallback: string) {
+function useAdminTab(
+  key: string,
+  allowed: readonly string[],
+  fallback: string,
+) {
   const params = useSearchParams();
   const value = params.get(key) ?? fallback;
   const selected = allowed.includes(value) ? value : fallback;
@@ -204,7 +265,11 @@ function Failure({ error, retry }: { error: unknown; retry: () => void }) {
 export function AdminDashboard() {
   const account = useAccountStore((s) => s.account),
     router = useRouter();
-  const [tab, setTab] = useAdminTab("tab", nav.map(([id]) => id), "overview");
+  const [tab, setTab] = useAdminTab(
+    "tab",
+    nav.map(([id]) => id),
+    "overview",
+  );
   const [mobile, setMobile] = useState(false);
   const session = useQuery({
     ...adminQueryRefresh,
@@ -372,11 +437,25 @@ function Overview({ open }: { open: (tab: string) => void }) {
         </Panel>
         <Panel>
           <h2 className="mb-4 font-bold">Trạng thái tin tuyển dụng</h2>
-          <p className="mb-4 text-xs text-slate-500">Thống kê các tin chưa bị xóa trong hệ thống.</p>
-          {["PENDING", "PUBLISHED", "PAUSED", "REJECTED", "CLOSED", "EXPIRED"].map(status => (
-            <div key={status} className="flex items-center justify-between border-b py-3 text-sm last:border-0">
+          <p className="mb-4 text-xs text-slate-500">
+            Thống kê các tin chưa bị xóa trong hệ thống.
+          </p>
+          {[
+            "PENDING",
+            "PUBLISHED",
+            "PAUSED",
+            "REJECTED",
+            "CLOSED",
+            "EXPIRED",
+          ].map((status) => (
+            <div
+              key={status}
+              className="flex items-center justify-between border-b py-3 text-sm last:border-0"
+            >
               <span>{labels[status]}</span>
-              <b className="text-emerald-700">{d.jobStatuses.find(row => row.status === status)?.count ?? 0}</b>
+              <b className="text-emerald-700">
+                {d.jobStatuses.find((row) => row.status === status)?.count ?? 0}
+              </b>
             </div>
           ))}
         </Panel>
@@ -387,47 +466,189 @@ function Overview({ open }: { open: (tab: string) => void }) {
 function RevenueReport() {
   const [days, setDays] = useState(30);
   const [mode, setMode] = useState("daily");
-  const [year, setYear] = useState(() => Number(new Intl.DateTimeFormat("en", {timeZone:"Asia/Ho_Chi_Minh",year:"numeric"}).format(new Date())));
+  const [year, setYear] = useState(() =>
+    Number(
+      new Intl.DateTimeFormat("en", {
+        timeZone: "Asia/Ho_Chi_Minh",
+        year: "numeric",
+      }).format(new Date()),
+    ),
+  );
   const query = useQuery({
     ...adminQueryRefresh,
     queryKey: ["admin", "revenue-report", days, mode, year],
-    queryFn: () => get<{points:{day:string;amount:number;count:number;candidate:number;company:number}[];total:number;count:number;candidate:number;company:number}>("revenue", {days,mode,year}),
+    queryFn: () =>
+      get<{
+        points: {
+          day: string;
+          amount: number;
+          count: number;
+          candidate: number;
+          company: number;
+        }[];
+        total: number;
+        count: number;
+        candidate: number;
+        company: number;
+      }>("revenue", { days, mode, year }),
   });
-  return <>
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-slate-500">Thanh toán thành công · Giờ Việt Nam</p>
-      <div className="flex flex-wrap gap-3">
-      <AdminSelect aria-label="Chế độ doanh thu" className={input} value={mode} onChange={e=>setMode(e.target.value)}><option value="daily">Theo ngày</option><option value="monthly">Theo tháng</option></AdminSelect>
-      {mode === "monthly" ? <label className="flex items-center gap-2 text-sm">Năm<input aria-label="Năm doanh thu" type="number" min={2000} max={2100} className={input+" w-28"} value={year} onChange={e=>{const value=Number(e.target.value);if(value>=2000&&value<=2100)setYear(value);}}/></label> : <AdminSelect aria-label="Khoảng thời gian doanh thu" className={input} value={days} onChange={e=>setDays(Number(e.target.value))}>
-        {[7,30,90].map(d=><option key={d} value={d}>{d} ngày gần nhất</option>)}
-      </AdminSelect>}
-      </div>
-    </div>
-    {query.isPending && <p>Đang tải doanh thu…</p>}
-    {query.isError && <Failure error={query.error} retry={()=>void query.refetch()}/>}
-    {query.data && <>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {[["Doanh thu trong kỳ",money(query.data.total)],["Thanh toán thành công",query.data.count],["Ứng viên",money(query.data.candidate)],["Nhà tuyển dụng",money(query.data.company)]].map(([label,value])=><Panel key={label}><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-2xl font-bold text-emerald-700">{value}</p></Panel>)}
-      </div>
-      <Panel>
-        <h2 className="mb-1 font-bold">{mode === "monthly" ? `Doanh thu từng tháng năm ${year}` : "Doanh thu theo ngày"}</h2>
-        <p className="mb-6 text-xs text-slate-500">Đơn vị: VND. Kỳ không có thanh toán được tính là 0.</p>
-        <div className="h-80 min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={query.data.points} margin={{top:10,right:20,left:10,bottom:10}}>
-              <defs><linearGradient id="adminRevenueFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#10b981" stopOpacity={0.35}/><stop offset="100%" stopColor="#10b981" stopOpacity={0.02}/></linearGradient></defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0"/>
-              <XAxis dataKey="day" tickFormatter={day=>mode === "monthly" ? `T${Number(String(day).slice(5))}` : String(day).slice(5).split("-").reverse().join("/")} minTickGap={35} tick={{fontSize:12}}/>
-              <YAxis tickFormatter={value=>Number(value).toLocaleString("vi-VN",{notation:"compact"})} tick={{fontSize:12}} width={70} domain={[0,"auto"]}/>
-              <Tooltip formatter={value=>money(value)} labelFormatter={day=>`${mode === "monthly" ? "Tháng" : "Ngày"} ${String(day).split("-").reverse().join("/")}`}/>
-              <Area type="monotone" dataKey="amount" name="Doanh thu" stroke="#059669" strokeWidth={3} fill="url(#adminRevenueFill)" activeDot={{r:5}}/>
-            </AreaChart>
-          </ResponsiveContainer>
+  return (
+    <>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-500">
+          Thanh toán thành công · Giờ Việt Nam
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <AdminSelect
+            aria-label="Chế độ doanh thu"
+            className={input}
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+          >
+            <option value="daily">Theo ngày</option>
+            <option value="monthly">Theo tháng</option>
+          </AdminSelect>
+          {mode === "monthly" ? (
+            <label className="flex items-center gap-2 text-sm">
+              Năm
+              <input
+                aria-label="Năm doanh thu"
+                type="number"
+                min={2000}
+                max={2100}
+                className={input + " w-28"}
+                value={year}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  if (value >= 2000 && value <= 2100) setYear(value);
+                }}
+              />
+            </label>
+          ) : (
+            <AdminSelect
+              aria-label="Khoảng thời gian doanh thu"
+              className={input}
+              value={days}
+              onChange={(e) => setDays(Number(e.target.value))}
+            >
+              {[7, 30, 90].map((d) => (
+                <option key={d} value={d}>
+                  {d} ngày gần nhất
+                </option>
+              ))}
+            </AdminSelect>
+          )}
         </div>
-        {query.data.count===0 && <p className="mt-3 text-center text-sm text-slate-500">Chưa có thanh toán thành công trong khoảng thời gian này.</p>}
-      </Panel>
-    </>}
-  </>;
+      </div>
+      {query.isPending && <p>Đang tải doanh thu…</p>}
+      {query.isError && (
+        <Failure error={query.error} retry={() => void query.refetch()} />
+      )}
+      {query.data && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Doanh thu trong kỳ", money(query.data.total)],
+              ["Thanh toán thành công", query.data.count],
+              ["Ứng viên", money(query.data.candidate)],
+              ["Nhà tuyển dụng", money(query.data.company)],
+            ].map(([label, value]) => (
+              <Panel key={label}>
+                <p className="text-sm text-slate-500">{label}</p>
+                <p className="mt-2 text-2xl font-bold text-emerald-700">
+                  {value}
+                </p>
+              </Panel>
+            ))}
+          </div>
+          <Panel>
+            <h2 className="mb-1 font-bold">
+              {mode === "monthly"
+                ? `Doanh thu từng tháng năm ${year}`
+                : "Doanh thu theo ngày"}
+            </h2>
+            <p className="mb-6 text-xs text-slate-500">
+              Đơn vị: VND. Kỳ không có thanh toán được tính là 0.
+            </p>
+            <div className="h-80 min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={query.data.points}
+                  margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="adminRevenueFill"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="#10b981"
+                        stopOpacity={0.35}
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="#10b981"
+                        stopOpacity={0.02}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#e2e8f0"
+                  />
+                  <XAxis
+                    dataKey="day"
+                    tickFormatter={(day) =>
+                      mode === "monthly"
+                        ? `T${Number(String(day).slice(5))}`
+                        : String(day).slice(5).split("-").reverse().join("/")
+                    }
+                    minTickGap={35}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis
+                    tickFormatter={(value) =>
+                      Number(value).toLocaleString("vi-VN", {
+                        notation: "compact",
+                      })
+                    }
+                    tick={{ fontSize: 12 }}
+                    width={70}
+                    domain={[0, "auto"]}
+                  />
+                  <Tooltip
+                    formatter={(value) => money(value)}
+                    labelFormatter={(day) =>
+                      `${mode === "monthly" ? "Tháng" : "Ngày"} ${String(day).split("-").reverse().join("/")}`
+                    }
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="amount"
+                    name="Doanh thu"
+                    stroke="#059669"
+                    strokeWidth={3}
+                    fill="url(#adminRevenueFill)"
+                    activeDot={{ r: 5 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            {query.data.count === 0 && (
+              <p className="mt-3 text-center text-sm text-slate-500">
+                Chưa có thanh toán thành công trong khoảng thời gian này.
+              </p>
+            )}
+          </Panel>
+        </>
+      )}
+    </>
+  );
 }
 function Approvals() {
   const [mode, setMode] = useAdminTab("subtab", ["jobs", "companies"], "jobs");
@@ -441,15 +662,16 @@ function Approvals() {
           Doanh nghiệp
         </button>
       </div>
-      <AdminList
-        key={mode}
-        resource={mode}
-      />
+      <AdminList key={mode} resource={mode} />
     </>
   );
 }
 function MasterData() {
-  const [mode, setMode] = useAdminTab("subtab", ["categories", "titles", "provinces", "wards"], "categories");
+  const [mode, setMode] = useAdminTab(
+    "subtab",
+    ["categories", "titles", "provinces", "wards"],
+    "categories",
+  );
   return (
     <>
       <div className="flex flex-wrap gap-2">
@@ -637,13 +859,20 @@ function AdminList({
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="bg-slate-50">
                   <tr>
-                    {["Thông tin", resource === "categories" ? "Mã" : resource === "titles" ? "Ngành nghề" : "Chi tiết", "Trạng thái", "Thao tác"].map(
-                      (h) => (
-                        <th key={h} className="p-3">
-                          {h}
-                        </th>
-                      ),
-                    )}
+                    {[
+                      "Thông tin",
+                      resource === "categories"
+                        ? "Mã"
+                        : resource === "titles"
+                          ? "Ngành nghề"
+                          : "Chi tiết",
+                      "Trạng thái",
+                      "Thao tác",
+                    ].map((h) => (
+                      <th key={h} className="p-3">
+                        {h}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
@@ -681,7 +910,9 @@ function AdminList({
                                 ? undefined
                                 : row.isActive
                                   ? "active"
-                                  : catalog ? "Ngừng hoạt động" : "disabled")
+                                  : catalog
+                                    ? "Ngừng hoạt động"
+                                    : "disabled")
                           }
                         />
                       </td>
@@ -1033,53 +1264,57 @@ function PlanEditor({ row, close }: { row: Row; close: () => void }) {
               </option>
             ))}
           </AdminSelect>
-          {entries.filter((b) => typeof b.value === "number").map((b) => (
-            <label key={b.entitlementId} className="block text-sm">
-              {b.entitlement.name}
-              {typeof b.value === "boolean" ? (
-                <input
-                  type="checkbox"
-                  checked={Boolean(benefits[b.entitlement.code])}
-                  onChange={(e) =>
-                    setBenefits({
-                      ...benefits,
-                      [b.entitlement.code]: e.target.checked,
-                    })
-                  }
-                />
-              ) : (
-                <input
-                  className={input + " mt-1 w-full"}
-                  required
-                  type={typeof b.value === "number" ? "number" : "text"}
-                  min={0}
-                  maxLength={500}
-                  value={String(benefits[b.entitlement.code])}
-                  onChange={(e) =>
-                    setBenefits({
-                      ...benefits,
-                      [b.entitlement.code]:
-                        typeof b.value === "number"
-                          ? Number(e.target.value)
-                          : e.target.value,
-                    })
-                  }
-                />
-              )}
-            </label>
-          ))}
+          {entries
+            .filter((b) => typeof b.value === "number")
+            .map((b) => (
+              <label key={b.entitlementId} className="block text-sm">
+                {b.entitlement.name}
+                {typeof b.value === "boolean" ? (
+                  <input
+                    type="checkbox"
+                    checked={Boolean(benefits[b.entitlement.code])}
+                    onChange={(e) =>
+                      setBenefits({
+                        ...benefits,
+                        [b.entitlement.code]: e.target.checked,
+                      })
+                    }
+                  />
+                ) : (
+                  <input
+                    className={input + " mt-1 w-full"}
+                    required
+                    type={typeof b.value === "number" ? "number" : "text"}
+                    min={0}
+                    maxLength={500}
+                    value={String(benefits[b.entitlement.code])}
+                    onChange={(e) =>
+                      setBenefits({
+                        ...benefits,
+                        [b.entitlement.code]:
+                          typeof b.value === "number"
+                            ? Number(e.target.value)
+                            : e.target.value,
+                      })
+                    }
+                  />
+                )}
+              </label>
+            ))}
           {entries.some((b) => typeof b.value !== "number") && (
             <div className="rounded-xl bg-slate-50 p-4">
               <p className="text-sm font-semibold">Quyền lợi đi kèm</p>
               <p className="mt-1 text-xs text-slate-500">Chỉ xem thông tin</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                {entries.filter((b) => typeof b.value !== "number").map((b) => (
-                  <li key={b.entitlementId}>
-                    {typeof b.value === "string"
-                      ? b.value || b.entitlement.name
-                      : `${b.entitlement.name}: ${b.value ? "Có" : "Không"}`}
-                  </li>
-                ))}
+                {entries
+                  .filter((b) => typeof b.value !== "number")
+                  .map((b) => (
+                    <li key={b.entitlementId}>
+                      {typeof b.value === "string"
+                        ? b.value || b.entitlement.name
+                        : `${b.entitlement.name}: ${b.value ? "Có" : "Không"}`}
+                    </li>
+                  ))}
               </ul>
             </div>
           )}
@@ -1283,12 +1518,14 @@ function CatalogEditor({
           />
           {parent && (
             <>
-              {resource !== "wards" && <input
-                className={input + " w-full"}
-                placeholder="Tìm ngành nghề"
-                value={parentSearch}
-                onChange={(e) => setParentSearch(e.target.value)}
-              />}
+              {resource !== "wards" && (
+                <input
+                  className={input + " w-full"}
+                  placeholder="Tìm ngành nghề"
+                  value={parentSearch}
+                  onChange={(e) => setParentSearch(e.target.value)}
+                />
+              )}
               <AdminSelect
                 required
                 className={input + " w-full"}
@@ -1315,7 +1552,11 @@ function CatalogEditor({
           )}
           <label className="block text-sm">
             Trạng thái
-            <AdminSelect className={input + " mt-1 w-full"} value={String(isActive)} onChange={(e) => setIsActive(e.target.value === "true")}>
+            <AdminSelect
+              className={input + " mt-1 w-full"}
+              value={String(isActive)}
+              onChange={(e) => setIsActive(e.target.value === "true")}
+            >
               <option value="true">Hoạt động</option>
               <option value="false">Ngừng hoạt động</option>
             </AdminSelect>

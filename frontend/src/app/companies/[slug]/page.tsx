@@ -33,18 +33,31 @@ export default function CompanyDetail() {
   const [starting, setStarting] = useState(false);
   const lock = useRef(false);
   async function startChat() {
-    if (!account) { toast.info("Đăng nhập để sử dụng tính năng này"); return; }
-    if (account.role !== "candidate") { toast.error("Vui lòng dùng tài khoản ứng viên để nhắn tin cho công ty."); return; }
+    if (!account) {
+      toast.info("Đăng nhập để sử dụng tính năng này");
+      return;
+    }
+    if (account.role !== "candidate") {
+      toast.error("Vui lòng dùng tài khoản ứng viên để nhắn tin cho công ty.");
+      return;
+    }
     if (!data?.id || lock.current) return;
     lock.current = true;
     setStarting(true);
     try {
       const conversation = await conversationService.create(data.id);
-      router.push("/messages?conversation=" + encodeURIComponent(conversation.id));
-    } catch { toast.error("Không thể mở cuộc trò chuyện. Vui lòng thử lại."); }
-    finally { lock.current = false; setStarting(false); }
+      router.push(
+        "/messages?conversation=" + encodeURIComponent(conversation.id),
+      );
+    } catch {
+      toast.error("Không thể mở cuộc trò chuyện. Vui lòng thử lại.");
+    } finally {
+      lock.current = false;
+      setStarting(false);
+    }
   }
-  if (isPending) return <LoadingState fullscreen message="Đang tải thông tin công ty…" />;
+  if (isPending)
+    return <LoadingState fullscreen message="Đang tải thông tin công ty…" />;
   return (
     <main className="route-home min-h-screen bg-[#f6f8f7]">
       <SiteHeader />
@@ -114,12 +127,23 @@ export default function CompanyDetail() {
             </p>
           </div>
           <Link
-            href={data ? `/discover/jobs-by-field?q=${encodeURIComponent(data.name)}&code=${encodeURIComponent(data.code)}` : "#"}
+            href={
+              data
+                ? `/discover/jobs-by-field?q=${encodeURIComponent(data.name)}&code=${encodeURIComponent(data.code)}`
+                : "#"
+            }
             className="mt-7 block w-full rounded-xl bg-[#00b14f] py-3 text-center text-sm font-bold text-white"
           >
             Xem danh sách công việc
           </Link>
-          <button type="button" onClick={() => void startChat()} disabled={starting || !data?.id} className="mt-3 block w-full rounded-xl border border-emerald-600 py-3 text-sm font-bold text-emerald-700 disabled:opacity-50">{starting ? "Đang mở..." : "Nhắn tin"}</button>
+          <button
+            type="button"
+            onClick={() => void startChat()}
+            disabled={starting || !data?.id}
+            className="mt-3 block w-full rounded-xl border border-emerald-600 py-3 text-sm font-bold text-emerald-700 disabled:opacity-50"
+          >
+            {starting ? "Đang mở..." : "Nhắn tin"}
+          </button>
         </aside>
       </section>
       <SiteFooter />

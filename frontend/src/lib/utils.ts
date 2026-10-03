@@ -31,16 +31,25 @@ httpRequest.interceptors.request.use(async (config) => {
 httpRequest.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && error.config && !error.config._authRetried) {
+    if (
+      error.response?.status === 401 &&
+      error.config &&
+      !error.config._authRetried
+    ) {
       error.config._authRetried = true;
       if (!refreshPromise) {
-        refreshPromise = makeRefreshToken().finally(() => { refreshPromise = null; });
+        refreshPromise = makeRefreshToken().finally(() => {
+          refreshPromise = null;
+        });
       }
       const newToken = await refreshPromise;
       if (newToken) {
         return httpRequest(error.config);
       }
-      throw new Unauthorized("Đăng nhập để sử dụng tính năng này", "UNAUTHORIZED");
+      throw new Unauthorized(
+        "Đăng nhập để sử dụng tính năng này",
+        "UNAUTHORIZED",
+      );
     }
     return Promise.reject(error);
   },

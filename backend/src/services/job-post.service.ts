@@ -44,7 +44,9 @@ class JobPostService {
       );
     return {
       ...job,
-      isBoosted: Boolean(job.isBoosted && job.boostedUntil && job.boostedUntil > new Date()),
+      isBoosted: Boolean(
+        job.isBoosted && job.boostedUntil && job.boostedUntil > new Date(),
+      ),
       company: {
         ...job.company,
         logoUrl: job.company.logoKey
@@ -52,7 +54,7 @@ class JobPostService {
           : null,
       },
     };
-  };
+  }
   async getManyJobPost(params: JobPostListQuery) {
     const page = Number(params.page ?? 1);
     const limit = Number(params.limit ?? 8);
@@ -103,7 +105,9 @@ class JobPostService {
     );
     return jobs.map((job) => ({
       ...job,
-      isBoosted: Boolean(job.isBoosted && job.boostedUntil && job.boostedUntil > new Date()),
+      isBoosted: Boolean(
+        job.isBoosted && job.boostedUntil && job.boostedUntil > new Date(),
+      ),
       company: {
         ...job.company,
         logoUrl: job.company.logoKey ? urls.get(job.company.logoKey) : null,
@@ -122,7 +126,8 @@ class JobPostService {
     params: JobPostListQuery,
   ): Promise<Prisma.JobPostWhereInput> {
     const conditions: Prisma.JobPostWhereInput[] = [];
-    if (params.companyCode) conditions.push({ company: { code: params.companyCode } });
+    if (params.companyCode)
+      conditions.push({ company: { code: params.companyCode } });
     if (params.query && !params.companyCode) {
       conditions.push({
         OR: [
@@ -173,7 +178,7 @@ class JobPostService {
       conditions.push({
         salaryMin: { lte: params.salary.max },
       });
-    };
+    }
     if (params.wardIds?.length) {
       const wards = await prisma.ward.findMany({
         where: { id: { in: params.wardIds } },
@@ -218,7 +223,9 @@ class JobPostService {
       deletedAt: null,
       status: "PUBLISHED",
       company: { deletedAt: null },
-      ...(params.sort === "hot" ? { isBoosted: true, boostedUntil: { gt: new Date() } } : {}),
+      ...(params.sort === "hot"
+        ? { isBoosted: true, boostedUntil: { gt: new Date() } }
+        : {}),
       AND: conditions,
     };
   }

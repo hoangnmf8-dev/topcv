@@ -2,9 +2,22 @@
 
 import { LoadingState } from "@/components/loading-state";
 import { CVDocument } from "./cv/cv-document";
-import { EMPTY_CV, TEMPLATES, THEMES, type CVData, type TemplateId, type ThemeId } from "@/lib/cv-layout";
+import {
+  EMPTY_CV,
+  TEMPLATES,
+  THEMES,
+  type CVData,
+  type TemplateId,
+  type ThemeId,
+} from "@/lib/cv-layout";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
-import { Children, isValidElement, useEffect, useState, type ReactNode } from "react";
+import {
+  Children,
+  isValidElement,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -13,129 +26,1234 @@ import { useAccountStore } from "@/stores/auth.store";
 import { conversationService } from "@/services/conversation.service";
 
 import Link from "next/link";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-const labels: Record<string, string> = { submitted: "Mới ứng tuyển", reviewing: "Đang xem xét", interview: "Phỏng vấn", hired: "Đã tuyển", rejected: "Từ chối" };
-type Profile = { id: string; fullName: string; headline: string | null; careerGoal: string | null; experienceYears: string | null; currentLocation: { name: string } | null };
-type Application = { id: string; status: string; fitScore: string | null; internalNote: string | null; coverLetter: string | null; appliedAt: string; candidate: Profile; jobPost: { id: string; title: string }; cv: { id: string; title: string; deletedAt: string | null } | null };
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+const labels: Record<string, string> = {
+  submitted: "Mới ứng tuyển",
+  reviewing: "Đang xem xét",
+  interview: "Phỏng vấn",
+  hired: "Đã tuyển",
+  rejected: "Từ chối",
+};
+type Profile = {
+  id: string;
+  fullName: string;
+  headline: string | null;
+  careerGoal: string | null;
+  experienceYears: string | null;
+  currentLocation: { name: string } | null;
+};
+type Application = {
+  id: string;
+  status: string;
+  fitScore: string | null;
+  internalNote: string | null;
+  coverLetter: string | null;
+  appliedAt: string;
+  candidate: Profile;
+  jobPost: { id: string; title: string };
+  cv: { id: string; title: string; deletedAt: string | null } | null;
+};
 type Page<T> = { items: T[]; total: number; page: number; pages: number };
-type Summary = { days: number; planName: string; activeJobLimit: number; occupiedSlots: number; jobs: number; activeJobs: number; total: number; statuses: { status: string; count: number }[]; recent: { id: string; candidate: { fullName: string }; jobPost: { title: string }; status: string; appliedAt: string }[]; reports: { id: string; title: string; counts: Record<string, number> }[] };
-const inputClass = "min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm";
-const buttonClass = "rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50";
-async function get<T>(path: string, params?: object, signal?: AbortSignal): Promise<T> { return (await httpRequest.get(`/employer/${path}`, { params, signal })).data.data; }
-function Panel({ title, children }: { title: string; children: ReactNode }) { return <section className="rounded-2xl border bg-white p-5 shadow-sm"><h2 className="mb-5 text-xl font-semibold">{title}</h2>{children}</section>; }
-function Pager({ page, pages, change }: { page: number; pages: number; change: (p: number) => void }) { return <div className="mt-5 flex items-center justify-end gap-4 text-sm"><button disabled={page <= 1} onClick={() => change(page - 1)} className="disabled:opacity-40">Trước</button><span>Trang {page}/{Math.max(1, pages)}</span><button disabled={page >= pages} onClick={() => change(page + 1)} className="disabled:opacity-40">Sau</button></div>; }
-function ErrorRetry({ retry }: { retry: () => void }) { return <button className="text-sm text-red-600" onClick={retry}>Không tải được dữ liệu. Thử lại</button>; }
-
-function RecruitmentReportTable({ rows }: { rows: Summary["reports"] }) {
- const [search,setSearch]=useState(""),[page,setPage]=useState(1),[onlyApplied,setOnlyApplied]=useState(false);
- const totalOf=(row:Summary["reports"][number])=>Object.values(row.counts).reduce((sum,count)=>sum+count,0);
- const filtered=rows.filter(row=>row.title.toLocaleLowerCase("vi-VN").includes(search.trim().toLocaleLowerCase("vi-VN"))&&(!onlyApplied||totalOf(row)>0)).sort((a,b)=>totalOf(b)-totalOf(a)||a.title.localeCompare(b.title,"vi"));
- const pages=Math.max(1,Math.ceil(filtered.length/10)),current=Math.min(page,pages);
- return <section className="mt-4">
-  <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><h3 className="font-semibold">Hiệu quả theo tin tuyển dụng</h3><p className="mt-1 text-xs text-slate-500">{filtered.length} tin · Ưu tiên tin có nhiều hồ sơ trong kỳ</p></div><div className="flex flex-wrap items-center gap-3"><input aria-label="Tìm tin trong báo cáo" placeholder="Tìm theo tiêu đề…" className={inputClass} value={search} onChange={e=>{setSearch(e.target.value);setPage(1);}}/><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={onlyApplied} onChange={e=>{setOnlyApplied(e.target.checked);setPage(1);}}/>Có ứng tuyển</label></div></div>
-  <div className="overflow-x-auto rounded-xl border"><table className="w-full min-w-[720px] text-left text-sm"><thead className="bg-slate-50"><tr><th className="p-3">Tin tuyển dụng</th><th className="p-3 text-center">Tổng</th>{Object.entries(labels).map(([key,label])=><th className="p-3 text-center" key={key}>{label}</th>)}</tr></thead><tbody>{filtered.slice((current-1)*10,current*10).map(row=><tr key={row.id} className="border-t hover:bg-slate-50"><td className="max-w-xs p-3 font-medium">{row.title}</td><td className="p-3 text-center font-semibold text-emerald-700">{totalOf(row)}</td>{Object.keys(labels).map(key=><td key={key} className={`p-3 text-center ${row.counts[key]?"":"text-slate-400"}`}>{row.counts[key]??0}</td>)}</tr>)}</tbody></table>{!filtered.length&&<p className="p-6 text-center text-sm text-slate-500">Không có tin phù hợp.</p>}</div>
-  <Pager page={current} pages={pages} change={setPage}/>
-  <p className="mt-3 text-xs text-slate-500">Thống kê trạng thái hiện tại của hồ sơ nhận trong kỳ.</p>
- </section>;
+type Summary = {
+  days: number;
+  planName: string;
+  activeJobLimit: number;
+  occupiedSlots: number;
+  jobs: number;
+  activeJobs: number;
+  total: number;
+  statuses: { status: string; count: number }[];
+  recent: {
+    id: string;
+    candidate: { fullName: string };
+    jobPost: { title: string };
+    status: string;
+    appliedAt: string;
+  }[];
+  reports: { id: string; title: string; counts: Record<string, number> }[];
+};
+const inputClass =
+  "min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm";
+const buttonClass =
+  "rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50";
+async function get<T>(
+  path: string,
+  params?: object,
+  signal?: AbortSignal,
+): Promise<T> {
+  return (await httpRequest.get(`/employer/${path}`, { params, signal })).data
+    .data;
+}
+function Panel({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="rounded-2xl border bg-white p-5 shadow-sm">
+      <h2 className="mb-5 text-xl font-semibold">{title}</h2>
+      {children}
+    </section>
+  );
+}
+function Pager({
+  page,
+  pages,
+  change,
+}: {
+  page: number;
+  pages: number;
+  change: (p: number) => void;
+}) {
+  return (
+    <div className="mt-5 flex items-center justify-end gap-4 text-sm">
+      <button
+        disabled={page <= 1}
+        onClick={() => change(page - 1)}
+        className="disabled:opacity-40"
+      >
+        Trước
+      </button>
+      <span>
+        Trang {page}/{Math.max(1, pages)}
+      </span>
+      <button
+        disabled={page >= pages}
+        onClick={() => change(page + 1)}
+        className="disabled:opacity-40"
+      >
+        Sau
+      </button>
+    </div>
+  );
+}
+function ErrorRetry({ retry }: { retry: () => void }) {
+  return (
+    <button className="text-sm text-red-600" onClick={retry}>
+      Không tải được dữ liệu. Thử lại
+    </button>
+  );
 }
 
-export function EmployerSummary({ report = false, open }: { report?: boolean; open?: (tab: string) => void }) {
-  const account = useAccountStore(s => s.account);
+function RecruitmentReportTable({ rows }: { rows: Summary["reports"] }) {
+  const [search, setSearch] = useState(""),
+    [page, setPage] = useState(1),
+    [onlyApplied, setOnlyApplied] = useState(false);
+  const totalOf = (row: Summary["reports"][number]) =>
+    Object.values(row.counts).reduce((sum, count) => sum + count, 0);
+  const filtered = rows
+    .filter(
+      (row) =>
+        row.title
+          .toLocaleLowerCase("vi-VN")
+          .includes(search.trim().toLocaleLowerCase("vi-VN")) &&
+        (!onlyApplied || totalOf(row) > 0),
+    )
+    .sort(
+      (a, b) => totalOf(b) - totalOf(a) || a.title.localeCompare(b.title, "vi"),
+    );
+  const pages = Math.max(1, Math.ceil(filtered.length / 10)),
+    current = Math.min(page, pages);
+  return (
+    <section className="mt-4">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="font-semibold">Hiệu quả theo tin tuyển dụng</h3>
+          <p className="mt-1 text-xs text-slate-500">
+            {filtered.length} tin · Ưu tiên tin có nhiều hồ sơ trong kỳ
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            aria-label="Tìm tin trong báo cáo"
+            placeholder="Tìm theo tiêu đề…"
+            className={inputClass}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+          />
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={onlyApplied}
+              onChange={(e) => {
+                setOnlyApplied(e.target.checked);
+                setPage(1);
+              }}
+            />
+            Có ứng tuyển
+          </label>
+        </div>
+      </div>
+      <div className="overflow-x-auto rounded-xl border">
+        <table className="w-full min-w-[720px] text-left text-sm">
+          <thead className="bg-slate-50">
+            <tr>
+              <th className="p-3">Tin tuyển dụng</th>
+              <th className="p-3 text-center">Tổng</th>
+              {Object.entries(labels).map(([key, label]) => (
+                <th className="p-3 text-center" key={key}>
+                  {label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.slice((current - 1) * 10, current * 10).map((row) => (
+              <tr key={row.id} className="border-t hover:bg-slate-50">
+                <td className="max-w-xs p-3 font-medium">{row.title}</td>
+                <td className="p-3 text-center font-semibold text-emerald-700">
+                  {totalOf(row)}
+                </td>
+                {Object.keys(labels).map((key) => (
+                  <td
+                    key={key}
+                    className={`p-3 text-center ${row.counts[key] ? "" : "text-slate-400"}`}
+                  >
+                    {row.counts[key] ?? 0}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {!filtered.length && (
+          <p className="p-6 text-center text-sm text-slate-500">
+            Không có tin phù hợp.
+          </p>
+        )}
+      </div>
+      <Pager page={current} pages={pages} change={setPage} />
+      <p className="mt-3 text-xs text-slate-500">
+        Thống kê trạng thái hiện tại của hồ sơ nhận trong kỳ.
+      </p>
+    </section>
+  );
+}
+
+export function EmployerSummary({
+  report = false,
+  open,
+}: {
+  report?: boolean;
+  open?: (tab: string) => void;
+}) {
+  const account = useAccountStore((s) => s.account);
   const [days, setDays] = useState(30);
-  const query = useQuery({ queryKey: ["employer", account?.id, "summary", days], enabled: account?.role === "company", queryFn: ({ signal }) => get<Summary>("summary", { days }, signal) });
+  const query = useQuery({
+    queryKey: ["employer", account?.id, "summary", days],
+    enabled: account?.role === "company",
+    queryFn: ({ signal }) => get<Summary>("summary", { days }, signal),
+  });
   const data = query.data;
-  return <Panel title={report ? "Báo cáo tuyển dụng" : "Tổng quan tuyển dụng"}>
-    <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-slate-500">Hồ sơ ứng tuyển trong {days} ngày gần nhất</p><EmployerDropdown aria-label="Khoảng thời gian báo cáo" className={inputClass} value={days} onChange={e => setDays(Number(e.target.value))}>{[7,30,90,365].map(n => <option key={n} value={n}>{n} ngày</option>)}</EmployerDropdown></div>
-    {query.isPending && <LoadingState message="Đang tải..." />}{query.isError && <ErrorRetry retry={() => void query.refetch()}/>}
-    {data && <div className="mb-4 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800"><b>Gói {data.planName}</b> · {data.occupiedSlots}/{data.activeJobLimit} tin hoạt động hoặc chờ duyệt. Tổng tin bao gồm cả tin tạm dừng, đã đóng và hết hạn.</div>}
-    {data && <><div className="grid grid-cols-2 gap-3 xl:grid-cols-4">{[["Tổng tin hiện có",data.jobs],["Tin đang tuyển",data.activeJobs],["Lượt ứng tuyển",data.total],["Đã tuyển",data.statuses.find(s=>s.status==="hired")?.count??0]].map(([label,value])=><div key={label} className="rounded-xl border bg-emerald-50/50 p-4"><p className="text-sm text-slate-600">{label}</p><p className="mt-2 text-3xl font-bold text-emerald-800">{value}</p></div>)}</div>
-      <div className="my-6 space-y-3">{Object.entries(labels).map(([status,label])=>{const count=data.statuses.find(s=>s.status===status)?.count??0;return <div key={status}><div className="flex justify-between text-sm"><span>{label}</span><span>{count}</span></div><div className="mt-1 h-2 rounded bg-slate-100"><div className="h-2 rounded bg-emerald-500" style={{width:`${data.total?count/data.total*100:0}%`}}/></div></div>;})}</div>
-      {report ? <RecruitmentReportTable key={days} rows={data.reports}/> : <><div className="mb-3 flex justify-between"><h3 className="font-semibold">Ứng tuyển gần đây</h3><button className="text-sm text-emerald-700" onClick={()=>open?.("candidates")}>Xem tất cả</button></div>{!data.recent.length&&<p className="text-sm text-slate-500">Chưa có ứng tuyển trong khoảng thời gian này.</p>}{data.recent.map(a=><div className="flex flex-wrap justify-between gap-2 border-t py-3 text-sm" key={a.id}><div><b>{a.candidate.fullName}</b><p className="text-slate-500">{a.jobPost.title}</p></div><span>{labels[a.status]} · {new Date(a.appliedAt).toLocaleDateString("vi-VN")}</span></div>)}</>}
-    </>}
-  </Panel>;
+  return (
+    <Panel title={report ? "Báo cáo tuyển dụng" : "Tổng quan tuyển dụng"}>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-500">
+          Hồ sơ ứng tuyển trong {days} ngày gần nhất
+        </p>
+        <EmployerDropdown
+          aria-label="Khoảng thời gian báo cáo"
+          className={inputClass}
+          value={days}
+          onChange={(e) => setDays(Number(e.target.value))}
+        >
+          {[7, 30, 90, 365].map((n) => (
+            <option key={n} value={n}>
+              {n} ngày
+            </option>
+          ))}
+        </EmployerDropdown>
+      </div>
+      {query.isPending && <LoadingState message="Đang tải..." />}
+      {query.isError && <ErrorRetry retry={() => void query.refetch()} />}
+      {data && (
+        <div className="mb-4 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800">
+          <b>Gói {data.planName}</b> · {data.occupiedSlots}/
+          {data.activeJobLimit} tin hoạt động hoặc chờ duyệt. Tổng tin bao gồm
+          cả tin tạm dừng, đã đóng và hết hạn.
+        </div>
+      )}
+      {data && (
+        <>
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+            {[
+              ["Tổng tin hiện có", data.jobs],
+              ["Tin đang tuyển", data.activeJobs],
+              ["Lượt ứng tuyển", data.total],
+              [
+                "Đã tuyển",
+                data.statuses.find((s) => s.status === "hired")?.count ?? 0,
+              ],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="rounded-xl border bg-emerald-50/50 p-4"
+              >
+                <p className="text-sm text-slate-600">{label}</p>
+                <p className="mt-2 text-3xl font-bold text-emerald-800">
+                  {value}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="my-6 space-y-3">
+            {Object.entries(labels).map(([status, label]) => {
+              const count =
+                data.statuses.find((s) => s.status === status)?.count ?? 0;
+              return (
+                <div key={status}>
+                  <div className="flex justify-between text-sm">
+                    <span>{label}</span>
+                    <span>{count}</span>
+                  </div>
+                  <div className="mt-1 h-2 rounded bg-slate-100">
+                    <div
+                      className="h-2 rounded bg-emerald-500"
+                      style={{
+                        width: `${data.total ? (count / data.total) * 100 : 0}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {report ? (
+            <RecruitmentReportTable key={days} rows={data.reports} />
+          ) : (
+            <>
+              <div className="mb-3 flex justify-between">
+                <h3 className="font-semibold">Ứng tuyển gần đây</h3>
+                <button
+                  className="text-sm text-emerald-700"
+                  onClick={() => open?.("candidates")}
+                >
+                  Xem tất cả
+                </button>
+              </div>
+              {!data.recent.length && (
+                <p className="text-sm text-slate-500">
+                  Chưa có ứng tuyển trong khoảng thời gian này.
+                </p>
+              )}
+              {data.recent.map((a) => (
+                <div
+                  className="flex flex-wrap justify-between gap-2 border-t py-3 text-sm"
+                  key={a.id}
+                >
+                  <div>
+                    <b>{a.candidate.fullName}</b>
+                    <p className="text-slate-500">{a.jobPost.title}</p>
+                  </div>
+                  <span>
+                    {labels[a.status]} ·{" "}
+                    {new Date(a.appliedAt).toLocaleDateString("vi-VN")}
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
+        </>
+      )}
+    </Panel>
+  );
 }
 
 function MessageButton({ id }: { id: string }) {
-  const router=useRouter();
-  const mutation=useMutation({mutationFn:()=>conversationService.create(id),onSuccess:c=>router.push(`/employer/messages?conversation=${encodeURIComponent(c.id)}`),onError:()=>toast.error("Không thể mở cuộc trò chuyện.")});
-  return <button disabled={mutation.isPending} onClick={()=>mutation.mutate()} className={buttonClass}>{mutation.isPending?"Đang mở...":"Nhắn tin"}</button>;
+  const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: () => conversationService.create(id),
+    onSuccess: (c) =>
+      router.push(
+        `/employer/messages?conversation=${encodeURIComponent(c.id)}`,
+      ),
+    onError: () => toast.error("Không thể mở cuộc trò chuyện."),
+  });
+  return (
+    <button
+      disabled={mutation.isPending}
+      onClick={() => mutation.mutate()}
+      className={buttonClass}
+    >
+      {mutation.isPending ? "Đang mở..." : "Nhắn tin"}
+    </button>
+  );
 }
 export function EmployerApplications() {
-  const account=useAccountStore(s=>s.account);
-  const [page,setPage]=useState(1),[search,setSearch]=useState(""),[query,setQuery]=useState(""),[status,setStatus]=useState(""),[job,setJob]=useState("");
-  const [selected,setSelected]=useState<Application|null>(null);
+  const account = useAccountStore((s) => s.account);
+  const [page, setPage] = useState(1),
+    [search, setSearch] = useState(""),
+    [query, setQuery] = useState(""),
+    [status, setStatus] = useState(""),
+    [job, setJob] = useState("");
+  const [selected, setSelected] = useState<Application | null>(null);
   useEffect(() => {
     if (search.trim() === query) return;
-    const timer = setTimeout(() => { setQuery(search.trim()); setPage(1); }, 300);
+    const timer = setTimeout(() => {
+      setQuery(search.trim());
+      setPage(1);
+    }, 300);
     return () => clearTimeout(timer);
   }, [search, query]);
-  const jobs=useQuery({queryKey:["employer",account?.id,"jobs"],enabled:account?.role==="company",queryFn:({signal})=>get<{id:string;title:string}[]>("jobs",undefined,signal)});
-  const list=useQuery({queryKey:["employer",account?.id,"applications",page,query,status,job],enabled:account?.role==="company",queryFn:({signal})=>get<Page<Application>>("applications",{page,query,...(status?{status}:{}),...(job?{jobPostId:job}:{})},signal)});
-  return <Panel title="Ứng viên ứng tuyển · Mini ATS"><div className="mb-5 flex flex-wrap gap-2"><input aria-label="Tìm ứng viên" className={inputClass} placeholder="Tên ứng viên" value={search} onChange={e=>setSearch(e.target.value)}/><EmployerDropdown aria-label="Lọc tin tuyển dụng" className={inputClass} value={job} onChange={e=>{setJob(e.target.value);setPage(1);}}><option value="">Tất cả tin</option>{jobs.data?.map(j=><option key={j.id} value={j.id}>{j.title}</option>)}</EmployerDropdown><EmployerDropdown aria-label="Lọc trạng thái" className={inputClass} value={status} onChange={e=>{setStatus(e.target.value);setPage(1);}}><option value="">Tất cả trạng thái</option>{Object.entries(labels).map(([k,v])=><option key={k} value={k}>{v}</option>)}</EmployerDropdown><button type="button" onClick={()=>{setSearch("");setQuery("");setJob("");setStatus("");setPage(1);}} className="px-3 py-2 text-sm font-semibold text-emerald-700 underline underline-offset-4 hover:text-emerald-900">Xóa lọc</button></div>
-{list.isPending&&<LoadingState message="Đang tải..." />}{list.isError&&<ErrorRetry retry={()=>void list.refetch()}/>}{list.data&&<><p className="mb-3 text-sm text-slate-500">{list.data.total} hồ sơ</p>{!list.data.items.length&&<p className="rounded-xl border border-dashed p-8 text-center text-slate-500">Không có hồ sơ phù hợp.</p>}{list.data.items.map(a=><div key={a.id} className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"><div><h3 className="font-semibold">{a.candidate.fullName}</h3><p className="text-sm text-slate-500">{a.jobPost.title}</p><p className="mt-1 text-xs">Ứng tuyển: {new Date(a.appliedAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })} · {labels[a.status]} · {a.fitScore != null ? `Điểm: ${a.fitScore}` : "Chưa đánh giá"}</p></div><button className={buttonClass} onClick={()=>setSelected(a)}>Xem hồ sơ</button></div>)}<Pager page={page} pages={list.data.pages} change={setPage}/></>}
-    {selected&&<ApplicationEditor key={selected.id} item={selected} close={()=>setSelected(null)}/>}
-  </Panel>;
+  const jobs = useQuery({
+    queryKey: ["employer", account?.id, "jobs"],
+    enabled: account?.role === "company",
+    queryFn: ({ signal }) =>
+      get<{ id: string; title: string }[]>("jobs", undefined, signal),
+  });
+  const list = useQuery({
+    queryKey: [
+      "employer",
+      account?.id,
+      "applications",
+      page,
+      query,
+      status,
+      job,
+    ],
+    enabled: account?.role === "company",
+    queryFn: ({ signal }) =>
+      get<Page<Application>>(
+        "applications",
+        {
+          page,
+          query,
+          ...(status ? { status } : {}),
+          ...(job ? { jobPostId: job } : {}),
+        },
+        signal,
+      ),
+  });
+  return (
+    <Panel title="Ứng viên ứng tuyển · Mini ATS">
+      <div className="mb-5 flex flex-wrap gap-2">
+        <input
+          aria-label="Tìm ứng viên"
+          className={inputClass}
+          placeholder="Tên ứng viên"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <EmployerDropdown
+          aria-label="Lọc tin tuyển dụng"
+          className={inputClass}
+          value={job}
+          onChange={(e) => {
+            setJob(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="">Tất cả tin</option>
+          {jobs.data?.map((j) => (
+            <option key={j.id} value={j.id}>
+              {j.title}
+            </option>
+          ))}
+        </EmployerDropdown>
+        <EmployerDropdown
+          aria-label="Lọc trạng thái"
+          className={inputClass}
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value);
+            setPage(1);
+          }}
+        >
+          <option value="">Tất cả trạng thái</option>
+          {Object.entries(labels).map(([k, v]) => (
+            <option key={k} value={k}>
+              {v}
+            </option>
+          ))}
+        </EmployerDropdown>
+        <button
+          type="button"
+          onClick={() => {
+            setSearch("");
+            setQuery("");
+            setJob("");
+            setStatus("");
+            setPage(1);
+          }}
+          className="px-3 py-2 text-sm font-semibold text-emerald-700 underline underline-offset-4 hover:text-emerald-900"
+        >
+          Xóa lọc
+        </button>
+      </div>
+      {list.isPending && <LoadingState message="Đang tải..." />}
+      {list.isError && <ErrorRetry retry={() => void list.refetch()} />}
+      {list.data && (
+        <>
+          <p className="mb-3 text-sm text-slate-500">{list.data.total} hồ sơ</p>
+          {!list.data.items.length && (
+            <p className="rounded-xl border border-dashed p-8 text-center text-slate-500">
+              Không có hồ sơ phù hợp.
+            </p>
+          )}
+          {list.data.items.map((a) => (
+            <div
+              key={a.id}
+              className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4"
+            >
+              <div>
+                <h3 className="font-semibold">{a.candidate.fullName}</h3>
+                <p className="text-sm text-slate-500">{a.jobPost.title}</p>
+                <p className="mt-1 text-xs">
+                  Ứng tuyển:{" "}
+                  {new Date(a.appliedAt).toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}{" "}
+                  · {labels[a.status]} ·{" "}
+                  {a.fitScore != null ? `Điểm: ${a.fitScore}` : "Chưa đánh giá"}
+                </p>
+              </div>
+              <button className={buttonClass} onClick={() => setSelected(a)}>
+                Xem hồ sơ
+              </button>
+            </div>
+          ))}
+          <Pager page={page} pages={list.data.pages} change={setPage} />
+        </>
+      )}
+      {selected && (
+        <ApplicationEditor
+          key={selected.id}
+          item={selected}
+          close={() => setSelected(null)}
+        />
+      )}
+    </Panel>
+  );
 }
-function ApplicationEditor({item,close}:{item:Application;close:()=>void}) {
-  const client=useQueryClient();const account=useAccountStore(s=>s.account);
-  const [status,setStatus]=useState(item.status),[score,setScore]=useState(item.fitScore??""),[note,setNote]=useState(item.internalNote??"");
-  const [showCv,setShowCv]=useState(false);
-  const cv=useQuery({queryKey:["employer",account?.id,"cv",item.id],enabled:showCv, staleTime:0,queryFn:()=>get<{title:string;url:string|null;content:unknown}>(`applications/${item.id}/cv`)});
-  const save=useMutation({mutationFn:()=>httpRequest.patch(`/employer/applications/${item.id}`,{status,fitScore:score===""?null:Number(score),internalNote:note}),onSuccess:()=>{void client.invalidateQueries({queryKey:["employer",account?.id]});toast.success("Đã cập nhật hồ sơ ứng tuyển");close();},onError:()=>toast.error("Không thể lưu thay đổi. Vui lòng thử lại.")});
-  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-label="Hồ sơ ứng tuyển"><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6"><div className="flex justify-between gap-4"><h2 className="text-xl font-bold">{item.candidate.fullName}</h2><button onClick={close} aria-label="Đóng hồ sơ">✕</button></div><p className="mt-2 text-slate-500">{item.jobPost.title}</p><p className="my-3 text-sm">{item.candidate.headline} · {item.candidate.currentLocation?.name??"Chưa có địa điểm"} · {experienceLabel(item.candidate.experienceYears)}</p><p className="whitespace-pre-wrap text-sm">{item.coverLetter??"Không có thư ứng tuyển."}</p><div className="my-4 flex gap-3"><MessageButton id={item.candidate.id}/>{item.cv&&!item.cv.deletedAt&&<button className="text-sm text-emerald-700 underline" onClick={()=>setShowCv(!showCv)}>Xem CV: {item.cv.title}</button>}</div>
-    <Dialog open={showCv} onOpenChange={setShowCv}><DialogContent className="h-[90vh] max-w-[95vw] overflow-y-auto sm:max-w-5xl"><DialogTitle>CV: {item.cv?.title}</DialogTitle>{cv.isPending&&<LoadingState message="Đang tải CV..." />}{cv.isError&&<ErrorRetry retry={()=>void cv.refetch()}/>}{cv.data?.url ? <iframe title={`CV ${item.candidate.fullName}`} src={cv.data.url} className="h-[75vh] w-full rounded-lg border" /> : cv.data?.content ? <ApplicationCvPreview value={cv.data.content} /> : cv.data && <p>CV chưa có nội dung.</p>}</DialogContent></Dialog>
-    <form className="space-y-4 border-t pt-4" onSubmit={e=>{e.preventDefault();save.mutate();}}><label className="block text-sm">Trạng thái<EmployerDropdown className={`${inputClass} mt-1 w-full`} value={status} onChange={e=>setStatus(e.target.value)}>{Object.entries(labels).map(([k,v])=><option key={k} value={k}>{v}</option>)}</EmployerDropdown></label><label className="block text-sm">Điểm phù hợp (0–100, để trống nếu chưa đánh giá)<input type="number" min={0} max={100} step="0.01" className={`${inputClass} mt-1 w-full`} value={score} onChange={e=>setScore(e.target.value)}/></label><label className="block text-sm">Ghi chú nội bộ<textarea maxLength={10000} rows={4} className={`${inputClass} mt-1 w-full`} value={note} onChange={e=>setNote(e.target.value)}/></label><button disabled={save.isPending} className={buttonClass}>{save.isPending?"Đang lưu...":"Lưu thay đổi"}</button></form></div></div>;
+function ApplicationEditor({
+  item,
+  close,
+}: {
+  item: Application;
+  close: () => void;
+}) {
+  const client = useQueryClient();
+  const account = useAccountStore((s) => s.account);
+  const [status, setStatus] = useState(item.status),
+    [score, setScore] = useState(item.fitScore ?? ""),
+    [note, setNote] = useState(item.internalNote ?? "");
+  const [showCv, setShowCv] = useState(false);
+  const cv = useQuery({
+    queryKey: ["employer", account?.id, "cv", item.id],
+    enabled: showCv,
+    staleTime: 0,
+    queryFn: () =>
+      get<{ title: string; url: string | null; content: unknown }>(
+        `applications/${item.id}/cv`,
+      ),
+  });
+  const save = useMutation({
+    mutationFn: () =>
+      httpRequest.patch(`/employer/applications/${item.id}`, {
+        status,
+        fitScore: score === "" ? null : Number(score),
+        internalNote: note,
+      }),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: ["employer", account?.id] });
+      toast.success("Đã cập nhật hồ sơ ứng tuyển");
+      close();
+    },
+    onError: () => toast.error("Không thể lưu thay đổi. Vui lòng thử lại."),
+  });
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Hồ sơ ứng tuyển"
+    >
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6">
+        <div className="flex justify-between gap-4">
+          <h2 className="text-xl font-bold">{item.candidate.fullName}</h2>
+          <button onClick={close} aria-label="Đóng hồ sơ">
+            ✕
+          </button>
+        </div>
+        <p className="mt-2 text-slate-500">{item.jobPost.title}</p>
+        <p className="my-3 text-sm">
+          {item.candidate.headline} ·{" "}
+          {item.candidate.currentLocation?.name ?? "Chưa có địa điểm"} ·{" "}
+          {experienceLabel(item.candidate.experienceYears)}
+        </p>
+        <p className="whitespace-pre-wrap text-sm">
+          {item.coverLetter ?? "Không có thư ứng tuyển."}
+        </p>
+        <div className="my-4 flex gap-3">
+          <MessageButton id={item.candidate.id} />
+          {item.cv && !item.cv.deletedAt && (
+            <button
+              className="text-sm text-emerald-700 underline"
+              onClick={() => setShowCv(!showCv)}
+            >
+              Xem CV: {item.cv.title}
+            </button>
+          )}
+        </div>
+        <Dialog open={showCv} onOpenChange={setShowCv}>
+          <DialogContent className="h-[90vh] max-w-[95vw] overflow-y-auto sm:max-w-5xl">
+            <DialogTitle>CV: {item.cv?.title}</DialogTitle>
+            {cv.isPending && <LoadingState message="Đang tải CV..." />}
+            {cv.isError && <ErrorRetry retry={() => void cv.refetch()} />}
+            {cv.data?.url ? (
+              <iframe
+                title={`CV ${item.candidate.fullName}`}
+                src={cv.data.url}
+                className="h-[75vh] w-full rounded-lg border"
+              />
+            ) : cv.data?.content ? (
+              <ApplicationCvPreview value={cv.data.content} />
+            ) : (
+              cv.data && <p>CV chưa có nội dung.</p>
+            )}
+          </DialogContent>
+        </Dialog>
+        <form
+          className="space-y-4 border-t pt-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            save.mutate();
+          }}
+        >
+          <label className="block text-sm">
+            Trạng thái
+            <EmployerDropdown
+              className={`${inputClass} mt-1 w-full`}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            >
+              {Object.entries(labels).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </EmployerDropdown>
+          </label>
+          <label className="block text-sm">
+            Điểm phù hợp (0–100, để trống nếu chưa đánh giá)
+            <input
+              type="number"
+              min={0}
+              max={100}
+              step="0.01"
+              className={`${inputClass} mt-1 w-full`}
+              value={score}
+              onChange={(e) => setScore(e.target.value)}
+            />
+          </label>
+          <label className="block text-sm">
+            Ghi chú nội bộ
+            <textarea
+              maxLength={10000}
+              rows={4}
+              className={`${inputClass} mt-1 w-full`}
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+          </label>
+          <button disabled={save.isPending} className={buttonClass}>
+            {save.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
-function ApplicationCvPreview({value}:{value:unknown}) {
-  const content = value as Partial<CVData> & { theme?: ThemeId; template?: TemplateId };
+function ApplicationCvPreview({ value }: { value: unknown }) {
+  const content = value as Partial<CVData> & {
+    theme?: ThemeId;
+    template?: TemplateId;
+  };
   if (!content.personal) return <p>Không thể hiển thị nội dung CV này.</p>;
-  const data = { ...EMPTY_CV, ...content, personal: { ...EMPTY_CV.personal, ...content.personal } };
-  const template = TEMPLATES.some(item => item.id === content.template) ? content.template! : "modern";
-  const theme = THEMES.some(item => item.id === content.theme) ? content.theme! : "emerald";
-  return <div className="overflow-x-auto bg-slate-100 p-4"><div className="mx-auto w-[794px] bg-white shadow"><CVDocument data={data} template={template} theme={theme}/></div></div>;
+  const data = {
+    ...EMPTY_CV,
+    ...content,
+    personal: { ...EMPTY_CV.personal, ...content.personal },
+  };
+  const template = TEMPLATES.some((item) => item.id === content.template)
+    ? content.template!
+    : "modern";
+  const theme = THEMES.some((item) => item.id === content.theme)
+    ? content.theme!
+    : "emerald";
+  return (
+    <div className="overflow-x-auto bg-slate-100 p-4">
+      <div className="mx-auto w-[794px] bg-white shadow">
+        <CVDocument data={data} template={template} theme={theme} />
+      </div>
+    </div>
+  );
 }
 export function EmployerTalent() {
-  const account=useAccountStore(s=>s.account);
-  const [selected,setSelected]=useState<Profile|null>(null);
-  const client=useQueryClient();
-  const usage=useQuery({queryKey:["employer",account?.id,"public-cv-usage"],enabled:account?.role==="company",queryFn:()=>get<{used:number;limit:number;remaining:number;planName:string}>("talent/usage")});
-  const cv=useMutation({retry:false,mutationFn:async (candidate:Profile)=>(await httpRequest.post(`/employer/talent/${candidate.id}/cv`)).data.data as {title:string;url:string|null;content:unknown},onSettled:()=>{void client.invalidateQueries({queryKey:["employer",account?.id,"public-cv-usage"]});}});
-  const [page,setPage]=useState(1);
-  const [draft,setDraft]=useState({query:"",location:"",experience:""}),[filters,setFilters]=useState(draft);
-  const list=useQuery({queryKey:["employer",account?.id,"talent",page,filters],enabled:account?.role==="company",queryFn:({signal})=>get<Page<Profile>>("talent",{page,query:filters.query,location:filters.location,...(filters.experience!==""?{experience:filters.experience}:{})},signal)});
-  return <Panel title="Tìm hồ sơ công khai"><p className="mb-4 text-sm text-slate-500">Các ứng viên cho phép nhà tuyển dụng tìm kiếm hồ sơ.</p>{usage.data&&<p className="mb-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">Gói {usage.data.planName}: còn {usage.data.remaining}/{usage.data.limit} lượt xem CV công khai. Mỗi lần mở đều tính lượt; miễn trừ nếu ứng viên đã ứng tuyển vào công ty.</p>}<form className="mb-5 flex flex-wrap gap-2" onSubmit={e=>{e.preventDefault();setFilters({...draft});setPage(1);}}><input className={inputClass} aria-label="Tên hoặc chức danh" placeholder="Tên hoặc chức danh" value={draft.query} onChange={e=>setDraft({...draft,query:e.target.value})}/><input className={inputClass} aria-label="Tỉnh thành" placeholder="Tỉnh/thành phố" value={draft.location} onChange={e=>setDraft({...draft,location:e.target.value})}/><input className={inputClass} aria-label="Kinh nghiệm tối thiểu" placeholder="Số năm kinh nghiệm từ" type="number" min={0} max={99} value={draft.experience} onChange={e=>setDraft({...draft,experience:e.target.value})}/><button className={buttonClass}>Tìm kiếm</button></form>{list.isPending&&<LoadingState message="Đang tải..." />}{list.isError&&<ErrorRetry retry={()=>void list.refetch()}/>}{list.data&&<><p className="mb-3 text-sm text-slate-500">{list.data.total} hồ sơ phù hợp</p>{!list.data.items.length&&<p className="p-6 text-center text-slate-500">Không có hồ sơ phù hợp.</p>}<div className="grid gap-4 xl:grid-cols-2">{list.data.items.map(p=><article key={p.id} className="rounded-xl border p-4"><h3 className="font-semibold">{p.fullName}</h3><p className="text-emerald-700">{p.headline??"Chưa cập nhật chức danh"}</p><p className="my-2 text-sm text-slate-500">{p.currentLocation?.name??"Chưa có địa điểm"} · {experienceLabel(p.experienceYears)}</p><p className="mb-4 whitespace-pre-wrap text-sm">{p.careerGoal??"Chưa cập nhật mục tiêu nghề nghiệp."}</p><div className="flex flex-wrap gap-2"><MessageButton id={p.id}/><button className="rounded-xl border border-emerald-600 px-4 py-2 text-sm font-semibold text-emerald-700" disabled={cv.isPending} onClick={()=>{cv.reset();setSelected(p);cv.mutate(p);}}>Xem CV</button></div></article>)}</div><Pager page={page} pages={list.data.pages} change={setPage}/></>}{selected&&<PublicCandidateCv key={selected.id} candidate={selected} cv={cv} close={()=>setSelected(null)}/>}</Panel>;
+  const account = useAccountStore((s) => s.account);
+  const [selected, setSelected] = useState<Profile | null>(null);
+  const client = useQueryClient();
+  const usage = useQuery({
+    queryKey: ["employer", account?.id, "public-cv-usage"],
+    enabled: account?.role === "company",
+    queryFn: () =>
+      get<{ used: number; limit: number; remaining: number; planName: string }>(
+        "talent/usage",
+      ),
+  });
+  const cv = useMutation({
+    retry: false,
+    mutationFn: async (candidate: Profile) =>
+      (await httpRequest.post(`/employer/talent/${candidate.id}/cv`)).data
+        .data as { title: string; url: string | null; content: unknown },
+    onSettled: () => {
+      void client.invalidateQueries({
+        queryKey: ["employer", account?.id, "public-cv-usage"],
+      });
+    },
+  });
+  const [page, setPage] = useState(1);
+  const [draft, setDraft] = useState({
+      query: "",
+      location: "",
+      experience: "",
+    }),
+    [filters, setFilters] = useState(draft);
+  const list = useQuery({
+    queryKey: ["employer", account?.id, "talent", page, filters],
+    enabled: account?.role === "company",
+    queryFn: ({ signal }) =>
+      get<Page<Profile>>(
+        "talent",
+        {
+          page,
+          query: filters.query,
+          location: filters.location,
+          ...(filters.experience !== ""
+            ? { experience: filters.experience }
+            : {}),
+        },
+        signal,
+      ),
+  });
+  return (
+    <Panel title="Tìm hồ sơ công khai">
+      <p className="mb-4 text-sm text-slate-500">
+        Các ứng viên cho phép nhà tuyển dụng tìm kiếm hồ sơ.
+      </p>
+      {usage.data && (
+        <p className="mb-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">
+          Gói {usage.data.planName}: còn {usage.data.remaining}/
+          {usage.data.limit} lượt xem CV công khai. Mỗi lần mở đều tính lượt;
+          miễn trừ nếu ứng viên đã ứng tuyển vào công ty.
+        </p>
+      )}
+      <form
+        className="mb-5 flex flex-wrap gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setFilters({ ...draft });
+          setPage(1);
+        }}
+      >
+        <input
+          className={inputClass}
+          aria-label="Tên hoặc chức danh"
+          placeholder="Tên hoặc chức danh"
+          value={draft.query}
+          onChange={(e) => setDraft({ ...draft, query: e.target.value })}
+        />
+        <input
+          className={inputClass}
+          aria-label="Tỉnh thành"
+          placeholder="Tỉnh/thành phố"
+          value={draft.location}
+          onChange={(e) => setDraft({ ...draft, location: e.target.value })}
+        />
+        <input
+          className={inputClass}
+          aria-label="Kinh nghiệm tối thiểu"
+          placeholder="Số năm kinh nghiệm từ"
+          type="number"
+          min={0}
+          max={99}
+          value={draft.experience}
+          onChange={(e) => setDraft({ ...draft, experience: e.target.value })}
+        />
+        <button className={buttonClass}>Tìm kiếm</button>
+      </form>
+      {list.isPending && <LoadingState message="Đang tải..." />}
+      {list.isError && <ErrorRetry retry={() => void list.refetch()} />}
+      {list.data && (
+        <>
+          <p className="mb-3 text-sm text-slate-500">
+            {list.data.total} hồ sơ phù hợp
+          </p>
+          {!list.data.items.length && (
+            <p className="p-6 text-center text-slate-500">
+              Không có hồ sơ phù hợp.
+            </p>
+          )}
+          <div className="grid gap-4 xl:grid-cols-2">
+            {list.data.items.map((p) => (
+              <article key={p.id} className="rounded-xl border p-4">
+                <h3 className="font-semibold">{p.fullName}</h3>
+                <p className="text-emerald-700">
+                  {p.headline ?? "Chưa cập nhật chức danh"}
+                </p>
+                <p className="my-2 text-sm text-slate-500">
+                  {p.currentLocation?.name ?? "Chưa có địa điểm"} ·{" "}
+                  {experienceLabel(p.experienceYears)}
+                </p>
+                <p className="mb-4 whitespace-pre-wrap text-sm">
+                  {p.careerGoal ?? "Chưa cập nhật mục tiêu nghề nghiệp."}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <MessageButton id={p.id} />
+                  <button
+                    className="rounded-xl border border-emerald-600 px-4 py-2 text-sm font-semibold text-emerald-700"
+                    disabled={cv.isPending}
+                    onClick={() => {
+                      cv.reset();
+                      setSelected(p);
+                      cv.mutate(p);
+                    }}
+                  >
+                    Xem CV
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+          <Pager page={page} pages={list.data.pages} change={setPage} />
+        </>
+      )}
+      {selected && (
+        <PublicCandidateCv
+          key={selected.id}
+          candidate={selected}
+          cv={cv}
+          close={() => setSelected(null)}
+        />
+      )}
+    </Panel>
+  );
 }
 
 function experienceLabel(years: string | null) {
-  return Number(years ?? 0) === 0 ? "Chưa có kinh nghiệm" : `${years} năm kinh nghiệm`;
+  return Number(years ?? 0) === 0
+    ? "Chưa có kinh nghiệm"
+    : `${years} năm kinh nghiệm`;
 }
-function PublicCandidateCv({candidate,close,cv}:{candidate:Profile;close:()=>void;cv:{isPending:boolean;isError:boolean;error:unknown;data?:{title:string;url:string|null;content:unknown}}}) {
-  return <Dialog open onOpenChange={open=>{if(!open)close();}}><DialogContent className="h-[90vh] max-w-[95vw] overflow-y-auto sm:max-w-5xl"><DialogTitle>CV: {candidate.fullName}</DialogTitle>{cv.isPending&&<LoadingState message="Đang tải CV..."/>}{cv.isError&&<><p role="alert">{(cv.error as {response?:{data?:{message?:string;errors?:{message?:string}}}})?.response?.data?.message ?? (cv.error as {response?:{data?:{errors?:{message?:string}}}})?.response?.data?.errors?.message ?? "Không thể xem CV. Vui lòng thử lại."}</p></>}{cv.data?.url?<iframe title={`CV ${candidate.fullName}`} src={cv.data.url} className="h-[75vh] w-full rounded-lg border"/>:cv.data?.content?<ApplicationCvPreview value={cv.data.content}/>:cv.data&&<p>CV chưa có nội dung.</p>}</DialogContent></Dialog>;
+function PublicCandidateCv({
+  candidate,
+  close,
+  cv,
+}: {
+  candidate: Profile;
+  close: () => void;
+  cv: {
+    isPending: boolean;
+    isError: boolean;
+    error: unknown;
+    data?: { title: string; url: string | null; content: unknown };
+  };
+}) {
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) close();
+      }}
+    >
+      <DialogContent className="h-[90vh] max-w-[95vw] overflow-y-auto sm:max-w-5xl">
+        <DialogTitle>CV: {candidate.fullName}</DialogTitle>
+        {cv.isPending && <LoadingState message="Đang tải CV..." />}
+        {cv.isError && (
+          <>
+            <p role="alert">
+              {(
+                cv.error as {
+                  response?: {
+                    data?: { message?: string; errors?: { message?: string } };
+                  };
+                }
+              )?.response?.data?.message ??
+                (
+                  cv.error as {
+                    response?: { data?: { errors?: { message?: string } } };
+                  }
+                )?.response?.data?.errors?.message ??
+                "Không thể xem CV. Vui lòng thử lại."}
+            </p>
+          </>
+        )}
+        {cv.data?.url ? (
+          <iframe
+            title={`CV ${candidate.fullName}`}
+            src={cv.data.url}
+            className="h-[75vh] w-full rounded-lg border"
+          />
+        ) : cv.data?.content ? (
+          <ApplicationCvPreview value={cv.data.content} />
+        ) : (
+          cv.data && <p>CV chưa có nội dung.</p>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
 }
-function EmployerDropdown({value,onChange,children,className,"aria-label":label}:{value:string|number;onChange:(e:{target:{value:string}})=>void;children:ReactNode;className?:string;"aria-label"?:string}) {
- const options=Children.toArray(children).filter(isValidElement).map(child=>{const p=child.props as {value?:string|number;children:ReactNode};return {value:String(p.value??p.children),label:p.children};});
- return <Select value={String(value)||"__all"} onValueChange={v=>onChange({target:{value:v==="__all"?"":String(v??"")}})}><SelectTrigger aria-label={label} className={"min-w-[150px] rounded-xl bg-white data-[size=default]:h-10 "+(className??"")}><SelectValue>{options.find(o=>o.value===String(value))?.label}</SelectValue></SelectTrigger><SelectContent align="end" sideOffset={8} alignItemWithTrigger={false} className="rounded-2xl border-slate-100 bg-white p-3 shadow-2xl min-w-64 w-max max-w-[min(420px,calc(100vw-2rem))]">{options.map(o=><SelectItem className="[&_[data-slot=select-item-text]]:whitespace-normal [&>span]:whitespace-normal [&>span]:break-words [&>span]:min-w-0 rounded-xl px-3 py-3 leading-6 transition hover:bg-[#e7f9ef] hover:text-[#008f40] data-highlighted:bg-[#e7f9ef] data-highlighted:text-[#008f40] data-selected:bg-[#e7f9ef] data-selected:text-[#008f40]" key={o.value} value={o.value||"__all"}>{o.label}</SelectItem>)}</SelectContent></Select>;
+function EmployerDropdown({
+  value,
+  onChange,
+  children,
+  className,
+  "aria-label": label,
+}: {
+  value: string | number;
+  onChange: (e: { target: { value: string } }) => void;
+  children: ReactNode;
+  className?: string;
+  "aria-label"?: string;
+}) {
+  const options = Children.toArray(children)
+    .filter(isValidElement)
+    .map((child) => {
+      const p = child.props as { value?: string | number; children: ReactNode };
+      return { value: String(p.value ?? p.children), label: p.children };
+    });
+  return (
+    <Select
+      value={String(value) || "__all"}
+      onValueChange={(v) =>
+        onChange({ target: { value: v === "__all" ? "" : String(v ?? "") } })
+      }
+    >
+      <SelectTrigger
+        aria-label={label}
+        className={
+          "min-w-[150px] rounded-xl bg-white data-[size=default]:h-10 " +
+          (className ?? "")
+        }
+      >
+        <SelectValue>
+          {options.find((o) => o.value === String(value))?.label}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent
+        align="end"
+        sideOffset={8}
+        alignItemWithTrigger={false}
+        className="rounded-2xl border-slate-100 bg-white p-3 shadow-2xl min-w-64 w-max max-w-[min(420px,calc(100vw-2rem))]"
+      >
+        {options.map((o) => (
+          <SelectItem
+            className="[&_[data-slot=select-item-text]]:whitespace-normal [&>span]:whitespace-normal [&>span]:break-words [&>span]:min-w-0 rounded-xl px-3 py-3 leading-6 transition hover:bg-[#e7f9ef] hover:text-[#008f40] data-highlighted:bg-[#e7f9ef] data-highlighted:text-[#008f40] data-selected:bg-[#e7f9ef] data-selected:text-[#008f40]"
+            key={o.value}
+            value={o.value || "__all"}
+          >
+            {o.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
 }
-const jobStatuses:Record<string,string>={PENDING:"Chờ duyệt",PUBLISHED:"Đang hiển thị",PAUSED:"Tạm dừng",REJECTED:"Bị từ chối",CLOSED:"Đã đóng",EXPIRED:"Hết hạn"};
-type EmployerJob={boostedUntil:string|null;id:string;title:string;status:string;deadlineAt:string|null;category:{name:string};province:{name:string};_count:{applications:number}};
-export function EmployerJobs(){
- const boostAccount=useAccountStore(s=>s.account);
- const boostUsage=useQuery({queryKey:["employer",boostAccount?.id,"job-boost-usage"],enabled:boostAccount?.role==="company",refetchInterval:60000,queryFn:()=>get<{limit:number;remaining:number;used:number}>("job-boost-usage")});
- const client=useQueryClient();
- const [action,setAction]=useState<{job:EmployerJob;status:string}|null>(null);
- const update=useMutation({mutationFn:()=>httpRequest.patch(`/employer/job-posts/${action!.job.id}/status`,{status:action!.status}),onSuccess:()=>{setAction(null);toast.success("Đã cập nhật tin");void client.invalidateQueries({queryKey:["employer"]});},onError:(error:unknown)=>{const e=error as {response?:{data?:{errors?:{message?:string};message?:string}}};toast.error(e.response?.data?.errors?.message??e.response?.data?.message??"Không thể cập nhật tin");}});
- const account=useAccountStore(s=>s.account);
- const [page,setPage]=useState(1),[draft,setDraft]=useState(""),[query,setQuery]=useState(""),[status,setStatus]=useState("");
- const list=useQuery({queryKey:["employer",account?.id,"job-posts",page,query,status],enabled:account?.role==="company",queryFn:({signal})=>get<Page<EmployerJob>>("job-posts",{page,query,...(status?{status}:{})},signal)});
- return <Panel title="Tin tuyển dụng">{boostUsage.data&&<p className="mb-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">{boostUsage.data.limit>0?`Còn ${boostUsage.data.remaining}/${boostUsage.data.limit} lượt đẩy tin trong kỳ Pro · Mỗi lượt 48 giờ`:"Nâng cấp Pro để đẩy 20 tin/30 ngày, mỗi lượt 48 giờ."}</p>}<div className="mb-5 flex flex-wrap justify-between gap-3"><form className="flex flex-wrap gap-3" onSubmit={e=>{e.preventDefault();setQuery(draft);setPage(1);}}><input aria-label="Tìm theo tiêu đề" placeholder="Tìm theo tiêu đề" className={inputClass} value={draft} onChange={e=>setDraft(e.target.value)}/><EmployerDropdown aria-label="Trạng thái tin" value={status} onChange={e=>{setStatus(e.target.value);setPage(1);}}><option value="">Tất cả trạng thái</option>{Object.entries(jobStatuses).map(([k,v])=><option key={k} value={k}>{v}</option>)}</EmployerDropdown><button className={buttonClass}>Tìm kiếm</button></form><Link className={buttonClass} href="/employer/post-job">+ Đăng tin</Link></div>
- {list.isPending&&<LoadingState message="Đang tải..." />}{list.isError&&<ErrorRetry retry={()=>void list.refetch()}/>}
- {list.data&&<><p className="mb-3 text-sm text-slate-500">{list.data.total} tin tuyển dụng</p><div className="overflow-x-auto"><table className="w-full min-w-[600px] text-left text-sm"><thead className="bg-slate-50"><tr><th className="p-3">Vị trí</th><th>Trạng thái</th><th>Ứng viên</th><th>Hạn nộp</th><th className="p-3">Thao tác</th></tr></thead><tbody>{list.data.items.map(j=><tr key={j.id} className="border-b"><td className="p-3"><b>{j.title}</b><p className="text-xs text-slate-500">{j.category.name} · {j.province.name}</p></td><td>{jobStatuses[j.status]}</td><td>{j._count.applications}</td><td>{j.deadlineAt?new Date(j.deadlineAt).toLocaleDateString("vi-VN"):"Chưa có hạn"}</td><td className="p-3"><div className="flex flex-wrap gap-2"><BoostJobButton job={j} limit={boostUsage.data?.limit??0}/>{(j.status==="PUBLISHED"?[["PAUSED","Tạm dừng"],["CLOSED","Đóng tin"]]:j.status==="PAUSED"?[["PUBLISHED","Khôi phục"],["CLOSED","Đóng tin"]]:j.status==="PENDING"?[["CLOSED","Đóng tin"]]:[]).map(([status,label])=><button key={status} className="font-semibold text-emerald-700" onClick={()=>setAction({job:j,status})}>{label}</button>)}</div></td></tr>)}</tbody></table>{!list.data.items.length&&<p className="p-8 text-center">Không tìm thấy tin tuyển dụng.</p>}</div><Pager page={page} pages={list.data.pages} change={setPage}/></>}{action&&<Dialog open onOpenChange={open=>{if(!open&&!update.isPending)setAction(null);}}><DialogContent><DialogTitle>{action.status==="CLOSED"?"Đóng tin":action.status==="PAUSED"?"Tạm dừng tin":"Khôi phục tin"}</DialogTitle><p>{action.job.title}</p><p className="text-sm text-slate-500">{action.status==="CLOSED"?"Tin ngừng nhận hồ sơ và giải phóng hạn mức. Hồ sơ đã ứng tuyển vẫn được giữ. Tin đã đóng không thể khôi phục.":action.status==="PAUSED"?"Tin tạm ngừng hiển thị và giải phóng hạn mức. Có thể khôi phục nếu còn hạn và đủ hạn mức.":"Tin sẽ hiển thị lại và sử dụng hạn mức."}</p><button disabled={update.isPending} className={buttonClass} onClick={()=>update.mutate()}>Xác nhận</button></DialogContent></Dialog>}</Panel>;
+const jobStatuses: Record<string, string> = {
+  PENDING: "Chờ duyệt",
+  PUBLISHED: "Đang hiển thị",
+  PAUSED: "Tạm dừng",
+  REJECTED: "Bị từ chối",
+  CLOSED: "Đã đóng",
+  EXPIRED: "Hết hạn",
+};
+type EmployerJob = {
+  boostedUntil: string | null;
+  id: string;
+  title: string;
+  status: string;
+  deadlineAt: string | null;
+  category: { name: string };
+  province: { name: string };
+  _count: { applications: number };
+};
+export function EmployerJobs() {
+  const boostAccount = useAccountStore((s) => s.account);
+  const boostUsage = useQuery({
+    queryKey: ["employer", boostAccount?.id, "job-boost-usage"],
+    enabled: boostAccount?.role === "company",
+    refetchInterval: 60000,
+    queryFn: () =>
+      get<{ limit: number; remaining: number; used: number }>(
+        "job-boost-usage",
+      ),
+  });
+  const client = useQueryClient();
+  const [action, setAction] = useState<{
+    job: EmployerJob;
+    status: string;
+  } | null>(null);
+  const update = useMutation({
+    mutationFn: () =>
+      httpRequest.patch(`/employer/job-posts/${action!.job.id}/status`, {
+        status: action!.status,
+      }),
+    onSuccess: () => {
+      setAction(null);
+      toast.success("Đã cập nhật tin");
+      void client.invalidateQueries({ queryKey: ["employer"] });
+    },
+    onError: (error: unknown) => {
+      const e = error as {
+        response?: {
+          data?: { errors?: { message?: string }; message?: string };
+        };
+      };
+      toast.error(
+        e.response?.data?.errors?.message ??
+          e.response?.data?.message ??
+          "Không thể cập nhật tin",
+      );
+    },
+  });
+  const account = useAccountStore((s) => s.account);
+  const [page, setPage] = useState(1),
+    [draft, setDraft] = useState(""),
+    [query, setQuery] = useState(""),
+    [status, setStatus] = useState("");
+  const list = useQuery({
+    queryKey: ["employer", account?.id, "job-posts", page, query, status],
+    enabled: account?.role === "company",
+    queryFn: ({ signal }) =>
+      get<Page<EmployerJob>>(
+        "job-posts",
+        { page, query, ...(status ? { status } : {}) },
+        signal,
+      ),
+  });
+  return (
+    <Panel title="Tin tuyển dụng">
+      {boostUsage.data && (
+        <p className="mb-4 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">
+          {boostUsage.data.limit > 0
+            ? `Còn ${boostUsage.data.remaining}/${boostUsage.data.limit} lượt đẩy tin trong kỳ Pro · Mỗi lượt 48 giờ`
+            : "Nâng cấp Pro để đẩy 20 tin/30 ngày, mỗi lượt 48 giờ."}
+        </p>
+      )}
+      <div className="mb-5 flex flex-wrap justify-between gap-3">
+        <form
+          className="flex flex-wrap gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setQuery(draft);
+            setPage(1);
+          }}
+        >
+          <input
+            aria-label="Tìm theo tiêu đề"
+            placeholder="Tìm theo tiêu đề"
+            className={inputClass}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+          />
+          <EmployerDropdown
+            aria-label="Trạng thái tin"
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">Tất cả trạng thái</option>
+            {Object.entries(jobStatuses).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v}
+              </option>
+            ))}
+          </EmployerDropdown>
+          <button className={buttonClass}>Tìm kiếm</button>
+        </form>
+        <Link className={buttonClass} href="/employer/post-job">
+          + Đăng tin
+        </Link>
+      </div>
+      {list.isPending && <LoadingState message="Đang tải..." />}
+      {list.isError && <ErrorRetry retry={() => void list.refetch()} />}
+      {list.data && (
+        <>
+          <p className="mb-3 text-sm text-slate-500">
+            {list.data.total} tin tuyển dụng
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[600px] text-left text-sm">
+              <thead className="bg-slate-50">
+                <tr>
+                  <th className="p-3">Vị trí</th>
+                  <th>Trạng thái</th>
+                  <th>Ứng viên</th>
+                  <th>Hạn nộp</th>
+                  <th className="p-3">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.data.items.map((j) => (
+                  <tr key={j.id} className="border-b">
+                    <td className="p-3">
+                      <b>{j.title}</b>
+                      <p className="text-xs text-slate-500">
+                        {j.category.name} · {j.province.name}
+                      </p>
+                    </td>
+                    <td>{jobStatuses[j.status]}</td>
+                    <td>{j._count.applications}</td>
+                    <td>
+                      {j.deadlineAt
+                        ? new Date(j.deadlineAt).toLocaleDateString("vi-VN")
+                        : "Chưa có hạn"}
+                    </td>
+                    <td className="p-3">
+                      <div className="flex flex-wrap gap-2">
+                        <BoostJobButton
+                          job={j}
+                          limit={boostUsage.data?.limit ?? 0}
+                        />
+                        {(j.status === "PUBLISHED"
+                          ? [
+                              ["PAUSED", "Tạm dừng"],
+                              ["CLOSED", "Đóng tin"],
+                            ]
+                          : j.status === "PAUSED"
+                            ? [
+                                ["PUBLISHED", "Khôi phục"],
+                                ["CLOSED", "Đóng tin"],
+                              ]
+                            : j.status === "PENDING"
+                              ? [["CLOSED", "Đóng tin"]]
+                              : []
+                        ).map(([status, label]) => (
+                          <button
+                            key={status}
+                            className="font-semibold text-emerald-700"
+                            onClick={() => setAction({ job: j, status })}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {!list.data.items.length && (
+              <p className="p-8 text-center">Không tìm thấy tin tuyển dụng.</p>
+            )}
+          </div>
+          <Pager page={page} pages={list.data.pages} change={setPage} />
+        </>
+      )}
+      {action && (
+        <Dialog
+          open
+          onOpenChange={(open) => {
+            if (!open && !update.isPending) setAction(null);
+          }}
+        >
+          <DialogContent>
+            <DialogTitle>
+              {action.status === "CLOSED"
+                ? "Đóng tin"
+                : action.status === "PAUSED"
+                  ? "Tạm dừng tin"
+                  : "Khôi phục tin"}
+            </DialogTitle>
+            <p>{action.job.title}</p>
+            <p className="text-sm text-slate-500">
+              {action.status === "CLOSED"
+                ? "Tin ngừng nhận hồ sơ và giải phóng hạn mức. Hồ sơ đã ứng tuyển vẫn được giữ. Tin đã đóng không thể khôi phục."
+                : action.status === "PAUSED"
+                  ? "Tin tạm ngừng hiển thị và giải phóng hạn mức. Có thể khôi phục nếu còn hạn và đủ hạn mức."
+                  : "Tin sẽ hiển thị lại và sử dụng hạn mức."}
+            </p>
+            <button
+              disabled={update.isPending}
+              className={buttonClass}
+              onClick={() => update.mutate()}
+            >
+              Xác nhận
+            </button>
+          </DialogContent>
+        </Dialog>
+      )}
+    </Panel>
+  );
 }
 
-function BoostJobButton({job,limit}:{job:EmployerJob;limit:number}){
- const client=useQueryClient(),[confirm,setConfirm]=useState(false);
- const boost=useMutation({mutationFn:()=>httpRequest.post(`/employer/job-posts/${job.id}/boost`),onSuccess:()=>{setConfirm(false);toast.success("Đã đẩy tin trong 48 giờ");void client.invalidateQueries({queryKey:["employer"]});},onError:(error:unknown)=>{const e=error as {response?:{data?:{errors?:{message?:string}}}};toast.error(e.response?.data?.errors?.message??"Không thể đẩy tin");}});
- if(job.status!=="PUBLISHED")return null;
- if(job.boostedUntil&&new Date(job.boostedUntil)>new Date())return <span className="text-xs text-orange-600">HOT đến {new Date(job.boostedUntil).toLocaleString("vi-VN")}</span>;
- return <><button disabled={limit===0} className="font-semibold text-orange-600 disabled:opacity-40" onClick={()=>setConfirm(true)}>Đẩy tin HOT</button>{confirm&&<Dialog open onOpenChange={open=>{if(!open&&!boost.isPending)setConfirm(false);}}><DialogContent><DialogTitle>Đẩy tin nổi bật</DialogTitle><p>{job.title}</p><p className="text-sm text-slate-500">Dùng 1 lượt đẩy tin trong kỳ Pro. Tin xuất hiện trong danh sách HOT trong 48 giờ, miễn là vẫn đang tuyển và còn hạn. Không thể đẩy lại khi hiệu lực này chưa kết thúc.</p><button className={buttonClass} disabled={boost.isPending} onClick={()=>boost.mutate()}>Xác nhận đẩy tin</button></DialogContent></Dialog>}</>;
+function BoostJobButton({ job, limit }: { job: EmployerJob; limit: number }) {
+  const client = useQueryClient(),
+    [confirm, setConfirm] = useState(false);
+  const boost = useMutation({
+    mutationFn: () => httpRequest.post(`/employer/job-posts/${job.id}/boost`),
+    onSuccess: () => {
+      setConfirm(false);
+      toast.success("Đã đẩy tin trong 48 giờ");
+      void client.invalidateQueries({ queryKey: ["employer"] });
+    },
+    onError: (error: unknown) => {
+      const e = error as {
+        response?: { data?: { errors?: { message?: string } } };
+      };
+      toast.error(e.response?.data?.errors?.message ?? "Không thể đẩy tin");
+    },
+  });
+  if (job.status !== "PUBLISHED") return null;
+  if (job.boostedUntil && new Date(job.boostedUntil) > new Date())
+    return (
+      <span className="text-xs text-orange-600">
+        HOT đến {new Date(job.boostedUntil).toLocaleString("vi-VN")}
+      </span>
+    );
+  return (
+    <>
+      <button
+        disabled={limit === 0}
+        className="font-semibold text-orange-600 disabled:opacity-40"
+        onClick={() => setConfirm(true)}
+      >
+        Đẩy tin HOT
+      </button>
+      {confirm && (
+        <Dialog
+          open
+          onOpenChange={(open) => {
+            if (!open && !boost.isPending) setConfirm(false);
+          }}
+        >
+          <DialogContent>
+            <DialogTitle>Đẩy tin nổi bật</DialogTitle>
+            <p>{job.title}</p>
+            <p className="text-sm text-slate-500">
+              Dùng 1 lượt đẩy tin trong kỳ Pro. Tin xuất hiện trong danh sách
+              HOT trong 48 giờ, miễn là vẫn đang tuyển và còn hạn. Không thể đẩy
+              lại khi hiệu lực này chưa kết thúc.
+            </p>
+            <button
+              className={buttonClass}
+              disabled={boost.isPending}
+              onClick={() => boost.mutate()}
+            >
+              Xác nhận đẩy tin
+            </button>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
+  );
 }

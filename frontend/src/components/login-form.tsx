@@ -54,7 +54,13 @@ export function LoginForm({
     try {
       const account = await setAccount();
       toast.success("Đăng nhập thành công");
-      router.replace(account.role === "company" ? "/employer" : account.role === "admin" ? "/admin" : "/");
+      router.replace(
+        account.role === "company"
+          ? "/employer"
+          : account.role === "admin"
+            ? "/admin"
+            : "/",
+      );
     } catch {
       setServerError(
         "Đăng nhập thành công nhưng không thể tải hồ sơ. Vui lòng thử lại.",

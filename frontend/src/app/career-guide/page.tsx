@@ -11,7 +11,11 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { careerArticles } from "@/data/career-articles";
-export const metadata = { title: "Cẩm nang nghề nghiệp | TopCV", description: "Hướng dẫn viết CV, định hướng nghề nghiệp, đánh giá offer và xây dựng portfolio." };
+export const metadata = {
+  title: "Cẩm nang nghề nghiệp | TopCV",
+  description:
+    "Hướng dẫn viết CV, định hướng nghề nghiệp, đánh giá offer và xây dựng portfolio.",
+};
 
 const categories = [
   {
@@ -131,7 +135,14 @@ export default function CareerGuide() {
                 key={article.slug}
                 className="group overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <Image src={article.image} alt={article.imageAlt} width={1200} height={750} unoptimized className="h-52 w-full object-cover transition duration-500 group-hover:scale-[1.02]" />
+                <Image
+                  src={article.image}
+                  alt={article.imageAlt}
+                  width={1200}
+                  height={750}
+                  unoptimized
+                  className="h-52 w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                />
                 <article className="p-6">
                   <div className="flex items-center justify-between gap-3">
                     <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">

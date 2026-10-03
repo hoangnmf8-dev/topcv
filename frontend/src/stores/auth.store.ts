@@ -18,9 +18,9 @@ export const useAccountStore = create<AccountState>((set) => ({
         useCompanyStore.getState().setCompany(account.company);
       }
       if (account.candidate) {
-        // /auth/profile returns the candidate fields needed by the dashboard.
-        // The detailed profile endpoint enriches the remaining optional fields later.
-        useCandidateStore.getState().setCandidate(account.candidate as Candidate);
+        useCandidateStore
+          .getState()
+          .setCandidate(account.candidate as Candidate);
       }
       return account;
     } catch (error) {

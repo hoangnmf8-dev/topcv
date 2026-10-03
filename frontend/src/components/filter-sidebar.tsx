@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { SlidersHorizontal, RotateCcw } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Separator } from "@/components/ui/separator"
+import { SlidersHorizontal, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Separator } from "@/components/ui/separator";
 
 const EXPERIENCE_OPTIONS = [
   { value: "0", label: "Chưa có kinh nghiệm" },
@@ -13,19 +13,19 @@ const EXPERIENCE_OPTIONS = [
   { value: "2", label: "1 - 2 năm" },
   { value: "3", label: "3 - 4 năm" },
   { value: "5", label: "Trên 5 năm" },
-]
+];
 
-const JOB_TYPE_OPTIONS = ["Full-time", "Part-time"]
+const JOB_TYPE_OPTIONS = ["Full-time", "Part-time"];
 
 type FilterSidebarProps = {
-  salary: number[]
-  onSalaryChange: (value: number[]) => void
-  experience: string[]
-  onToggleExperience: (value: string) => void
-  jobTypes: string[]
-  onToggleJobType: (value: string) => void
-  onReset: () => void
-}
+  salary: number[];
+  onSalaryChange: (value: number[]) => void;
+  experience: string[];
+  onToggleExperience: (value: string) => void;
+  jobTypes: string[];
+  onToggleJobType: (value: string) => void;
+  onReset: () => void;
+};
 
 export function FilterSidebar({
   salary,
@@ -118,5 +118,5 @@ export function FilterSidebar({
         </div>
       </div>
     </aside>
-  )
+  );
 }

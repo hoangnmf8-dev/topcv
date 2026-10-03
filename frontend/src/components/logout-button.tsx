@@ -28,13 +28,28 @@ export function LogoutButton() {
       // A full navigation also closes socket connections and clears local UI state.
       window.location.replace("/login");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Không thể đăng xuất. Vui lòng thử lại.");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Không thể đăng xuất. Vui lòng thử lại.",
+      );
       lock.current = false;
       setPending(false);
     }
   }
-  return <button type="button" disabled={pending} onClick={() => void logout()} className="mt-3 flex w-full items-center gap-3 rounded-xl border-t border-slate-100 px-3 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60">
-    {pending ? <Loader2 className="size-4 animate-spin" /> : <LogOut className="size-4" />}
-    {pending ? "Đang đăng xuất..." : "Đăng xuất"}
-  </button>;
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={() => void logout()}
+      className="mt-3 flex w-full items-center gap-3 rounded-xl border-t border-slate-100 px-3 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60"
+    >
+      {pending ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <LogOut className="size-4" />
+      )}
+      {pending ? "Đang đăng xuất..." : "Đăng xuất"}
+    </button>
+  );
 }

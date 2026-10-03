@@ -4,18 +4,44 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
-import { ArrowLeft, Building2, CheckCircle2, Clock3, Eye, EyeOff, Lock, Mail, Phone, RefreshCw, ShieldCheck, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  CheckCircle2,
+  Clock3,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Phone,
+  RefreshCw,
+  ShieldCheck,
+  User,
+} from "lucide-react";
 import { toast } from "sonner";
 
-import { registerAction, resendVerificationAction, verifyRegistrationAction } from "@/actions/auth.action";
+import {
+  registerAction,
+  resendVerificationAction,
+  verifyRegistrationAction,
+} from "@/actions/auth.action";
 import { AuthForm } from "@/components/auth-form";
 import { GoogleButton } from "@/components/google-button";
 import type { Role } from "@/components/role-selector";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { useAccountStore } from "@/stores/auth.store";
 import { type RegisterInput, registerSchema } from "@/validators/auth.validate";
 
@@ -30,10 +56,18 @@ function maskEmail(email: string) {
 }
 
 function formatTime(total: number) {
-  return `${Math.floor(total / 60).toString().padStart(2, "0")}:${(total % 60).toString().padStart(2, "0")}`;
+  return `${Math.floor(total / 60)
+    .toString()
+    .padStart(2, "0")}:${(total % 60).toString().padStart(2, "0")}`;
 }
 
-export function RegisterForm({ role, onVerificationChange }: { role: Role; onVerificationChange?: (active: boolean) => void }) {
+export function RegisterForm({
+  role,
+  onVerificationChange,
+}: {
+  role: Role;
+  onVerificationChange?: (active: boolean) => void;
+}) {
   const [step, setStep] = React.useState<Step>("form");
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirm, setShowConfirm] = React.useState(false);
@@ -94,7 +128,10 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
       return;
     }
 
-    const result = await registerAction(values, isCompany ? "company" : "candidate");
+    const result = await registerAction(
+      values,
+      isCompany ? "company" : "candidate",
+    );
     if (!result.success) {
       setServerError(result.message);
       return;
@@ -109,7 +146,8 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
 
   async function verify(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (otp.length !== 6 || otpSeconds === 0 || isVerifying || isResending) return;
+    if (otp.length !== 6 || otpSeconds === 0 || isVerifying || isResending)
+      return;
     setServerError("");
     try {
       setIsVerifying(true);
@@ -122,7 +160,9 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
       setStep("success");
       toast.success("Xác minh email thành công");
     } catch {
-      setServerError("Xác minh thành công nhưng không thể tải hồ sơ. Vui lòng đăng nhập lại.");
+      setServerError(
+        "Xác minh thành công nhưng không thể tải hồ sơ. Vui lòng đăng nhập lại.",
+      );
     } finally {
       setIsVerifying(false);
     }
@@ -149,79 +189,353 @@ export function RegisterForm({ role, onVerificationChange }: { role: Role; onVer
   if (step === "success") {
     return (
       <div className="py-4 text-center">
-        <div className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-50 text-primary"><CheckCircle2 className="size-9" /></div>
+        <div className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-50 text-primary">
+          <CheckCircle2 className="size-9" />
+        </div>
         <h2 className="mt-5 text-xl font-bold">Xác minh thành công!</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">Tài khoản của bạn đã sẵn sàng. Chào mừng bạn đến với TopCV.</p>
-        <Button size="lg" className="mt-6 w-full font-semibold" onClick={() => router.replace(isCompany ? "/employer" : "/candidate")}>Bắt đầu sử dụng</Button>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          Tài khoản của bạn đã sẵn sàng. Chào mừng bạn đến với TopCV.
+        </p>
+        <Button
+          size="lg"
+          className="mt-6 w-full font-semibold"
+          onClick={() => router.replace(isCompany ? "/employer" : "/candidate")}
+        >
+          Bắt đầu sử dụng
+        </Button>
       </div>
     );
   }
 
   if (step === "otp") {
     return (
-      <AuthForm onSubmit={verify} onSubmitError={() => setServerError("Không thể gửi yêu cầu xác minh. Vui lòng thử lại.")} className="py-1">
-        <button type="button" onClick={() => { setStep("form"); setServerError(""); setOtp(""); }} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />Thay đổi thông tin</button>
+      <AuthForm
+        onSubmit={verify}
+        onSubmitError={() =>
+          setServerError("Không thể gửi yêu cầu xác minh. Vui lòng thử lại.")
+        }
+        className="py-1"
+      >
+        <button
+          type="button"
+          onClick={() => {
+            setStep("form");
+            setServerError("");
+            setOtp("");
+          }}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Thay đổi thông tin
+        </button>
         <div className="mt-5 text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-emerald-50 text-primary"><ShieldCheck className="size-7" /></div>
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-emerald-50 text-primary">
+            <ShieldCheck className="size-7" />
+          </div>
           <h2 className="mt-4 text-xl font-bold">Xác minh email</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Nhập mã gồm 6 chữ số vừa được gửi tới<br /><strong className="text-foreground">{maskEmail(email)}</strong></p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            Nhập mã gồm 6 chữ số vừa được gửi tới
+            <br />
+            <strong className="text-foreground">{maskEmail(email)}</strong>
+          </p>
         </div>
-        <InputOTP id="register-otp" maxLength={6} value={otp} onChange={(value) => { setOtp(value); setServerError(""); }} containerClassName="mt-6 justify-center" autoFocus>
+        <InputOTP
+          id="register-otp"
+          maxLength={6}
+          value={otp}
+          onChange={(value) => {
+            setOtp(value);
+            setServerError("");
+          }}
+          containerClassName="mt-6 justify-center"
+          autoFocus
+        >
           <InputOTPGroup className="gap-2 [&>[data-slot=input-otp-slot]]:size-11 [&>[data-slot=input-otp-slot]]:rounded-xl [&>[data-slot=input-otp-slot]]:border sm:[&>[data-slot=input-otp-slot]]:size-12">
-            {Array.from({ length: 6 }, (_, index) => <InputOTPSlot key={index} index={index} />)}
+            {Array.from({ length: 6 }, (_, index) => (
+              <InputOTPSlot key={index} index={index} />
+            ))}
           </InputOTPGroup>
         </InputOTP>
-        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground"><Clock3 className="size-4" />{otpSeconds ? <span>Mã có hiệu lực trong <strong className="text-foreground">{formatTime(otpSeconds)}</strong></span> : <span className="font-medium text-destructive">Mã OTP đã hết hạn</span>}</div>
-        {serverError && <p role="alert" className="mt-4 rounded-xl bg-destructive/10 px-4 py-3 text-center text-sm text-destructive">{serverError}</p>}
-        <Button type="submit" size="lg" className="mt-5 w-full font-semibold" disabled={otp.length !== 6 || otpSeconds === 0 || isVerifying}><ShieldCheck />{isVerifying ? "Đang xác minh..." : "Xác nhận mã OTP"}</Button>
-        <div className="mt-5 text-center text-sm text-muted-foreground">Chưa nhận được mã? <button type="button" onClick={resend} disabled={resendSeconds > 0 || isResending} className="inline-flex items-center gap-1 font-semibold text-primary disabled:cursor-not-allowed disabled:text-muted-foreground"><RefreshCw className="size-3.5" />{isResending ? "Đang gửi..." : resendSeconds ? `Gửi lại sau ${resendSeconds}s` : "Gửi lại mã"}</button></div>
+        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <Clock3 className="size-4" />
+          {otpSeconds ? (
+            <span>
+              Mã có hiệu lực trong{" "}
+              <strong className="text-foreground">
+                {formatTime(otpSeconds)}
+              </strong>
+            </span>
+          ) : (
+            <span className="font-medium text-destructive">
+              Mã OTP đã hết hạn
+            </span>
+          )}
+        </div>
+        {serverError && (
+          <p
+            role="alert"
+            className="mt-4 rounded-xl bg-destructive/10 px-4 py-3 text-center text-sm text-destructive"
+          >
+            {serverError}
+          </p>
+        )}
+        <Button
+          type="submit"
+          size="lg"
+          className="mt-5 w-full font-semibold"
+          disabled={otp.length !== 6 || otpSeconds === 0 || isVerifying}
+        >
+          <ShieldCheck />
+          {isVerifying ? "Đang xác minh..." : "Xác nhận mã OTP"}
+        </Button>
+        <div className="mt-5 text-center text-sm text-muted-foreground">
+          Chưa nhận được mã?{" "}
+          <button
+            type="button"
+            onClick={resend}
+            disabled={resendSeconds > 0 || isResending}
+            className="inline-flex items-center gap-1 font-semibold text-primary disabled:cursor-not-allowed disabled:text-muted-foreground"
+          >
+            <RefreshCw className="size-3.5" />
+            {isResending
+              ? "Đang gửi..."
+              : resendSeconds
+                ? `Gửi lại sau ${resendSeconds}s`
+                : "Gửi lại mã"}
+          </button>
+        </div>
       </AuthForm>
     );
   }
 
   return (
-    <AuthForm onSubmit={handleSubmit(submitRegistration)} onSubmitError={() => setServerError("Không thể gửi yêu cầu đăng ký. Vui lòng thử lại.")} noValidate>
+    <AuthForm
+      onSubmit={handleSubmit(submitRegistration)}
+      onSubmitError={() =>
+        setServerError("Không thể gửi yêu cầu đăng ký. Vui lòng thử lại.")
+      }
+      noValidate
+    >
       <FieldGroup>
-        {!isCompany && <Field>
-          <FieldLabel htmlFor="reg-name">Họ và tên</FieldLabel>
-          <InputGroup className="h-11" aria-invalid={Boolean(errors.fullName)}><InputGroupAddon><User /></InputGroupAddon><InputGroupInput id="reg-name" autoComplete="name" placeholder="Nguyễn Văn A" aria-invalid={Boolean(errors.fullName)} {...register("fullName", { onChange: () => { setServerError(""); clearErrors("fullName"); } })} /></InputGroup>
-          {errors.fullName && <ErrorText>{errors.fullName.message}</ErrorText>}
-        </Field>}
-        {isCompany && <Field>
-          <FieldLabel htmlFor="reg-company">Tên công ty / Doanh nghiệp</FieldLabel>
-          <InputGroup className="h-11" aria-invalid={Boolean(errors.companyName)}><InputGroupAddon><Building2 /></InputGroupAddon><InputGroupInput id="reg-company" autoComplete="organization" placeholder="Công ty TNHH ABC" aria-invalid={Boolean(errors.companyName)} {...register("companyName", { onChange: () => { setServerError(""); clearErrors("companyName"); } })} /></InputGroup>
-          {errors.companyName && <ErrorText>{errors.companyName.message}</ErrorText>}
-        </Field>}
+        {!isCompany && (
+          <Field>
+            <FieldLabel htmlFor="reg-name">Họ và tên</FieldLabel>
+            <InputGroup
+              className="h-11"
+              aria-invalid={Boolean(errors.fullName)}
+            >
+              <InputGroupAddon>
+                <User />
+              </InputGroupAddon>
+              <InputGroupInput
+                id="reg-name"
+                autoComplete="name"
+                placeholder="Nguyễn Văn A"
+                aria-invalid={Boolean(errors.fullName)}
+                {...register("fullName", {
+                  onChange: () => {
+                    setServerError("");
+                    clearErrors("fullName");
+                  },
+                })}
+              />
+            </InputGroup>
+            {errors.fullName && (
+              <ErrorText>{errors.fullName.message}</ErrorText>
+            )}
+          </Field>
+        )}
+        {isCompany && (
+          <Field>
+            <FieldLabel htmlFor="reg-company">
+              Tên công ty / Doanh nghiệp
+            </FieldLabel>
+            <InputGroup
+              className="h-11"
+              aria-invalid={Boolean(errors.companyName)}
+            >
+              <InputGroupAddon>
+                <Building2 />
+              </InputGroupAddon>
+              <InputGroupInput
+                id="reg-company"
+                autoComplete="organization"
+                placeholder="Công ty TNHH ABC"
+                aria-invalid={Boolean(errors.companyName)}
+                {...register("companyName", {
+                  onChange: () => {
+                    setServerError("");
+                    clearErrors("companyName");
+                  },
+                })}
+              />
+            </InputGroup>
+            {errors.companyName && (
+              <ErrorText>{errors.companyName.message}</ErrorText>
+            )}
+          </Field>
+        )}
         <Field>
           <FieldLabel htmlFor="reg-email">Email</FieldLabel>
-          <InputGroup className="h-11" aria-invalid={Boolean(errors.email)}><InputGroupAddon><Mail /></InputGroupAddon><InputGroupInput id="reg-email" type="email" autoComplete="email" placeholder="ban@example.com" aria-invalid={Boolean(errors.email)} {...register("email", { onChange: () => setServerError("") })} /></InputGroup>
+          <InputGroup className="h-11" aria-invalid={Boolean(errors.email)}>
+            <InputGroupAddon>
+              <Mail />
+            </InputGroupAddon>
+            <InputGroupInput
+              id="reg-email"
+              type="email"
+              autoComplete="email"
+              placeholder="ban@example.com"
+              aria-invalid={Boolean(errors.email)}
+              {...register("email", { onChange: () => setServerError("") })}
+            />
+          </InputGroup>
           {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
         </Field>
         <Field>
-          <FieldLabel htmlFor="reg-phone">Số điện thoại <span className="font-normal text-muted-foreground">(không bắt buộc)</span></FieldLabel>
-          <InputGroup className="h-11" aria-invalid={Boolean(errors.phone)}><InputGroupAddon><Phone /></InputGroupAddon><InputGroupInput id="reg-phone" type="tel" autoComplete="tel" placeholder="0912 345 678" aria-invalid={Boolean(errors.phone)} {...register("phone", { onChange: () => setServerError("") })} /></InputGroup>
+          <FieldLabel htmlFor="reg-phone">
+            Số điện thoại{" "}
+            <span className="font-normal text-muted-foreground">
+              (không bắt buộc)
+            </span>
+          </FieldLabel>
+          <InputGroup className="h-11" aria-invalid={Boolean(errors.phone)}>
+            <InputGroupAddon>
+              <Phone />
+            </InputGroupAddon>
+            <InputGroupInput
+              id="reg-phone"
+              type="tel"
+              autoComplete="tel"
+              placeholder="0912 345 678"
+              aria-invalid={Boolean(errors.phone)}
+              {...register("phone", { onChange: () => setServerError("") })}
+            />
+          </InputGroup>
           {errors.phone && <ErrorText>{errors.phone.message}</ErrorText>}
         </Field>
         <Field>
           <FieldLabel htmlFor="reg-password">Mật khẩu</FieldLabel>
-          <InputGroup className="h-11" aria-invalid={Boolean(errors.password)}><InputGroupAddon><Lock /></InputGroupAddon><InputGroupInput id="reg-password" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="Tối thiểu 8 ký tự" aria-invalid={Boolean(errors.password)} {...register("password", { onChange: () => setServerError("") })} /><InputGroupAddon align="inline-end"><InputGroupButton type="button" size="icon-sm" aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"} onClick={() => setShowPassword((value) => !value)}>{showPassword ? <EyeOff /> : <Eye />}</InputGroupButton></InputGroupAddon></InputGroup>
+          <InputGroup className="h-11" aria-invalid={Boolean(errors.password)}>
+            <InputGroupAddon>
+              <Lock />
+            </InputGroupAddon>
+            <InputGroupInput
+              id="reg-password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Tối thiểu 8 ký tự"
+              aria-invalid={Boolean(errors.password)}
+              {...register("password", { onChange: () => setServerError("") })}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                type="button"
+                size="icon-sm"
+                aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                onClick={() => setShowPassword((value) => !value)}
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
           {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
         </Field>
         <Field>
           <FieldLabel htmlFor="reg-confirm">Xác nhận mật khẩu</FieldLabel>
-          <InputGroup className="h-11" aria-invalid={Boolean(errors.confirmPassword)}><InputGroupAddon><Lock /></InputGroupAddon><InputGroupInput id="reg-confirm" type={showConfirm ? "text" : "password"} autoComplete="new-password" placeholder="Nhập lại mật khẩu" aria-invalid={Boolean(errors.confirmPassword)} {...register("confirmPassword", { onChange: () => setServerError("") })} /><InputGroupAddon align="inline-end"><InputGroupButton type="button" size="icon-sm" aria-label={showConfirm ? "Ẩn mật khẩu" : "Hiện mật khẩu"} onClick={() => setShowConfirm((value) => !value)}>{showConfirm ? <EyeOff /> : <Eye />}</InputGroupButton></InputGroupAddon></InputGroup>
-          {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
+          <InputGroup
+            className="h-11"
+            aria-invalid={Boolean(errors.confirmPassword)}
+          >
+            <InputGroupAddon>
+              <Lock />
+            </InputGroupAddon>
+            <InputGroupInput
+              id="reg-confirm"
+              type={showConfirm ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder="Nhập lại mật khẩu"
+              aria-invalid={Boolean(errors.confirmPassword)}
+              {...register("confirmPassword", {
+                onChange: () => setServerError(""),
+              })}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                type="button"
+                size="icon-sm"
+                aria-label={showConfirm ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                onClick={() => setShowConfirm((value) => !value)}
+              >
+                {showConfirm ? <EyeOff /> : <Eye />}
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+          {errors.confirmPassword && (
+            <ErrorText>{errors.confirmPassword.message}</ErrorText>
+          )}
         </Field>
-        {serverError && <p role="alert" className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{serverError}</p>}
-        <Controller control={control} name="termsAccepted" render={({ field }) => <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground"><Checkbox id="terms" className="mt-0.5" checked={field.value} onCheckedChange={(checked) => field.onChange(checked === true)} /><span className="leading-snug">Tôi đồng ý với <a href="#" className="font-medium text-primary hover:underline">Điều khoản dịch vụ</a> và <a href="#" className="font-medium text-primary hover:underline">Chính sách bảo mật</a></span></label>} />
-        {errors.termsAccepted && <ErrorText>{errors.termsAccepted.message}</ErrorText>}
-        <Button type="submit" size="lg" className="w-full font-semibold" disabled={isSubmitting}><Mail />{isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản & nhận OTP"}</Button>
-        <GoogleButton label="Đăng ký với Google" role={isCompany ? "company" : "candidate"} />
+        {serverError && (
+          <p
+            role="alert"
+            className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          >
+            {serverError}
+          </p>
+        )}
+        <Controller
+          control={control}
+          name="termsAccepted"
+          render={({ field }) => (
+            <label className="flex cursor-pointer items-start gap-2 text-sm text-muted-foreground">
+              <Checkbox
+                id="terms"
+                className="mt-0.5"
+                checked={field.value}
+                onCheckedChange={(checked) => field.onChange(checked === true)}
+              />
+              <span className="leading-snug">
+                Tôi đồng ý với{" "}
+                <a
+                  href="#"
+                  className="font-medium text-primary hover:underline"
+                >
+                  Điều khoản dịch vụ
+                </a>{" "}
+                và{" "}
+                <a
+                  href="#"
+                  className="font-medium text-primary hover:underline"
+                >
+                  Chính sách bảo mật
+                </a>
+              </span>
+            </label>
+          )}
+        />
+        {errors.termsAccepted && (
+          <ErrorText>{errors.termsAccepted.message}</ErrorText>
+        )}
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full font-semibold"
+          disabled={isSubmitting}
+        >
+          <Mail />
+          {isSubmitting ? "Đang tạo tài khoản..." : "Tạo tài khoản & nhận OTP"}
+        </Button>
+        <GoogleButton
+          label="Đăng ký với Google"
+          role={isCompany ? "company" : "candidate"}
+        />
       </FieldGroup>
     </AuthForm>
   );
 }
 
 function ErrorText({ children }: { children?: string }) {
-  return children ? <p className="mt-1 text-sm text-destructive">{children}</p> : null;
+  return children ? (
+    <p className="mt-1 text-sm text-destructive">{children}</p>
+  ) : null;
 }

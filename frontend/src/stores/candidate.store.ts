@@ -6,13 +6,17 @@ export const useCandidateStore = create<CandidateStore>((set) => ({
   candidate: null,
   setCandidate: async (candidateData: Candidate) => {
     let avatarUrl: string | null = null;
-    if(candidateData.avatarKey) {
-      avatarUrl = candidateData.avatarUrl || await uploadService.getUrlFile(candidateData.avatarKey);
+    if (candidateData.avatarKey) {
+      avatarUrl =
+        candidateData.avatarUrl ||
+        (await uploadService.getUrlFile(candidateData.avatarKey));
     }
-    return set({candidate: {
-      ...candidateData,
-      avatarUrl,
-    }})
+    return set({
+      candidate: {
+        ...candidateData,
+        avatarUrl,
+      },
+    });
   },
   updateCandidate: (data) =>
     set((state) => {

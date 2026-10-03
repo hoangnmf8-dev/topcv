@@ -6,7 +6,7 @@ interface SendTemplateEmailParams {
   templateId: string;
   variables: Record<string, TemplateVariableValue>;
   subject?: string;
-};
+}
 class MailService {
   async sendTemplateEmail(params: SendTemplateEmailParams): Promise<string> {
     const fromEmail = process.env.RESEND_FROM_EMAIL;
@@ -25,12 +25,12 @@ class MailService {
     });
     if (error) {
       throw new Error(`Gửi email thất bại: ${error.message}`);
-    };
+    }
     if (!data) {
       throw new Error("Resend không trả về thông tin email");
-    };
+    }
     return data.id;
-  };
-};
+  }
+}
 
 export const mailService = new MailService();

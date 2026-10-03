@@ -15,12 +15,10 @@ class JobPostController {
           .json({ message: "Chỉ nhà tuyển dụng được đăng tin" });
       const parsed = jobPostCreateSchema.safeParse(req.body);
       if (!parsed.success)
-        return res
-          .status(400)
-          .json({
-            message: "Thông tin tin tuyển dụng không hợp lệ",
-            errors: parsed.error.issues,
-          });
+        return res.status(400).json({
+          message: "Thông tin tin tuyển dụng không hợp lệ",
+          errors: parsed.error.issues,
+        });
       const company = await prisma.company.findFirst({
         where: { accountId: req.profile.id, deletedAt: null },
       });
@@ -43,28 +41,38 @@ class JobPostController {
         }),
       ]);
       if (!jobTitle)
-        return res
-          .status(400)
-          .json({
-            message:
-              "Chức danh không thuộc ngành nghề đã chọn hoặc không còn hoạt động",
-          });
+        return res.status(400).json({
+          message:
+            "Chức danh không thuộc ngành nghề đã chọn hoặc không còn hoạt động",
+        });
       if (!ward || !category)
         return res
           .status(400)
           .json({ message: "Ngành nghề hoặc địa điểm không hợp lệ" });
-      const job = await prisma.$transaction(async tx => {
+      const job = await prisma.$transaction(async (tx) => {
         await tx.$queryRaw`SELECT id FROM company WHERE id = ${company.id}::uuid FOR UPDATE`;
         const plan = await currentPlan(req.profile.id, tx);
-        const count = await tx.jobPost.count({ where: { companyId: company.id, deletedAt: null, status: { in: ["PENDING", "PUBLISHED"] }, OR: [{ deadlineAt: null }, { deadlineAt: { gt: new Date() } }] } });
-        if (count >= plan.benefits.activeJobLimit) throw new AppError(`Gói hiện tại cho phép ${plan.benefits.activeJobLimit} tin hoạt động hoặc chờ duyệt.`, "JOB_LIMIT_REACHED", 403);
+        const count = await tx.jobPost.count({
+          where: {
+            companyId: company.id,
+            deletedAt: null,
+            status: { in: ["PENDING", "PUBLISHED"] },
+            OR: [{ deadlineAt: null }, { deadlineAt: { gt: new Date() } }],
+          },
+        });
+        if (count >= plan.benefits.activeJobLimit)
+          throw new AppError(
+            `Gói hiện tại cho phép ${plan.benefits.activeJobLimit} tin hoạt động hoặc chờ duyệt.`,
+            "JOB_LIMIT_REACHED",
+            403,
+          );
         return tx.jobPost.create({
-        data: {
-          ...data,
-          deadlineAt: new Date(data.deadlineAt),
-          companyId: company.id,
-          status: "PENDING",
-        },
+          data: {
+            ...data,
+            deadlineAt: new Date(data.deadlineAt),
+            companyId: company.id,
+            status: "PENDING",
+          },
         });
       });
       return res.status(201).json(job);
@@ -83,13 +91,11 @@ class JobPostController {
     try {
       const parsed = jobPostQuerySchema.safeParse(req.query);
       if (!parsed.success) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Bộ lọc không hợp lệ",
-            errors: parsed.error.issues,
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Bộ lọc không hợp lệ",
+          errors: parsed.error.issues,
+        });
       }
       const params = parsed.data;
       const companyData = await jobPostService.getManyJobPost(params);

@@ -13,42 +13,43 @@ enum SaturdaySchedule {
   WORK
   OFF
   UNSPECIFIED
+
   @@map("saturday_schedule")
 }
 
 model JobPost {
-  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  companyId          String    @map("company_id") @db.Uuid
-  jobTitleId         String?   @map("job_title_id") @db.Uuid
-  jobCategoryId      String    @map("job_category_id") @db.Uuid
-  provinceId         String    @map("province_id") @db.Uuid
-  wardId             String    @map("ward_id") @db.Uuid
-  address            String    @db.Text
-  title              String    @db.VarChar(255)
-  description        String?   @db.Text
-  requirements       String?   @db.Text
-  benefits           String?   @db.Text
-  overview           Json      @default("{\"requirements\":[],\"specialties\":[]}") @db.JsonB
-  salaryMin          Decimal?  @map("salary_min") @db.Decimal(15, 2)
-  salaryMax          Decimal?  @map("salary_max") @db.Decimal(15, 2)
-  currency           String?   @default("VND") @db.VarChar(10)
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId          String            @map("company_id") @db.Uuid
+  jobTitleId         String?           @map("job_title_id") @db.Uuid
+  jobCategoryId      String            @map("job_category_id") @db.Uuid
+  provinceId         String            @map("province_id") @db.Uuid
+  wardId             String            @map("ward_id") @db.Uuid
+  address            String            @db.Text
+  title              String            @db.VarChar(255)
+  description        String?           @db.Text
+  requirements       String?           @db.Text
+  benefits           String?           @db.Text
+  overview           Json              @default("{\"requirements\":[],\"specialties\":[]}") @db.JsonB
+  salaryMin          Decimal?          @map("salary_min") @db.Decimal(15, 2)
+  salaryMax          Decimal?          @map("salary_max") @db.Decimal(15, 2)
+  currency           String?           @default("VND") @db.VarChar(10)
   saturdaySchedule   SaturdaySchedule? @map("saturday_schedule")
-  employmentType     String?   @default("full_time") @map("employment_type") @db.VarChar(30)
-  experienceYearsMin Decimal?  @map("experience_years_min") @db.Decimal(4, 0)
-  deadlineAt         DateTime? @map("deadline_at") @db.Timestamptz
-  status             JobStatus @default(PENDING)
-  publishedAt        DateTime? @map("published_at") @db.Timestamptz
-  isBoosted          Boolean   @map("is_boosted") @default(false) @db.Boolean
-  boostedUntil       DateTime? @map("boosted_until") @db.Timestamptz
-  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt          DateTime? @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt          DateTime? @map("deleted_at") @db.Timestamptz
+  employmentType     String?           @default("full_time") @map("employment_type") @db.VarChar(30)
+  experienceYearsMin Decimal?          @map("experience_years_min") @db.Decimal(4, 0)
+  deadlineAt         DateTime?         @map("deadline_at") @db.Timestamptz
+  status             JobStatus         @default(PENDING)
+  publishedAt        DateTime?         @map("published_at") @db.Timestamptz
+  isBoosted          Boolean           @default(false) @map("is_boosted") @db.Boolean
+  boostedUntil       DateTime?         @map("boosted_until") @db.Timestamptz
+  createdAt          DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime?         @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt          DateTime?         @map("deleted_at") @db.Timestamptz
 
-  company  Company     @relation(fields: [companyId], references: [id], onDelete: Restrict)
-  jobTitle JobTitle?   @relation(fields: [jobTitleId], references: [id], onDelete: SetNull)
-  category JobCategory @relation(fields: [jobCategoryId], references: [id], onDelete: Restrict)
-  province Province    @relation(fields: [provinceId], references: [id], onDelete: Restrict)
-  ward Ward @relation(fields: [wardId, provinceId], references: [id, provinceId], onDelete: Restrict)
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  jobTitle     JobTitle?     @relation(fields: [jobTitleId], references: [id], onDelete: SetNull)
+  category     JobCategory   @relation(fields: [jobCategoryId], references: [id], onDelete: Restrict)
+  province     Province      @relation(fields: [provinceId], references: [id], onDelete: Restrict)
+  ward         Ward          @relation(fields: [wardId, provinceId], references: [id, provinceId], onDelete: Restrict)
   applications Application[]
   savedJobs    SavedJob[]
 
@@ -58,6 +59,5 @@ model JobPost {
   @@index([wardId, provinceId])
   @@index([status, deadlineAt])
   @@index([boostedUntil])
-
   @@map("job_post")
 }

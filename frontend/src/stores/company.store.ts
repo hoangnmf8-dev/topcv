@@ -5,18 +5,25 @@ import uploadService from "@/services/upload.service";
 export const useCompanyStore = create<CompanyStore>((set) => ({
   company: null,
   setCompany: async (companyData: Company) => {
-    let logoUrl: string | null = null, bannerUrl: string | null = null;
-    if(companyData.logoKey) {
-      logoUrl = companyData.logoUrl || await uploadService.getUrlFile(companyData.logoKey);
+    let logoUrl: string | null = null,
+      bannerUrl: string | null = null;
+    if (companyData.logoKey) {
+      logoUrl =
+        companyData.logoUrl ||
+        (await uploadService.getUrlFile(companyData.logoKey));
     }
-    if(companyData.bannerKey) {
-      bannerUrl = companyData.bannerUrl || await uploadService.getUrlFile(companyData.bannerKey);
+    if (companyData.bannerKey) {
+      bannerUrl =
+        companyData.bannerUrl ||
+        (await uploadService.getUrlFile(companyData.bannerKey));
     }
-    return set({company: {
-      ...companyData,
-      logoUrl,
-      bannerUrl
-    }})
+    return set({
+      company: {
+        ...companyData,
+        logoUrl,
+        bannerUrl,
+      },
+    });
   },
   updateCompany: (data) =>
     set((state) => {

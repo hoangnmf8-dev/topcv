@@ -112,7 +112,10 @@ class UploadService {
       });
       if (!candidate)
         throw new AppError("Không có quyền tải CV", "FORBIDDEN", 403);
-      assertCvAccess(await candidateAccess(accountId, candidate.id), input.purpose === "cv");
+      assertCvAccess(
+        await candidateAccess(accountId, candidate.id),
+        input.purpose === "cv",
+      );
     }
     this.validateFile(input);
     const rule = this.uploadRules[input.purpose];
@@ -195,7 +198,17 @@ class UploadService {
     accountId: string,
     publicCandidateId?: string,
   ): Promise<string> {
-    if (publicCandidateId && !await prisma.company.findFirst({ where: { accountId, deletedAt: null, account: { role: "company", status: "active", deletedAt: null } }, select: { id: true } }))
+    if (
+      publicCandidateId &&
+      !(await prisma.company.findFirst({
+        where: {
+          accountId,
+          deletedAt: null,
+          account: { role: "company", status: "active", deletedAt: null },
+        },
+        select: { id: true },
+      }))
+    )
       throw new AppError("Không có quyền xem CV", "CV_ACCESS_DENIED", 403);
     if (/\.(png|jpe?g|webp)$/i.test(objectKey))
       return this.createImageUrl(objectKey);
@@ -204,7 +217,22 @@ class UploadService {
         fileKey: objectKey,
         deletedAt: null,
         OR: [
-          ...(publicCandidateId ? [{ isDefault: true, candidate: { id: publicCandidateId, isSearchable: true, deletedAt: null, account: { status: "active" as const, deletedAt: null } }, AND: { candidate: { account: { role: "candidate" as const } } } }] : []),
+          ...(publicCandidateId
+            ? [
+                {
+                  isDefault: true,
+                  candidate: {
+                    id: publicCandidateId,
+                    isSearchable: true,
+                    deletedAt: null,
+                    account: { status: "active" as const, deletedAt: null },
+                  },
+                  AND: {
+                    candidate: { account: { role: "candidate" as const } },
+                  },
+                },
+              ]
+            : []),
           { candidate: { accountId, deletedAt: null } },
           {
             applications: {
@@ -237,7 +265,11 @@ class UploadService {
       throw new AppError("Key CV không hợp lệ", "INVALID_CV_KEY", 400);
     }
     const candidate = await prisma.candidate.findFirst({
-      where: { accountId, deletedAt: null, account: { role: "candidate", status: "active", deletedAt: null } },
+      where: {
+        accountId,
+        deletedAt: null,
+        account: { role: "candidate", status: "active", deletedAt: null },
+      },
       select: { id: true },
     });
     if (!candidate)
@@ -255,23 +287,51 @@ class UploadService {
     ) {
       throw new AppError("File CV không hợp lệ", "INVALID_CV_FILE", 400);
     }
-    const header = await r2Client.send(new GetObjectCommand({ Bucket: R2_PRIVATE_BUCKET_NAME, Key: input.objectKey, Range: "bytes=0-4" }));
+    const header = await r2Client.send(
+      new GetObjectCommand({
+        Bucket: R2_PRIVATE_BUCKET_NAME,
+        Key: input.objectKey,
+        Range: "bytes=0-4",
+      }),
+    );
     const bytes = await header.Body?.transformToByteArray();
     if (!bytes || Buffer.from(bytes).toString("ascii") !== "%PDF-")
-      throw new AppError("Nội dung file không phải PDF", "INVALID_CV_FILE", 400);
+      throw new AppError(
+        "Nội dung file không phải PDF",
+        "INVALID_CV_FILE",
+        400,
+      );
     return prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM candidate WHERE id = ${candidate.id}::uuid FOR UPDATE`;
-      const existing = await tx.cv.findFirst({ where: { candidateId: candidate.id, fileKey: input.objectKey } });
-      if (existing?.deletedAt) throw new AppError("CV đã bị xóa, hãy chọn lại file để tải lên", "CV_DELETED", 409);
+      const existing = await tx.cv.findFirst({
+        where: { candidateId: candidate.id, fileKey: input.objectKey },
+      });
+      if (existing?.deletedAt)
+        throw new AppError(
+          "CV đã bị xóa, hãy chọn lại file để tải lên",
+          "CV_DELETED",
+          409,
+        );
       const access = await candidateAccess(accountId, candidate.id, tx);
       assertCvAccess(access, !existing);
-      const isDefault = (!existing && access.count === 0) || (existing?.isDefault && access.count === 1) ? true : input.isDefault;
+      const isDefault =
+        (!existing && access.count === 0) ||
+        (existing?.isDefault && access.count === 1)
+          ? true
+          : input.isDefault;
       if (isDefault)
         await tx.cv.updateMany({
-          where: { candidateId: candidate.id, isDefault: true, deletedAt: null },
+          where: {
+            candidateId: candidate.id,
+            isDefault: true,
+            deletedAt: null,
+          },
           data: { isDefault: false },
         });
-      const data = { title: input.title, ...(isDefault !== undefined ? {isDefault} : {}) };
+      const data = {
+        title: input.title,
+        ...(isDefault !== undefined ? { isDefault } : {}),
+      };
       return existing
         ? tx.cv.update({ where: { id: existing.id }, data })
         : tx.cv.create({

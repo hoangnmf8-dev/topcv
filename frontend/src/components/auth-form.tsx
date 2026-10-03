@@ -1,14 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentProps, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+  type FormEvent,
+} from "react";
 
-type AuthFormProps = Omit<ComponentProps<"form">, "onSubmit" | "action" | "method"> & {
+type AuthFormProps = Omit<
+  ComponentProps<"form">,
+  "onSubmit" | "action" | "method"
+> & {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void | Promise<void>;
   onSubmitError: () => void;
 };
 
 /** Keep SSR forms inert until their submit handler is attached. */
-export function AuthForm({ children, onSubmit, onSubmitError, ...props }: AuthFormProps) {
+export function AuthForm({
+  children,
+  onSubmit,
+  onSubmitError,
+  ...props
+}: AuthFormProps) {
   const [ready, setReady] = useState(false);
   const submitting = useRef(false);
 

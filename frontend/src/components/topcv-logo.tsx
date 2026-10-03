@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function TopCvLogo({ className }: { className?: string }) {
   return (
@@ -13,5 +13,5 @@ export function TopCvLogo({ className }: { className?: string }) {
         Top<span className="text-primary">CV</span>
       </span>
     </div>
-  )
+  );
 }
