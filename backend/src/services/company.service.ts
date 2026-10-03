@@ -33,7 +33,13 @@ class CompanyService {
         id
       }, 
       data: {
-        ...data
+        ...(data.name !== undefined ? { name: data.name } : {}),
+        ...(data.phone !== undefined ? { phone: data.phone } : {}),
+        ...(data.website !== undefined ? { website: data.website } : {}),
+        ...(data.taxCode !== undefined ? { taxCode: data.taxCode } : {}),
+        ...(data.address !== undefined ? { address: data.address } : {}),
+        ...(data.sizeRange !== undefined ? { sizeRange: data.sizeRange } : {}),
+        ...(data.description !== undefined ? { description: data.description } : {}),
       }
     }
     )

@@ -1,4 +1,5 @@
 import cvRouter from "./cv.route";
+import { authMiddleware, requireRoles } from "../middlewares/auth.middleware";
 import adminRouter from "./admin.route";
 import notificationRouter from "./notification.route";
 import billingRouter from "./billing.route";
@@ -17,6 +18,10 @@ import aiRouter from "./ai.route";
 import conversationRouter from "./conversation.route";
 
 const indexRouter = express.Router();
+// Public GET routes remain readable; private routers authenticate before checking roles.
+indexRouter.use(["/saved-job", "/application", "/cv"], authMiddleware, requireRoles("candidate"));
+indexRouter.use("/admin", authMiddleware, requireRoles("admin"));
+indexRouter.use("/employer", authMiddleware, requireRoles("company"));
 indexRouter.use("/admin", adminRouter);
 indexRouter.use("/notifications", notificationRouter);
 indexRouter.use("/billing", billingRouter);

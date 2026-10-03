@@ -21,7 +21,7 @@ function audit(tx: Prisma.TransactionClient, actorAccountId: string, action: str
   return tx.auditLog.create({ data: { actorType: "ACCOUNT", actorAccountId, action, entityType, entityId, beforeData, afterData } });
 }
 router.get("/overview", async (_req, res) => {
-  const [accounts, companies, jobs, pendingJobs, pendingCompanies, pendingOrders, revenue, recent] = await Promise.all([
+  const [accounts, companies, jobs, pendingJobs, pendingCompanies, pendingOrders, revenue, jobStatuses] = await Promise.all([
     prisma.account.count({ where: { deletedAt: null, status: "active" } }),
     prisma.company.count({ where: { deletedAt: null } }),
     prisma.jobPost.count({ where: { deletedAt: null } }),
@@ -29,9 +29,9 @@ router.get("/overview", async (_req, res) => {
     prisma.company.count({ where: { deletedAt: null, verificationStatus: "pending" } }),
     prisma.order.count({ where: { deletedAt: null, status: "pending" } }),
     prisma.payment.aggregate({ where: { status: "succeeded", order: { deletedAt: null } }, _sum: { amount: true }, _count: true }),
-    prisma.auditLog.findMany({ take: 5, orderBy: { createdAt: "desc" }, select: { action: true, entityType: true, createdAt: true, actor: { select: { email: true } } } }),
+    prisma.jobPost.groupBy({ by: ["status"], where: { deletedAt: null, status: { in: ["PENDING", "PUBLISHED", "PAUSED", "REJECTED", "CLOSED", "EXPIRED"] } }, _count: { _all: true } }),
   ]);
-  res.json({ data: { accounts, companies, jobs, pendingJobs, pendingCompanies, pendingOrders, revenue: revenue._sum.amount ?? 0, successfulPayments: revenue._count, recent } });
+  res.json({ data: { accounts, companies, jobs, pendingJobs, pendingCompanies, pendingOrders, revenue: revenue._sum.amount ?? 0, successfulPayments: revenue._count, jobStatuses: jobStatuses.map(row => ({ status: row.status, count: row._count._all })) } });
 });
 router.get("/revenue", async (req, res) => {
   const days = z.coerce.number().pipe(z.union([z.literal(7), z.literal(30), z.literal(90)])).default(30).parse(req.query.days);
@@ -150,14 +150,14 @@ router.patch("/companies/:id",async(req,res)=>{
   res.json({success:true});
 });
 router.patch("/jobs/:id",async(req,res)=>{
-  const id=uuid.parse(req.params.id),input=z.object({status:z.enum(["PUBLISHED","REJECTED"]),reason:z.string().trim().min(3).max(500)}).strict().parse(req.body);
+  const id=uuid.parse(req.params.id),input=z.object({status:z.enum(["PUBLISHED","REJECTED","CLOSED"]),reason:z.string().trim().min(3).max(500)}).strict().parse(req.body);
   const recipient=await prisma.$transaction(async tx=>{
     const before=await tx.jobPost.findUniqueOrThrow({where:{id},include:{company:{select:{accountId:true,deletedAt:true,account:{select:{status:true,deletedAt:true}}}}}});
     await tx.$queryRaw`SELECT id FROM company WHERE id=${before.companyId}::uuid FOR UPDATE`;
     await tx.$queryRaw`SELECT id FROM job_post WHERE id=${id}::uuid FOR UPDATE`;
     const fresh=await tx.jobPost.findUniqueOrThrow({where:{id}});
     if(fresh.deletedAt)throw new AppError("Tin đã bị xóa","NOT_FOUND",404);
-    const allowed=fresh.status==="PENDING"?["PUBLISHED","REJECTED"]:[];
+    const allowed=fresh.status==="PENDING"?["PUBLISHED","REJECTED"]:["PUBLISHED","PAUSED"].includes(fresh.status)?["CLOSED"]:[];
     if(!allowed.includes(input.status))throw new AppError("Chuyển trạng thái không hợp lệ","INVALID_STATUS",409);
     if(input.status==="PUBLISHED"){
       if(before.company.deletedAt||before.company.account.deletedAt||before.company.account.status!=="active")throw new AppError("Doanh nghiệp không hoạt động","COMPANY_INACTIVE",409);
@@ -166,9 +166,9 @@ router.patch("/jobs/:id",async(req,res)=>{
       const used=await tx.jobPost.count({where:{companyId:before.companyId,id:{not:id},deletedAt:null,status:{in:["PENDING","PUBLISHED"]},OR:[{deadlineAt:null},{deadlineAt:{gt:new Date()}}]}});
       if(used>=plan.benefits.activeJobLimit)throw new AppError("Doanh nghiệp đã hết hạn mức tin tuyển dụng","JOB_LIMIT_REACHED",403);
     }
-    await tx.jobPost.update({where:{id},data:{status:input.status,...(input.status==="PUBLISHED"&&!fresh.publishedAt?{publishedAt:new Date()}:{})}});
+    await tx.jobPost.update({where:{id},data:{status:input.status,...(input.status==="CLOSED"?{isBoosted:false,boostedUntil:null}:{}),...(input.status==="PUBLISHED"&&!fresh.publishedAt?{publishedAt:new Date()}:{})}});
     await audit(tx,req.profile.id,"job.status","job_post",id,{status:fresh.status},input);
-    const title=input.status==="PUBLISHED"?"Tin tuyển dụng đã được duyệt":"Tin tuyển dụng bị từ chối";
+    const title=input.status==="PUBLISHED"?"Tin tuyển dụng đã được duyệt":input.status==="CLOSED"?"Tin tuyển dụng đã được đóng":"Tin tuyển dụng bị từ chối";
     await tx.notification.create({data:{recipientAccountId:before.company.accountId,type:"job",title,description:`${fresh.title}. Lý do: ${input.reason}`.slice(0,255),link:"/employer?tab=jobs",eventKey:`job:status:${id}:${randomUUID()}`,metadata:{jobPostId:id,status:input.status,reason:input.reason}}});
     return before.company.accountId;
   });

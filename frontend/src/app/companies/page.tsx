@@ -15,7 +15,7 @@ export default function CompaniesPage() {
   const [query, setQuery] = useState("");
   const [keyword, setKeyword] = useState("");
   const [page,setPage]=useState(1);
-  const directory=useQuery({queryKey:["company-directory",keyword,page],placeholderData:keepPreviousData,queryFn:async({signal})=>(await httpRequest.get<Directory>("/company/directory",{signal,params:{page,query:keyword}})).data});
+  const directory=useQuery({queryKey:["company-directory",keyword,page],placeholderData:keepPreviousData,staleTime:0,refetchInterval:30000,refetchOnWindowFocus:true,queryFn:async({signal})=>(await httpRequest.get<Directory>("/company/directory",{signal,params:{page,query:keyword}})).data});
   const results=directory.data?.items??[];
   const search=()=>{setKeyword(query.trim());setPage(1);};
   return (

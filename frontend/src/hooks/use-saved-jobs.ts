@@ -1,6 +1,5 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAccountStore } from "@/stores/auth.store";
 import service from "@/services/saved-job.service";
@@ -9,7 +8,6 @@ export function useSavedJobs() {
   const account = useAccountStore(state => state.account);
   const accountId = account?.role === "candidate" ? account.id : undefined;
   const client = useQueryClient();
-  const router = useRouter();
   const key = ["saved-job-ids", accountId];
   const query = useQuery({ queryKey: key, enabled: !!accountId, queryFn: ({ signal }) => service.list(signal) });
   const mutation = useMutation({
@@ -27,8 +25,8 @@ export function useSavedJobs() {
   });
   const saved = new Set(accountId ? query.data ?? [] : []);
   function toggle(id: string) {
-    if (!account) { toast.info("Vui lòng đăng nhập để lưu việc làm."); router.push("/login"); return; }
-    if (!accountId) { toast.info("Chỉ tài khoản ứng viên được lưu việc làm."); return; }
+    if (!account) { toast.info("Đăng nhập để sử dụng tính năng này"); return; }
+    if (!accountId) { toast.info("Không có quyền truy cập"); return; }
     if (query.isPending || query.isError) { void query.refetch(); toast.info("Đang tải danh sách tin đã lưu. Vui lòng thử lại."); return; }
     const lock = `${accountId}:${id}`;
     if (locks.has(lock)) return;

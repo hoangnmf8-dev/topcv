@@ -33,7 +33,7 @@ export default function CompanyDetail() {
   const [starting, setStarting] = useState(false);
   const lock = useRef(false);
   async function startChat() {
-    if (!account) { router.push("/login"); return; }
+    if (!account) { toast.info("Đăng nhập để sử dụng tính năng này"); return; }
     if (account.role !== "candidate") { toast.error("Vui lòng dùng tài khoản ứng viên để nhắn tin cho công ty."); return; }
     if (!data?.id || lock.current) return;
     lock.current = true;

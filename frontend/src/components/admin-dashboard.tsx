@@ -326,7 +326,7 @@ function Overview({ open }: { open: (tab: string) => void }) {
         pendingOrders: number;
         revenue: string;
         successfulPayments: number;
-        recent: Row[];
+        jobStatuses: { status: string; count: number }[];
       }>("overview"),
   });
   if (q.isPending) return <p>Đang tải…</p>;
@@ -371,17 +371,14 @@ function Overview({ open }: { open: (tab: string) => void }) {
           </p>
         </Panel>
         <Panel>
-          <h2 className="mb-4 font-bold">Hoạt động gần đây</h2>
-          {d.recent.map((row, i) => (
-            <div key={i} className="border-b py-3 text-sm">
-              <b>{nested(row, "actor", "email") || "Hệ thống"}</b>
-              <p>
-                {str(row.action)} · {str(row.entityType)}
-              </p>
-              <p className="text-xs text-slate-500">{date(row.createdAt)}</p>
+          <h2 className="mb-4 font-bold">Trạng thái tin tuyển dụng</h2>
+          <p className="mb-4 text-xs text-slate-500">Thống kê các tin chưa bị xóa trong hệ thống.</p>
+          {["PENDING", "PUBLISHED", "PAUSED", "REJECTED", "CLOSED", "EXPIRED"].map(status => (
+            <div key={status} className="flex items-center justify-between border-b py-3 text-sm last:border-0">
+              <span>{labels[status]}</span>
+              <b className="text-emerald-700">{d.jobStatuses.find(row => row.status === status)?.count ?? 0}</b>
             </div>
           ))}
-          {!d.recent.length && <p>Chưa có hoạt động.</p>}
         </Panel>
       </div>
     </>
@@ -482,7 +479,9 @@ function actions(resource: string, row: Row): string[][] {
           ["PUBLISHED", "Duyệt tin"],
           ["REJECTED", "Từ chối"],
         ]
-      : [];
+      : ["PUBLISHED", "PAUSED"].includes(str(row.status))
+        ? [["CLOSED", "Đóng tin"]]
+        : [];
   if (resource === "companies")
     return ["verified", "rejected", "pending"]
       .filter((s) => s !== row.verificationStatus)
@@ -709,7 +708,8 @@ function AdminList({
                           {actions(resource, row).map(([s, l]) => (
                             <button
                               key={s}
-                              className="font-semibold text-emerald-700"
+                              disabled={mutation.isPending}
+                              className={`rounded-lg border px-3 py-1.5 text-sm font-semibold disabled:opacity-50 ${s === "PUBLISHED" ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-red-200 bg-red-50 text-red-700"}`}
                               onClick={() => {
                                 setReason("");
                                 setTarget({ row, status: s });

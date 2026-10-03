@@ -40,7 +40,7 @@ httpRequest.interceptors.response.use(
       if (newToken) {
         return httpRequest(error.config);
       }
-      throw new Unauthorized("Không có quyền truy cập", "UNAUTHORIZED");
+      throw new Unauthorized("Đăng nhập để sử dụng tính năng này", "UNAUTHORIZED");
     }
     return Promise.reject(error);
   },

@@ -72,10 +72,17 @@ test("admin APIs isolate privileges, perform audited mutations and protect refer
    assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"PUBLISHED",reason:"Test duplicate"})).status,409);
    assert.equal(await prisma.notification.count({where:{recipientAccountId:company.id,type:"job"}}),1);
    assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"PAUSED",reason:"Test pause"})).status,400);
-   assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"CLOSED",reason:"Test close"})).status,400);
+   assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"CLOSED",reason:"Test close"})).status,200);
+   assert.equal((await prisma.jobPost.findUniqueOrThrow({where:{id:job.id}})).status,"CLOSED");
+   assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"CLOSED",reason:"Test duplicate close"})).status,409);
    await prisma.jobPost.update({where:{id:job.id},data:{status:"PAUSED"}});
    assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"PUBLISHED",reason:"Test restore"})).status,409);
+   assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"CLOSED",reason:"Test paused close"})).status,200);
+   assert.equal((await prisma.jobPost.findUniqueOrThrow({where:{id:job.id}})).status,"CLOSED");
+   const closed=await prisma.notification.findFirstOrThrow({where:{recipientAccountId:company.id,title:"Tin tuyển dụng đã được đóng"}});
+   assert.ok(closed.description.includes("Test close"));
    await prisma.jobPost.update({where:{id:job.id},data:{status:"PENDING"}});
+   assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"CLOSED",reason:"Test pending close"})).status,409);
    await prisma.jobPost.update({where:{id:job.id},data:{deadlineAt:new Date(Date.now()-1000)}});
    assert.equal((await request("/jobs/"+job.id,"PATCH",{status:"PUBLISHED",reason:"Test expired"})).status,409);
    assert.equal((await request("/companies/"+company.company!.id,"PATCH",{verificationStatus:"verified",reason:"Test verification"})).status,200);

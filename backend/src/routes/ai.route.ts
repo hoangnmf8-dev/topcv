@@ -1,6 +1,6 @@
 import express from "express";
-import { authMiddleware } from "../middlewares/auth.middleware";
+import { authMiddleware, requireRoles } from "../middlewares/auth.middleware";
 import aiController from "../controllers/ai.controller";
 const aiRouter = express.Router();
-aiRouter.post("/generate", authMiddleware, aiController.generateTextAI);
+aiRouter.post("/generate", authMiddleware, requireRoles("candidate"), aiController.generateTextAI);
 export default aiRouter;

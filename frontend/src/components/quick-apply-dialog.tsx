@@ -19,6 +19,12 @@ import type { JobCardData, SavedCvOption } from "@/types";
 type Props = { job: JobCardData | null; open: boolean; onOpenChange: (open: boolean) => void; savedCvOptions?: SavedCvOption[] };
 export function QuickApplyDialog({ job, open, onOpenChange }: Props) {
   const account = useAccountStore(state => state.account);
+  useEffect(() => {
+    if (open && account?.role !== "candidate") {
+      toast.info(account ? "Không có quyền truy cập" : "Đăng nhập để sử dụng tính năng này");
+      onOpenChange(false);
+    }
+  }, [open, account, onOpenChange]);
   const accountId = account?.id ?? "";
   const client = useQueryClient();
   const [cvId, setCvId] = useState("");
@@ -80,8 +86,9 @@ export function QuickApplyDialog({ job, open, onOpenChange }: Props) {
     } finally { lock.current = false; setBusy(false); }
   }
   const candidate = account?.role === "candidate";
+  if (!candidate) return null;
   return <Dialog open={open} onOpenChange={changeOpen}><DialogContent showCloseButton={!busy} className="flex max-h-[90dvh] min-w-0 flex-col overflow-hidden p-0 sm:max-w-lg"><DialogHeader className="px-5 pt-5"><DialogTitle>Ứng tuyển nhanh</DialogTitle><DialogDescription>Vị trí {job?.title} tại {job?.company}</DialogDescription></DialogHeader>
-  {!candidate ? <div className="p-5"><p className="mb-4">{account ? "Chỉ tài khoản ứng viên được nộp hồ sơ." : "Vui lòng đăng nhập để ứng tuyển."}</p>{!account&&<Link href="/login" className="text-emerald-700 underline">Đăng nhập</Link>}</div> :
+  {!candidate ? <div className="p-5"><p className="mb-4">{account ? "Không có quyền truy cập" : "Đăng nhập để sử dụng tính năng này"}</p>{!account&&<Link href="/login" className="text-emerald-700 underline">Đăng nhập</Link>}</div> :
   status.data ? <div className="p-5"><p role="status" className="font-semibold text-emerald-700">Bạn đã ứng tuyển công việc này.</p><Link href="/candidate?tab=applications" className="mt-3 inline-block text-emerald-700 underline">Xem hồ sơ đã ứng tuyển</Link></div> :
   <form onSubmit={submit} className="flex min-h-0 min-w-0 flex-col overflow-hidden"><div className="min-h-0 space-y-5 overflow-y-auto overflow-x-hidden p-5"><fieldset disabled={busy} className="min-w-0 space-y-5">
   <label className="block text-sm font-semibold">Chọn CV từ hệ thống<select value={cvId} disabled={cvs.isPending || !options.length} onChange={event=>{setCvId(event.target.value);setFile(null);uploaded.current=null;setError("");}} className="mt-2 h-10 w-full min-w-0 rounded-lg border px-3 font-normal"><option value="">{cvs.isPending?"Đang tải CV…":options.length?"Chọn CV có sẵn":"Chưa có CV có sẵn"}</option>{options.map(cv=><option key={cv.id} value={cv.id}>{cv.title}{cv.isDefault?" · Mặc định":""}</option>)}</select></label>

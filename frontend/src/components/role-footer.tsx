@@ -39,15 +39,15 @@ export function RoleFooter({ variant }: RoleFooterProps) {
           <p>© 2026 TopCV Việt Nam. Bảo mật tài khoản và dữ liệu người dùng.</p>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
             <Link
-              href="/career-guide#privacy"
+              href="/information/privacy"
               className="hover:text-emerald-700"
             >
               Chính sách bảo mật
             </Link>
-            <Link href="/career-guide#terms" className="hover:text-emerald-700">
+            <Link href="/information/terms" className="hover:text-emerald-700">
               Điều khoản sử dụng
             </Link>
-            <Link href="/career-guide#help" className="hover:text-emerald-700">
+            <Link href="/information/help" className="hover:text-emerald-700">
               Trung tâm trợ giúp
             </Link>
           </div>
@@ -143,9 +143,9 @@ export function RoleFooter({ variant }: RoleFooterProps) {
               : "Đồng hành cùng sự nghiệp của bạn."}
           </p>
           <div className="flex gap-4">
-            <Link href="/career-guide#privacy">Bảo mật</Link>
-            <Link href="/career-guide#terms">Điều khoản</Link>
-            <Link href="/career-guide#help">Trợ giúp</Link>
+            <Link href="/information/privacy">Bảo mật</Link>
+            <Link href="/information/terms">Điều khoản</Link>
+            <Link href="/information/help">Trợ giúp</Link>
           </div>
         </div>
       </div>

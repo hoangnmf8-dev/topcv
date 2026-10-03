@@ -23,14 +23,13 @@ const groups = [
     ],
   },
   {
-    title: "Nhà tuyển dụng",
+    title: "Thông tin & hỗ trợ",
     links: [
-      [["Đăng tin tuyển dụng"], "/employer/post-job"],
-      [["Quản lý tuyển dụng"], "/employer"],
-      [["Tìm hồ sơ ứng viên"], "/employer"],
-      [["Gói dịch vụ tuyển dụng"], "/employer/services"],
-      [["Tin nhắn với ứng viên"], "/employer/messages"],
-    ].map(([label, href]) => [label[0], href]),
+      ["Về TopCV", "/information/about"],
+      ["Bảo mật", "/information/privacy"],
+      ["Điều khoản", "/information/terms"],
+      ["Trợ giúp", "/information/help"],
+    ],
   },
 ] as { title: string; links: string[][] }[];
 
@@ -83,20 +82,6 @@ export function SiteFooter() {
                 Hà Nội · TP. Hồ Chí Minh · Làm việc 08:00–18:00, Thứ 2–Thứ 6
               </p>
             </div>
-          </div>
-          <div className="flex flex-wrap content-start gap-x-5 gap-y-2 text-sm text-emerald-50/75 md:justify-end">
-            <Link href="/career-guide#about" className="hover:text-white">
-              Về TopCV
-            </Link>
-            <Link href="/career-guide#privacy" className="hover:text-white">
-              Bảo mật
-            </Link>
-            <Link href="/career-guide#terms" className="hover:text-white">
-              Điều khoản
-            </Link>
-            <Link href="/career-guide#help" className="hover:text-white">
-              Trợ giúp
-            </Link>
           </div>
         </div>
       </div>

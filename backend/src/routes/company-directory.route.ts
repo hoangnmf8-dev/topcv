@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
   const open: Prisma.JobPostWhereInput = {
     deletedAt: null,
     status: "PUBLISHED",
-    OR: [{ deadlineAt: null }, { deadlineAt: { gte: new Date() } }],
+    OR: [{ deadlineAt: null }, { deadlineAt: { gt: new Date() } }],
   };
   const where: Prisma.CompanyWhereInput = {
     deletedAt: null,
@@ -65,6 +65,7 @@ router.get("/", async (req, res) => {
       logoUrl: logoKey ? await uploadService.createImageUrl(logoKey) : null,
     })),
   );
+  res.setHeader("Cache-Control", "no-store");
   res.json({ items, total, page, totalPages: Math.ceil(total / limit) });
 });
 export default router;
