@@ -132,32 +132,50 @@ const menus: { label: string; items?: MenuItem[] }[] = [
 export function SiteHeader({
   onMenuClick,
   menuOpen = false,
-}: { onMenuClick?: () => void; menuOpen?: boolean } = {}) {
+  mobileMenu = true,
+}: {
+  onMenuClick?: () => void;
+  menuOpen?: boolean;
+  mobileMenu?: boolean;
+} = {}) {
   const account = useAccountStore((state) => state.account);
   const { candidate } = useCandidateStore((state) => state);
   const [open, setOpen] = useState<string | null>(null);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState<string | null>(null);
+  const isMenuOpen = onMenuClick ? menuOpen : mobileDrawerOpen;
+  const toggleMenu = onMenuClick
+    ? onMenuClick
+    : () => setMobileDrawerOpen((current) => !current);
+  const closeMobileMenu = () => {
+    setMobileDrawerOpen(false);
+    setMobileSection(null);
+  };
 
   return (
+    <>
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm backdrop-blur">
-      <div className="mx-auto flex h-[76px] max-w-[1280px] items-center gap-5 px-4 sm:px-6">
-        {onMenuClick && (
+      <div className="mx-auto flex h-[76px] max-w-[1280px] items-center gap-2 px-3 sm:px-4 xl:gap-5 xl:px-6">
+        {(onMenuClick || mobileMenu) && (
           <button
-            onClick={onMenuClick}
-            className="grid size-9 shrink-0 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 xl:hidden"
-            aria-label={menuOpen ? "Đóng menu" : "Mở menu"}
-            aria-expanded={menuOpen}
+            onClick={toggleMenu}
+            className="grid size-9 shrink-0 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+            aria-label={isMenuOpen ? "Đóng menu" : "Mở menu"}
+            aria-expanded={isMenuOpen}
           >
-            <Menu className="size-5" />
+            {isMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         )}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5"
+          className="hidden shrink-0 items-center gap-2.5 sm:flex"
           aria-label="TopCV về trang chủ"
         >
-          <img src="/topcv-logo-7.png" alt="topcv-logo" className="h-[76px]" />
+          <img src="/topcv-logo-7.png" alt="topcv-logo" className="h-14 xl:h-[76px]" />
         </Link>
-        <nav className="hidden h-full items-center gap-1 xl:flex">
+        <nav
+          className="hidden h-full items-center gap-0 lg:flex xl:gap-1"
+        >
           {menus
             .filter((menu) => menu.label !== "Cẩm nang nghề nghiệp")
             .map((menu) => (
@@ -171,7 +189,7 @@ export function SiteHeader({
                     setOpen(open === menu.label ? null : menu.label)
                   }
                   onMouseEnter={() => setOpen(menu.label)}
-                  className={`inline-flex h-full items-center gap-1 px-3 text-sm font-semibold transition ${open === menu.label ? "text-[#00b14f]" : "text-slate-700 hover:text-[#00b14f]"}`}
+                  className={`inline-flex h-full items-center gap-1 px-1.5 text-sm font-semibold transition xl:px-3 ${open === menu.label ? "text-[#00b14f]" : "text-slate-700 hover:text-[#00b14f]"}`}
                 >
                   {menu.label}
                   <ChevronDown
@@ -215,13 +233,13 @@ export function SiteHeader({
             ))}
           <Link
             href="/career-guide"
-            className="inline-flex h-full items-center px-3 text-sm font-semibold text-slate-700 transition hover:text-[#00b14f]"
+            className="inline-flex h-full items-center px-1.5 text-sm font-semibold text-slate-700 transition hover:text-[#00b14f] xl:px-3"
           >
             Cẩm nang nghề nghiệp
           </Link>
           <Link
             href="/services"
-            className="ml-2 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-sm font-bold text-amber-700"
+            className="ml-1 inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-sm font-bold text-amber-700 xl:ml-2 xl:gap-2 xl:px-3"
           >
             <Crown aria-hidden="true" className="size-4 shrink-0" />
             TopCV Pro
@@ -249,7 +267,7 @@ export function SiteHeader({
                       ? "/employer"
                       : "/candidate"
                 }
-                className="hidden items-center gap-2 border-l border-slate-200 pl-3 text-sm font-semibold text-slate-700 sm:flex"
+                className="flex items-center gap-2 border-l border-slate-200 pl-3 text-sm font-semibold text-slate-700"
               >
                 <span className="grid size-9 place-items-center rounded-full bg-slate-100">
                   <Avatar>
@@ -279,5 +297,92 @@ export function SiteHeader({
         </div>
       </div>
     </header>
+      {mobileMenu && !onMenuClick && mobileDrawerOpen && (
+        <div className="fixed inset-0 z-[100] lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-[1px]"
+            onClick={closeMobileMenu}
+            aria-label="Đóng menu"
+          />
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu điều hướng TopCV"
+            className="absolute inset-y-0 left-0 flex w-[min(67vw,420px)] animate-in slide-in-from-left flex-col bg-white shadow-2xl duration-200"
+          >
+            <div className="flex h-[76px] shrink-0 items-center justify-between border-b px-4">
+              <Link href="/" onClick={closeMobileMenu} aria-label="TopCV trang chủ">
+                <img src="/topcv-logo-7.png" alt="TopCV" className="h-[60px]" />
+              </Link>
+              <button
+                type="button"
+                onClick={closeMobileMenu}
+                className="grid size-9 place-items-center rounded-lg text-slate-600 hover:bg-slate-100"
+                aria-label="Đóng menu"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <nav className="flex-1 overflow-y-auto p-3">
+              {menus
+                .filter((menu) => menu.items?.length)
+                .map((menu) => (
+                  <div key={menu.label} className="mb-1">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMobileSection((current) =>
+                          current === menu.label ? null : menu.label,
+                        )
+                      }
+                      aria-expanded={mobileSection === menu.label}
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      {menu.label}
+                      <ChevronDown
+                        className={`size-4 transition-transform ${mobileSection === menu.label ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    {mobileSection === menu.label && (
+                      <div className="mb-2 ml-3 border-l border-emerald-100 pl-2">
+                        {menu.items?.map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link
+                              key={item.label}
+                              href={item.href}
+                              onClick={closeMobileMenu}
+                              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-600 hover:bg-emerald-50 hover:text-emerald-700"
+                            >
+                              <Icon className="size-4 shrink-0" />
+                              {item.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              <Link
+                href="/career-guide"
+                onClick={closeMobileMenu}
+                className="flex items-center rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                Cẩm nang nghề nghiệp
+              </Link>
+              <Link
+                href="/services"
+                onClick={closeMobileMenu}
+                className="mt-2 flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm font-bold text-amber-700"
+              >
+                <Crown className="size-4" />
+                TopCV Pro
+              </Link>
+            </nav>
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

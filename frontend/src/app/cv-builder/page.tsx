@@ -104,12 +104,10 @@ function CVBuilderPage() {
     form.reset(valid.data);
     loaded.current = id;
   }, [detail.data, id, form]);
-  const [aiError, setAiError] = useState("");
   const [saveState, setSaveState] = useState<
     "idle" | "saving" | "saved" | "default-saved"
   >("idle");
   const [mobileView, setMobileView] = useState<"edit" | "preview">("edit");
-  const handleOptimize = () => setAiError("Tính năng AI hiện chưa khả dụng.");
   function onAvatarChange(next: File | null) {
     if (next) {
       const valid = cvImageSchema.safeParse(next);
@@ -273,19 +271,11 @@ function CVBuilderPage() {
           onThemeChange={(value) =>
             form.setValue("theme", value, { shouldDirty: true })
           }
-          onOptimize={handleOptimize}
           onSave={() => persistCV(false)}
           onSaveAsDefault={() => persistCV(true)}
           onDownloadPDF={handleDownloadPDF}
-          aiLoading={false}
           saveState={saveState}
         />
-
-        {aiError && (
-          <div className="border-b border-destructive/20 bg-destructive/10 px-4 py-2 text-center text-xs font-medium text-destructive">
-            {aiError}
-          </div>
-        )}
 
         <div className="flex shrink-0 items-center gap-1 border-b border-border bg-background p-1.5 lg:hidden">
           <TabButton

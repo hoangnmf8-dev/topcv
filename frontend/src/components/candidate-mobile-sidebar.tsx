@@ -75,6 +75,7 @@ export function CandidateMobileSidebar({
         </nav>
         <Link
           href="/cv-builder"
+          onClick={onClose}
           className="m-4 flex items-center justify-center gap-2 rounded-xl bg-[#00b14f] px-4 py-3 text-sm font-bold text-white"
         >
           <FileText className="size-4" />

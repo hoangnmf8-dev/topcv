@@ -121,7 +121,7 @@ export function HeroSearch() {
           onSubmit={submit}
           className="mx-auto mt-8 max-w-6xl rounded-2xl border border-white/25 bg-white p-2.5 shadow-2xl shadow-emerald-950/25 md:rounded-3xl md:p-3"
         >
-          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_260px_220px_auto] md:items-center">
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_260px_220px_auto] md:items-center">
             <label className="flex h-13 items-center gap-3 rounded-xl border border-transparent bg-slate-50 px-4 transition focus-within:border-emerald-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-50">
               <Search className="size-5 shrink-0 text-emerald-600" />
               <input

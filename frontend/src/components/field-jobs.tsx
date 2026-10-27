@@ -355,8 +355,8 @@ function FieldJobsContent({
             Tạo thông báo việc làm
           </button>
         </div>
-        <div className="mt-7 grid gap-6 xl:grid-cols-[280px_1fr]">
-          <aside className="h-fit rounded-2xl border bg-white p-5 shadow-sm xl:sticky xl:top-24">
+        <div className="mt-7 grid gap-6 lg:grid-cols-[280px_1fr]">
+          <aside className="h-fit rounded-2xl border bg-white p-5 shadow-sm lg:sticky lg:top-24">
             <h2 className="flex items-center gap-2 text-lg font-bold">
               <SlidersHorizontal className="size-5 text-emerald-600" />
               Bộ lọc nâng cao

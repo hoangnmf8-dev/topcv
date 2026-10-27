@@ -34,8 +34,8 @@ import {
   UsersRound,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { RoleFooter } from "@/components/role-footer";
 import { CandidateMobileSidebar } from "@/components/candidate-mobile-sidebar";
+import { RoleFooter } from "@/components/role-footer";
 import { useCandidateStore } from "@/stores/candidate.store";
 
 import { useDashboardTab } from "@/hooks/use-dashboard-tab";
@@ -60,18 +60,33 @@ const employerTabs = [
 ] as const;
 
 export function PortalDashboard({ mode }: { mode: Mode }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const completion = useProfileCompletion();
   const candidate = mode === "candidate";
   const tabs = candidate ? candidateTabs : employerTabs;
   const { candidate: candidateStore } = useCandidateStore((state) => state);
   const [tab, setTab] = useDashboardTab(tabs);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <main className="route-home min-h-screen bg-slate-50">
-      <SiteHeader
-        menuOpen={mobileMenuOpen}
-        onMenuClick={() => setMobileMenuOpen((open) => !open)}
-      />
+      {candidate ? (
+        <SiteHeader
+          mobileMenu={false}
+          menuOpen={mobileMenuOpen}
+          onMenuClick={() => setMobileMenuOpen((open) => !open)}
+        />
+      ) : (
+        <SiteHeader mobileMenu={false} />
+      )}
+      {candidate && mobileMenuOpen && (
+        <CandidateMobileSidebar
+          active={tab}
+          onChange={(id) => {
+            setTab(id);
+            setMobileMenuOpen(false);
+          }}
+          onClose={() => setMobileMenuOpen(false)}
+        />
+      )}
       <section className="relative overflow-hidden bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-600">
         <div
           aria-hidden
@@ -103,8 +118,11 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
           </Link>
         </div>
       </section>
-      <div className="mx-auto grid max-w-[1280px] gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[245px_1fr]">
-        <aside className="hidden h-fit rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block">
+      <div
+        className={`mx-auto grid max-w-[1280px] gap-6 px-4 py-8 sm:px-6 ${candidate ? "" : "lg:grid-cols-[245px_1fr]"}`}
+      >
+        {!candidate && (
+          <aside className="hidden h-fit rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block">
           <div className="mb-3 border-b border-slate-100 px-3 pb-3">
             <p className="font-bold">
               {candidate ? "Tài khoản ứng viên" : "Tài khoản doanh nghiệp"}
@@ -130,7 +148,8 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
             ))}
           </nav>
           {candidate && <LogoutButton />}
-        </aside>
+          </aside>
+        )}
         <section>
           {tab === "overview" &&
             (candidate ? (
@@ -152,16 +171,6 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
           {tab === "security" && <Security />}
         </section>
       </div>
-      {candidate && mobileMenuOpen && (
-        <CandidateMobileSidebar
-          active={tab}
-          onChange={(id) => {
-            setTab(id);
-            setMobileMenuOpen(false);
-          }}
-          onClose={() => setMobileMenuOpen(false)}
-        />
-      )}
       <RoleFooter variant="candidate" />
     </main>
   );
