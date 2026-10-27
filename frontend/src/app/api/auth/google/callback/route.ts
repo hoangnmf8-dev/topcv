@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { TTL } from "@/constants/ttl.constant";
 
 export async function GET(request: NextRequest) {
+  const frontendOrigin =
+    process.env.FRONTEND_URL;
   const state = request.nextUrl.searchParams.get("state") ?? "";
   const expected = request.cookies.get("googleOAuthState")?.value ?? "";
   let response: NextResponse;
@@ -15,7 +17,7 @@ export async function GET(request: NextRequest) {
       throw new Error("Invalid state");
     if (request.nextUrl.searchParams.has("error")) {
       response = NextResponse.redirect(
-        new URL("/login?authError=google_cancelled", request.url),
+        new URL("/login?authError=google_cancelled", frontendOrigin),
       );
     } else {
       const code = request.nextUrl.searchParams.get("code");
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
       )
         throw new Error("Google callback failed");
       response = NextResponse.redirect(
-        new URL(session.role === "company" ? "/employer" : "/", request.url),
+        new URL(session.role === "company" ? "/employer" : "/", frontendOrigin),
       );
       const options = {
         httpOnly: true,
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
   } catch {
     response = NextResponse.redirect(
-      new URL("/login?authError=google_failed", request.url),
+      new URL("/login?authError=google_failed", frontendOrigin),
     );
   }
   response.cookies.set("googleOAuthState", "", {
