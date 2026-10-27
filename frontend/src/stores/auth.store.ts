@@ -11,7 +11,7 @@ export const useAccountStore = create<AccountState>((set) => ({
       const profileResponse = await getProfileAction();
       if (!profileResponse.success) {
         throw new Error(profileResponse.message);
-      }
+      } 
       const account = profileResponse.data as AccountResponse;
       set({ account });
       if (account.company) {

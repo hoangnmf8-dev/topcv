@@ -107,16 +107,14 @@ router.post("/orders", async (req, res) => {
     z.object({ planId: z.string().uuid(), requestKey: z.string().uuid() }),
     req.body,
   );
-  res
-    .status(201)
-    .json({
-      data: await createOrder(
-        req.profile.id,
-        req.profile.role as "candidate" | "company",
-        input.planId,
-        input.requestKey,
-      ),
-    });
+  res.status(201).json({
+    data: await createOrder(
+      req.profile.id,
+      req.profile.role as "candidate" | "company",
+      input.planId,
+      input.requestKey,
+    ),
+  });
 });
 router.post("/orders/:id/checkout", async (req, res) =>
   res.json({

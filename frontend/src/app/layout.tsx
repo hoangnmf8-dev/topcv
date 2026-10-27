@@ -7,11 +7,10 @@ import AuthProvider from "@/providers/auth-provider";
 
 export const metadata: Metadata = {
   title: "TopViec / TopCV",
-  description:
-    "Nền tảng tuyển dụng hàng đầu.",
+  description: "Nền tảng tuyển dụng hàng đầu.",
   icons: {
-    icon: "/favicon.ico"
-  }
+    icon: "/favicon.ico",
+  },
 };
 
 export const viewport: Viewport = {
@@ -26,7 +25,9 @@ export default function RootLayout({
     <html lang="vi">
       <body className="font-sans antialiased">
         <QueryProvider>
-          <AuthProvider><ChatProvider>{children}</ChatProvider></AuthProvider>
+          <AuthProvider>
+            <ChatProvider>{children}</ChatProvider>
+          </AuthProvider>
         </QueryProvider>
         <Toaster position="top-center" richColors />
       </body>

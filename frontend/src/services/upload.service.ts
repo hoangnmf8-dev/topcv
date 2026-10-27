@@ -69,6 +69,7 @@ class UpLoadService {
         domain + "/" + objectKey.split("/").map(encodeURIComponent).join("/")
       );
     }
+    console.log(encodeURIComponent)
     const response = await httpRequest.post("/upload/presign-dowload", {
       objectKey,
     });

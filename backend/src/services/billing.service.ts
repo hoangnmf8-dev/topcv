@@ -65,7 +65,6 @@ export async function syncPlans() {
       };
       const plan = await prisma.servicePlan.upsert({
         where: { code: `${audience}_${tier}` },
-        // Prices are managed in the database; new plans start unavailable to buy.
         create: { code: `${audience}_${tier}`, ...data, price: 0 },
         update: data,
       });

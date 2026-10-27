@@ -220,7 +220,7 @@ class AuthController {
     try {
       const url = new URL(
         "/api/auth/google/callback",
-        process.env.FRONTEND_URL ?? "http://localhost:3000",
+        process.env.FRONTEND_URL,
       );
       for (const key of ["code", "state", "error"]) {
         const value = req.query[key];
