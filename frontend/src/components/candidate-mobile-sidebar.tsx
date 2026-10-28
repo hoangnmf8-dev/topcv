@@ -5,6 +5,7 @@ import {
   CreditCard,
   FileText,
   Heart,
+  House,
   LayoutDashboard,
   PackageCheck,
   ReceiptText,
@@ -71,6 +72,14 @@ export function CandidateMobileSidebar({
               {label}
             </button>
           ))}
+          <Link
+            href="/"
+            onClick={onClose}
+            className="mb-2 flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            <House className="size-5 shrink-0" />
+            Về trang chủ
+          </Link>
           <LogoutButton />
         </nav>
         <Link

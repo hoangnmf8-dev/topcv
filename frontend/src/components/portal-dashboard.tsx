@@ -119,10 +119,9 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
         </div>
       </section>
       <div
-        className={`mx-auto grid max-w-[1280px] gap-6 px-4 py-8 sm:px-6 ${candidate ? "" : "lg:grid-cols-[245px_1fr]"}`}
+        className="mx-auto grid max-w-[1280px] gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[245px_1fr]"
       >
-        {!candidate && (
-          <aside className="hidden h-fit rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block">
+        <aside className="hidden h-fit rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm lg:sticky lg:top-24 lg:block">
           <div className="mb-3 border-b border-slate-100 px-3 pb-3">
             <p className="font-bold">
               {candidate ? "Tài khoản ứng viên" : "Tài khoản doanh nghiệp"}
@@ -148,8 +147,7 @@ export function PortalDashboard({ mode }: { mode: Mode }) {
             ))}
           </nav>
           {candidate && <LogoutButton />}
-          </aside>
-        )}
+        </aside>
         <section>
           {tab === "overview" &&
             (candidate ? (
